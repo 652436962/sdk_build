@@ -60,6 +60,15 @@ cd /home/lechi/tronlong/t527_openharmony/
 sudo chown -R $USER:$USER .
 ```
 
+### 1.5 关键文件路径
+以下是飞凌 T527 开发板的关键配置文件路径：
+
+| 类型 | 路径 |
+|------|------|
+| 设备树（Bootloader） | `device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts` |
+| 设备树（DTSI） | `device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi` |
+| 编译配置 | `device/soc/allwinner/t527/patches/config/t527_standard_defconfig` |
+
 ---
 
 ## 二、进入 Docker 编译环境
