@@ -35,7 +35,7 @@ sudo usermod -aG docker $USER
 进入 RK3568 Buildroot SDK 根目录，修复文件权限，避免编译时报读写权限错误：
 ```bash
 # 进入 SDK 根目录（替换为你实际的 SDK 路径）
-cd /home/lechi/tronlong/RK3568_sdk/
+cd /home/lechi/tronlong/rk3568_sdk/
 # 修复目录归属（推荐）
 sudo chown -R $USER:$USER .
 # 备用命令（上一条命令报错时使用）
@@ -48,10 +48,10 @@ sudo chown -R $USER:$USER .
 ### 2.1 启动容器命令（首次执行）
 **先进入本机 RK3568 Buildroot SDK 根目录**，再执行以下命令，自动进入编译容器：
 ```bash
-cd /home/lechi/tronlong/RK3568_sdk/
+cd /home/lechi/tronlong/rk3568_sdk/
 
 docker run -it \
---name RK3568_sdk \
+--name rk3568_sdk \
 -v $(pwd):/workspace \
 -w /workspace \
 -h rk3568-build \
@@ -64,7 +64,7 @@ ubuntu:20.04 \
 ### 2.2 命令参数说明
 | 参数 | 作用 |
 |------|------|
-| `--name RK3568_sdk` | 容器命名，区分开发板型号 |
+| `--name rk3568_sdk` | 容器命名，区分开发板型号 |
 | `-v $(pwd):/workspace` | 本机 SDK 目录映射到容器，文件双向同步 |
 | `-w /workspace` | 容器内默认进入 SDK 工作目录 |
 | `-h rk3568-build` | 设置容器主机名，方便识别 |
@@ -77,8 +77,8 @@ docker ps -a
 
 如果容器已创建（非首次启动），使用以下命令重新进入：
 ```bash
-docker start RK3568_sdk
-docker exec -it RK3568_sdk /bin/bash
+docker start rk3568_sdk
+docker exec -it rk3568_sdk /bin/bash
 ```
 
 环境就绪标识：终端提示符变为
@@ -147,15 +147,14 @@ make
 # 编译完成后将生成内核镜像文件 boot.img 或 boot.tar
 
 # 仅编译根文件系统
-./build.sh rootfs
+./build.sh buildroot
 # 编译完成后将生成 rootfs.squashfs 或 rootfs.tar
-```
 
-### 4.4 打包完整固件
-```bash
-./build.sh all
-# 或
-make release
+# 编译 recovery
+./build.sh recovery
+
+# 打包固件镜像
+./build.sh updateimg
 ```
 
 编译时长：20~60 分钟（取决于 CPU 核心数与内存）
@@ -163,14 +162,57 @@ make release
 
 ---
 
-## 五、Buildroot 配置说明
-### 5.1 进入配置菜单
+## 五、内核配置说明
+### 5.1 方法一：直接修改配置文件
+直接将配置写到内核默认配置文件 `kernel/arch/arm64/configs/OK3568-C-linux_defconfig` 中：
+
 ```bash
-cd buildroot
+CONFIG_USB_SERIAL_CH341=y
+```
+
+然后重新编译内核：
+```bash
+./build.sh kernel
+```
+
+### 5.2 方法二：图形化配置
+1. 编辑 `device/rockchip/common/scripts/mk-kernel.sh`，注释掉相关代码
+2. 执行图形化配置：
+```bash
+make ARCH=arm64 menuconfig
+```
+3. 用户根据需求配置内核，将配置写到 `.config` 文件后，保存退出
+4. 重新编译内核：
+```bash
+./build.sh kernel
+```
+
+---
+
+## 六、Buildroot 配置说明
+### 6.1 方法一：直接修改配置文件
+将配置写到 `buildroot/configs/OK3568_defconfig` 中：
+
+```bash
+BR2_PACKAGE_PYTHON3=y
+BR2_PACKAGE_PYTHON3_PY_PYC=y
+```
+
+然后重新编译：
+```bash
+./build.sh buildroot
+```
+
+> 编译过程中弹出提示：`Found old config, override it? (y/n)` 选择 `y` 表示覆盖之前的 .config 文件。
+
+### 6.2 方法二：图形化配置
+1. 编辑 `device/rockchip/common/scripts/mk-buildroot.sh`，注释掉相关代码
+2. 执行：
+```bash
 make menuconfig
 ```
 
-### 5.2 常用配置项
+### 6.3 常用配置项
 | 配置项 | 说明 |
 |--------|------|
 | Target options | 目标架构选择（AARCH64） |
@@ -182,7 +224,7 @@ make menuconfig
 
 ---
 
-## 六、退出与重新进入
+## 七、退出与重新进入
 ### 6.1 退出容器
 容器内执行 `exit`，本机 SDK 文件不受影响：
 ```bash
@@ -192,18 +234,18 @@ exit
 ### 6.2 下次编译流程
 1. 进入本机 SDK 根目录
    ```bash
-   cd /home/lechi/tronlong/RK3568_sdk/
+   cd /home/lechi/tronlong/rk3568_sdk/
    ```
 2. 执行以下命令重新进入已存在的容器：
    ```bash
-   docker start RK3568_sdk
-   docker exec -it RK3568_sdk /bin/bash
+   docker start rk3568_sdk
+   docker exec -it rk3568_sdk /bin/bash
    ```
 3. 直接执行编译命令，**无需重复安装依赖**
 
 ---
 
-## 七、常见问题与修复
+## 八、常见问题与修复
 ### 7.1 Docker 拉取镜像失败
 **现象**：
 ```
@@ -235,7 +277,7 @@ permission denied
 
 **修复方法**（本机执行）：
 ```bash
-cd /home/lechi/tronlong/RK3568_sdk/
+cd /home/lechi/tronlong/rk3568_sdk/
 sudo chown -R $USER:$USER .
 ```
 
@@ -262,12 +304,12 @@ make distclean
 
 ---
 
-## 八、注意事项
+## 九、注意事项
 1. SDK 存放路径**严禁包含中文、空格、特殊字符**，否则直接编译失败
 2. 编译过程中**不要关闭终端、不要中断进程**，否则固件损坏
 3. 如需彻底删除容器重建环境，执行：
    ```bash
-   docker stop RK3568_sdk && docker rm RK3568_sdk
+   docker stop rk3568_sdk && docker rm rk3568_sdk
    ```
 4. 首次进入容器需要安装依赖，耗时较长，请耐心等待
 5. Buildroot 编译会下载大量源码包，请确保网络稳定
@@ -278,10 +320,10 @@ make distclean
 ### 首次使用（创建容器并进入）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/RK3568_sdk/
+cd /home/lechi/tronlong/rk3568_sdk/
 
 # 2. 启动容器（首次创建）
-docker run -it --name RK3568_sdk -v $(pwd):/workspace -w /workspace -h rk3568-build ubuntu:20.04 /bin/bash
+docker run -it --name rk3568_sdk -v $(pwd):/workspace -w /workspace -h rk3568-build ubuntu:20.04 /bin/bash
 
 # 3. 在容器内安装编译依赖
 apt update && apt-get install -y git ssh make gcc libssl-dev liblz4-tool expect expect-dev g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler ncurses-dev bzip2 expat libgmp-dev libmpc-dev bc python-is-python3 python2 rsync bsdmainutils uuid-runtime swig build-essential libncurses-dev
@@ -295,9 +337,9 @@ chmod +x build.sh
 
 ### 下次使用（重新进入容器并编译）
 ```bash
-cd /home/lechi/tronlong/RK3568_sdk/
-docker start RK3568_sdk
-docker exec -it RK3568_sdk /bin/bash
+cd /home/lechi/tronlong/rk3568_sdk/
+docker start rk3568_sdk
+docker exec -it rk3568_sdk /bin/bash
 cd /workspace
 ./build.sh
 ```
