@@ -306,6 +306,7 @@ exit
 
 ## 相关资源
 
+- **OpenHarmony 官方 Docker 编译环境文档**：https://docs.openharmony.cn/pages/v5.0.3/zh-cn/device-dev/get-code/gettools-acquire.md
 - **OpenHarmony 官方文档**：https://gitee.com/openharmony/docs
 - **飞凌嵌入式**：https://www.forlinx.com
 - **Docker 镜像仓库**：swr.cn-south-1.myhuaweicloud.com/openharmony-docker/
