@@ -131,11 +131,14 @@ ls -la build.sh
 ```
 
 ### 3.3 单独编译内核
+<!--
 ```bash
 ./build.sh --product-name okt527 --ccache --build-target kernel
 ```
+-->
 
 ### 3.4 单独编译子系统
+<!--
 ```bash
 # 编译内核
 ./build.sh --product-name okt527 --ccache --build-target kernel
@@ -146,6 +149,7 @@ ls -la build.sh
 # 编译系统组件
 ./build.sh --product-name okt527 --ccache --build-target apps
 ```
+-->
 
 ### 3.5 编译选项说明
 | 选项 | 说明 |
@@ -307,6 +311,10 @@ sudo docker exec -it okt527-oh5.0 /bin/bash
 cd /home/openharmony
 ./build.sh --product-name okt527 --ccache
 
+# 5.打包
+cd device/board/forlinx/okt527/kernel/build/
+./pack.sh
+
 # 5. 退出
 exit
 ```
@@ -320,6 +328,11 @@ exit
 - **飞凌嵌入式**：https://www.forlinx.com
 - **Docker 镜像仓库**：swr.cn-south-1.myhuaweicloud.com/openharmony-docker/
 
+- 串口调试
+-sudo apt-get install picocom
+
+- 使用：
+-picocom -b 115200 /dev/ttyUSB0
 ---
 
 **备注**：本文档适配飞凌 OK527-C 开发板的 OpenHarmony 5.0 SDK，Docker 编译环境基于官方标准镜像，与官方编译要求一致。
