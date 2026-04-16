@@ -54,7 +54,7 @@ sudo docker images
 进入 T527 OpenHarmony SDK 根目录，修复文件权限：
 ```bash
 # 进入 SDK 根目录（替换为你实际的 SDK 路径）
-cd /home/lechi/tronlong/t527\ _openharmony/forlinx-5.0-release
+cd /path/to/your/t527_openharmony/forlinx-5.0-release
 
 # 修复目录归属（推荐）
 sudo chown -R $USER:$USER .
@@ -67,7 +67,7 @@ sudo chown -R $USER:$USER .
 ### 2.1 启动容器命令（首次执行）
 **先进入本机 T527 OpenHarmony SDK 根目录**，再执行以下命令，自动进入编译容器：
 ```bash
-cd /home/lechi/tronlong/t527\ _openharmony/forlinx-5.0-release
+cd /path/to/your/t527_openharmony/forlinx-5.0-release
 
 sudo docker run -it \
 --name okt527-oh5.0 \
@@ -208,7 +208,7 @@ permission denied
 
 **修复方法**（本机执行）：
 ```bash
-cd /home/lechi/tronlong/t527\ _openharmony/forlinx-5.0-release
+cd /path/to/your/t527_openharmony/forlinx-5.0-release
 sudo chown -R $USER:$USER .
 ```
 
@@ -267,7 +267,7 @@ date
 ### 首次使用（创建容器并进入）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/t527\ _openharmony/forlinx-5.0-release
+cd /path/to/your/t527_openharmony/forlinx-5.0-release
 
 # 2. 拉取官方 Docker 镜像（如未拉取）
 sudo docker pull swr.cn-south-1.myhuaweicloud.com/openharmony-docker/docker_oh_standard:3.2
@@ -286,7 +286,7 @@ exit
 ### 后续使用（直接进入已存在容器）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/t527\ _openharmony/forlinx-5.0-release
+cd /path/to/your/t527_openharmony/forlinx-5.0-release
 
 # 2. 启动已存在的容器
 sudo docker start okt527-oh5.0
