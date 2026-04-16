@@ -35,7 +35,7 @@ sudo usermod -aG docker $USER
 进入 RK3568 Buildroot SDK 根目录，修复文件权限，避免编译时报读写权限错误：
 ```bash
 # 进入 SDK 根目录（替换为你实际的 SDK 路径）
-cd /home/lechi/tronlong/ok3568-buildroot/
+cd /home/lechi/tronlong/RK3568_sdk/
 # 修复目录归属（推荐）
 sudo chown -R $USER:$USER .
 # 备用命令（上一条命令报错时使用）
@@ -48,10 +48,10 @@ sudo chown -R $USER:$USER .
 ### 2.1 启动容器命令（首次执行）
 **先进入本机 RK3568 Buildroot SDK 根目录**，再执行以下命令，自动进入编译容器：
 ```bash
-cd /home/lechi/tronlong/ok3568-buildroot/
+cd /home/lechi/tronlong/RK3568_sdk/
 
 docker run -it \
---name ok3568-buildroot \
+--name rk3568-buildroot \
 -v $(pwd):/workspace \
 -w /workspace \
 -h ok3568-build \
@@ -64,7 +64,7 @@ ubuntu:20.04 \
 ### 2.2 命令参数说明
 | 参数 | 作用 |
 |------|------|
-| `--name ok3568-buildroot` | 容器命名，区分开发板型号 |
+| `--name rk3568-buildroot` | 容器命名，区分开发板型号 |
 | `-v $(pwd):/workspace` | 本机 SDK 目录映射到容器，文件双向同步 |
 | `-w /workspace` | 容器内默认进入 SDK 工作目录 |
 | `-h ok3568-build` | 设置容器主机名，方便识别 |
@@ -77,8 +77,8 @@ docker ps -a
 
 如果容器已创建（非首次启动），使用以下命令重新进入：
 ```bash
-docker start ok3568-buildroot
-docker exec -it ok3568-buildroot /bin/bash
+docker start rk3568-buildroot
+docker exec -it rk3568-buildroot /bin/bash
 ```
 
 环境就绪标识：终端提示符变为
@@ -192,12 +192,12 @@ exit
 ### 6.2 下次编译流程
 1. 进入本机 SDK 根目录
    ```bash
-   cd /home/lechi/tronlong/ok3568-buildroot/
+   cd /home/lechi/tronlong/RK3568_sdk/
    ```
 2. 执行以下命令重新进入已存在的容器：
    ```bash
-   docker start ok3568-buildroot
-   docker exec -it ok3568-buildroot /bin/bash
+   docker start rk3568-buildroot
+   docker exec -it rk3568-buildroot /bin/bash
    ```
 3. 直接执行编译命令，**无需重复安装依赖**
 
@@ -235,7 +235,7 @@ permission denied
 
 **修复方法**（本机执行）：
 ```bash
-cd /home/lechi/tronlong/ok3568-buildroot/
+cd /home/lechi/tronlong/RK3568_sdk/
 sudo chown -R $USER:$USER .
 ```
 
@@ -267,7 +267,7 @@ make distclean
 2. 编译过程中**不要关闭终端、不要中断进程**，否则固件损坏
 3. 如需彻底删除容器重建环境，执行：
    ```bash
-   docker stop ok3568-buildroot && docker rm ok3568-buildroot
+   docker stop rk3568-buildroot && docker rm rk3568-buildroot
    ```
 4. 首次进入容器需要安装依赖，耗时较长，请耐心等待
 5. Buildroot 编译会下载大量源码包，请确保网络稳定
@@ -278,10 +278,10 @@ make distclean
 ### 首次使用（创建容器并进入）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/ok3568-buildroot/
+cd /home/lechi/tronlong/RK3568_sdk/
 
 # 2. 启动容器（首次创建）
-docker run -it --name ok3568-buildroot -v $(pwd):/workspace -w /workspace -h ok3568-build ubuntu:20.04 /bin/bash
+docker run -it --name rk3568-buildroot -v $(pwd):/workspace -w /workspace -h rk3568-build ubuntu:20.04 /bin/bash
 
 # 3. 在容器内安装编译依赖
 apt update && apt-get install -y git ssh make gcc libssl-dev liblz4-tool expect expect-dev g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler ncurses-dev bzip2 expat libgmp-dev libmpc-dev bc python-is-python3 python2 rsync bsdmainutils uuid-runtime swig build-essential libncurses-dev
@@ -295,9 +295,9 @@ chmod +x build.sh
 
 ### 下次使用（重新进入容器并编译）
 ```bash
-cd /home/lechi/tronlong/ok3568-buildroot/
-docker start ok3568-buildroot
-docker exec -it ok3568-buildroot /bin/bash
+cd /home/lechi/tronlong/RK3568_sdk/
+docker start rk3568-buildroot
+docker exec -it rk3568-buildroot /bin/bash
 cd /workspace
 ./build.sh
 ```
