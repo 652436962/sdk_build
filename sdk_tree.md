@@ -21,8 +21,11 @@ tronlong
 │   └── ubuntu                       # Ubuntu 编译相关目录（含 Kernel、U-boot、rootfs 等）
 ├── rk3562_sdk.zip                   # RK3562 SDK 压缩包（备份）
 ├── RK3568_sdk                       # RK3568 Buildroot SDK 根目录
-│   └── ubuntu                       # Ubuntu 编译相关目录
+│   ├── 源码                          # RK3568 源码目录
+│   └── OK3568-linux-source          # RK3568 Linux 内核源码
 ├── t527_openharmony                 # T527 OpenHarmony 5.0 SDK 根目录
+│   ├── 1-源码                        # T527 源码目录
+│   └── forlinx-5.0-release         # 飞凌 T527 发布版本
 ├── tina5.0_v2.5                     # T113i Tina Linux SDK 根目录
 │   ├── dl.tar.gz                    # buildroot 下载缓存包
 │   ├── LinuxSDK-v2.1.tar.gz         # Linux SDK 归档包
@@ -49,13 +52,16 @@ tronlong
 | 路径 | 说明 |
 |------|------|
 | `RK3568_sdk/` | RK3568 Buildroot SDK 根目录，挂载至 Docker 容器 `/workspace` |
-| `RK3568_sdk/ubuntu/` | 包含 Kernel、U-boot、rootfs、build.sh 等编译核心文件 |
+| `RK3568_sdk/源码/` | RK3568 源码目录 |
+| `RK3568_sdk/OK3568-linux-source/` | RK3568 Linux 内核源码 |
 | `build_ok3568_script.md` | RK3568 Buildroot 完整编译流程文档（Docker Ubuntu 20.04） |
 
 ### T527 OpenHarmony 相关
 | 路径 | 说明 |
 |------|------|
 | `t527_openharmony/` | T527 OpenHarmony 5.0 SDK 根目录，挂载至 Docker 容器 `/workspace` |
+| `t527_openharmony/1-源码/` | T527 源码目录 |
+| `t527_openharmony/forlinx-5.0-release/` | 飞凌 T527 发布版本 |
 | `build_T527_openharmony_script.md` | T527 OpenHarmony 5.0 完整编译流程文档（Docker OpenHarmony 3.2） |
 
 ### T113i 相关
