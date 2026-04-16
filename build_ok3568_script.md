@@ -51,7 +51,7 @@ sudo chown -R $USER:$USER .
 cd /home/lechi/tronlong/RK3568_sdk/
 
 docker run -it \
---name rk3568-buildroot \
+--name RK3568_sdk \
 -v $(pwd):/workspace \
 -w /workspace \
 -h rk3568-build \
@@ -64,7 +64,7 @@ ubuntu:20.04 \
 ### 2.2 命令参数说明
 | 参数 | 作用 |
 |------|------|
-| `--name rk3568-buildroot` | 容器命名，区分开发板型号 |
+| `--name RK3568_sdk` | 容器命名，区分开发板型号 |
 | `-v $(pwd):/workspace` | 本机 SDK 目录映射到容器，文件双向同步 |
 | `-w /workspace` | 容器内默认进入 SDK 工作目录 |
 | `-h rk3568-build` | 设置容器主机名，方便识别 |
@@ -77,8 +77,8 @@ docker ps -a
 
 如果容器已创建（非首次启动），使用以下命令重新进入：
 ```bash
-docker start rk3568-buildroot
-docker exec -it rk3568-buildroot /bin/bash
+docker start RK3568_sdk
+docker exec -it RK3568_sdk /bin/bash
 ```
 
 环境就绪标识：终端提示符变为
@@ -196,8 +196,8 @@ exit
    ```
 2. 执行以下命令重新进入已存在的容器：
    ```bash
-   docker start rk3568-buildroot
-   docker exec -it rk3568-buildroot /bin/bash
+   docker start RK3568_sdk
+   docker exec -it RK3568_sdk /bin/bash
    ```
 3. 直接执行编译命令，**无需重复安装依赖**
 
@@ -267,7 +267,7 @@ make distclean
 2. 编译过程中**不要关闭终端、不要中断进程**，否则固件损坏
 3. 如需彻底删除容器重建环境，执行：
    ```bash
-   docker stop rk3568-buildroot && docker rm rk3568-buildroot
+   docker stop RK3568_sdk && docker rm RK3568_sdk
    ```
 4. 首次进入容器需要安装依赖，耗时较长，请耐心等待
 5. Buildroot 编译会下载大量源码包，请确保网络稳定
@@ -281,7 +281,7 @@ make distclean
 cd /home/lechi/tronlong/RK3568_sdk/
 
 # 2. 启动容器（首次创建）
-docker run -it --name rk3568-buildroot -v $(pwd):/workspace -w /workspace -h rk3568-build ubuntu:20.04 /bin/bash
+docker run -it --name RK3568_sdk -v $(pwd):/workspace -w /workspace -h rk3568-build ubuntu:20.04 /bin/bash
 
 # 3. 在容器内安装编译依赖
 apt update && apt-get install -y git ssh make gcc libssl-dev liblz4-tool expect expect-dev g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler ncurses-dev bzip2 expat libgmp-dev libmpc-dev bc python-is-python3 python2 rsync bsdmainutils uuid-runtime swig build-essential libncurses-dev
@@ -296,8 +296,8 @@ chmod +x build.sh
 ### 下次使用（重新进入容器并编译）
 ```bash
 cd /home/lechi/tronlong/RK3568_sdk/
-docker start rk3568-buildroot
-docker exec -it rk3568-buildroot /bin/bash
+docker start RK3568_sdk
+docker exec -it RK3568_sdk /bin/bash
 cd /workspace
 ./build.sh
 ```
