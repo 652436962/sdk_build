@@ -54,7 +54,7 @@ docker run -it \
 --name rk3568-buildroot \
 -v $(pwd):/workspace \
 -w /workspace \
--h ok3568-build \
+-h rk3568-build \
 ubuntu:20.04 \
 /bin/bash
 ```
@@ -67,7 +67,7 @@ ubuntu:20.04 \
 | `--name rk3568-buildroot` | 容器命名，区分开发板型号 |
 | `-v $(pwd):/workspace` | 本机 SDK 目录映射到容器，文件双向同步 |
 | `-w /workspace` | 容器内默认进入 SDK 工作目录 |
-| `-h ok3568-build` | 设置容器主机名，方便识别 |
+| `-h rk3568-build` | 设置容器主机名，方便识别 |
 
 ### 2.3 重新进入已存在的容器
 查看容器命令：
@@ -82,7 +82,7 @@ docker exec -it rk3568-buildroot /bin/bash
 ```
 
 环境就绪标识：终端提示符变为
-`root@ok3568-build:/workspace#`
+`root@rk3568-build:/workspace#`
 
 ---
 
