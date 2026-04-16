@@ -1,6 +1,6 @@
 # tronlong SDK 目录结构说明
 
-主机
+我的主机
 
 lechi@lechi-PC:~$ pwd
 /home/lechi
