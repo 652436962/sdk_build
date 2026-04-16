@@ -222,16 +222,27 @@ make menuconfig
 | Kernel | 内核配置 |
 | Target packages | 目标软件包选择 |
 
+### 6.4 交叉编译链位置
+编译完成后，交叉编译链位于以下路径：
+
+| 类型 | 路径 |
+|------|------|
+| 驱动/内核编译链 | `buildroot/output/OK3568/host/bin/aarch64-linux-<xxx>` |
+| 文件系统应用（QT等）编译链 | `buildroot/output/OK3568/host/bin/aarch64-none-linux-gnu-<xxx>` |
+
+> **说明**：以上路径是执行 `./build.sh buildroot` 后的编译链生成位置。
+> 如果使用预置 `host.tar.bz2` 方式编译整包，需在编译完成后再解开 `host.tar.bz2` 即可获得编译链。
+
 ---
 
 ## 七、退出与重新进入
-### 6.1 退出容器
+### 7.1 退出容器
 容器内执行 `exit`，本机 SDK 文件不受影响：
 ```bash
 exit
 ```
 
-### 6.2 下次编译流程
+### 7.2 下次编译流程
 1. 进入本机 SDK 根目录
    ```bash
    cd /home/lechi/tronlong/rk3568_sdk/
@@ -246,7 +257,7 @@ exit
 ---
 
 ## 八、常见问题与修复
-### 7.1 Docker 拉取镜像失败
+### 8.1 Docker 拉取镜像失败
 **现象**：
 ```
 Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: lookup registry-1.docker.io: no such host
@@ -257,11 +268,7 @@ Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: look
 # 配置 Docker 镜像加速（国内服务器推荐）
 sudo tee /etc/docker/daemon.json <<EOF
 {
-  "registry-mirrors": [
-    "https://ccr.ccs.tencentyun.com/",
-    "https://docker.mirrors.ustc.edu.cn/",
-    "https://hub-mirror.c.163.com/"
-  ]
+"registry-mirrors": ["https://ccr.ccs.tencentyun.com/"]
 }
 EOF
 
@@ -269,7 +276,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
-### 7.2 权限问题
+### 8.2 权限问题
 **现象**：
 ```
 permission denied
@@ -281,7 +288,7 @@ cd /home/lechi/tronlong/rk3568_sdk/
 sudo chown -R $USER:$USER .
 ```
 
-### 7.3 编译卡住或内存不足
+### 8.3 编译卡住或内存不足
 **现象**：编译过程中系统变卡或崩溃
 
 **修复方法**：
@@ -290,7 +297,7 @@ sudo chown -R $USER:$USER .
 docker run -it --memory=8g ...
 ```
 
-### 7.4 编译产物清理
+### 8.4 编译产物清理
 ```bash
 # 清理编译产物（保留源码）
 rm -rf buildroot/output
