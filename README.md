@@ -20,7 +20,7 @@ tronlong
 │   ├── init.sh                      # 初始化脚本
 │   └── ubuntu                       # Ubuntu 编译相关目录（含 Kernel、U-boot、rootfs 等）
 ├── rk3562_sdk.zip                   # RK3562 SDK 压缩包（备份）
-├── RK3568_sdk                       # RK3568 Buildroot SDK 根目录
+├── rk3568_sdk                       # RK3568 Buildroot SDK 根目录
 │   ├── 源码                          # RK3568 源码目录
 │   └── OK3568-linux-source          # RK3568 Linux 内核源码
 ├── t527_openharmony                 # T527 OpenHarmony 5.0 SDK 根目录
@@ -51,9 +51,9 @@ tronlong
 ### RK3568 Buildroot 相关
 | 路径 | 说明 |
 |------|------|
-| `RK3568_sdk/` | RK3568 Buildroot SDK 根目录，挂载至 Docker 容器 `/workspace` |
-| `RK3568_sdk/源码/` | RK3568 源码目录 |
-| `RK3568_sdk/OK3568-linux-source/` | RK3568 Linux 内核源码 |
+| `rk3568_sdk/` | RK3568 Buildroot SDK 根目录，挂载至 Docker 容器 `/workspace` |
+| `rk3568_sdk/源码/` | RK3568 源码目录 |
+| `rk3568_sdk/OK3568-linux-source/` | RK3568 Linux 内核源码 |
 | `build_ok3568_script.md` | RK3568 Buildroot 完整编译流程文档（Docker Ubuntu 20.04） |
 
 ### T527 OpenHarmony 相关
@@ -78,7 +78,7 @@ tronlong
 
 | 容器名 | 基础镜像 | 挂载目录 | 对应平台 |
 |--------|----------|----------|----------|
-| `RK3568_sdk` | `ubuntu:20.04` | `RK3568_sdk/` → `/workspace` | 瑞芯微 RK3568 Buildroot |
+| `rk3568_sdk` | `ubuntu:20.04` | `rk3568_sdk/` → `/workspace` | 瑞芯微 RK3568 Buildroot |
 | `rk3562-sdk` | `ubuntu:20.04` | `rk3562_sdk/` → `/workspace` | 瑞芯微 RK3562 |
 | `t527-oh5.0` | `openharmony:3.2` | `t527_openharmony/` → `/workspace` | 全志 T527 OpenHarmony |
 | `t113i-sdk` | `ubuntu:18.04` | `tina5.0_v2.5/` → `/workspace` | 全志 T113i |
@@ -89,9 +89,9 @@ tronlong
 
 ### RK3568 Buildroot
 ```bash
-cd /home/lechi/tronlong/RK3568_sdk
-docker start RK3568_sdk
-docker exec -it RK3568_sdk /bin/bash
+cd /home/lechi/tronlong/rk3568_sdk
+docker start rk3568_sdk
+docker exec -it rk3568_sdk /bin/bash
 cd /workspace
 ./build.sh
 ```
