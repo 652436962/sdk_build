@@ -15,7 +15,7 @@ tronlong
 ├── build_rk3562_script.md           # RK3562 SDK Docker 编译环境完整文档
 ├── build_T113i_script.md            # T113i SDK Docker 编译环境完整文档
 ├── build_T527_openharmony_script.md # T527 OpenHarmony 5.0 SDK Docker 编译环境完整文档
-├── sdk_tree.md                      # 本文件：SDK 目录结构说明
+├── README.md                         # 本文件：SDK 目录结构说明
 ├── rk3562_sdk                       # RK3562 SDK 根目录
 │   ├── init.sh                      # 初始化脚本
 │   └── ubuntu                       # Ubuntu 编译相关目录（含 Kernel、U-boot、rootfs 等）

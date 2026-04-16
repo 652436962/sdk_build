@@ -127,6 +127,12 @@ ls -la build.sh
 
 ### 3.2 全量编译（推荐，生成完整刷机固件）
 ```bash
+cd device/board/forlinx/okt527/pacth
+./per_build.sh
+cd -
+bash build/prebuilts_download.sh
+./build.sh --product-name okt527 --ccache
+
 ./build.sh --product-name okt527 --ccache
 ```
 
