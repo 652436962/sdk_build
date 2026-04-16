@@ -119,24 +119,9 @@ chmod +x build.sh
 ```bash
 ./build.sh
 ```
-或者使用 Makefile 方式：
-```bash
-make
-```
 
-### 4.2 编译 Buildroot
-```bash
-# 进入 Buildroot 目录
-cd buildroot
 
-# 配置 Buildroot（可选）
-make menuconfig
-
-# 编译 Buildroot
-make
-```
-
-### 4.3 单独编译各模块
+### 4.2 单独编译各模块
 ```bash
 # 仅编译 U-Boot
 ./build.sh uboot
@@ -176,13 +161,26 @@ CONFIG_USB_SERIAL_CH341=y
 ```
 
 ### 5.2 方法二：图形化配置
-1. 编辑 `device/rockchip/common/scripts/mk-kernel.sh`，注释掉相关代码
-2. 执行图形化配置：
-```bash
-make ARCH=arm64 menuconfig
-```
-3. 用户根据需求配置内核，将配置写到 `.config` 文件后，保存退出
-4. 重新编译内核：
+
+#### 步骤1：内核编译脚本修改
+1. 编辑文件 `device/rockchip/common/scripts/mk-kernel.sh`
+2. 找到如下代码行，**添加 `#` 注释掉整行**：
+   ```bash
+   # run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+   ```
+3. 编辑 `kernel/Makefile` 文件，在第一行添加交叉编译器路径：
+   ```makefile
+   CROSS_COMPILE=/path/to/your/sdk/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+   ```
+
+#### 步骤2：图形化配置内核
+1. 执行：
+   ```bash
+   make ARCH=arm64 menuconfig
+   ```
+2. 用户根据需求配置内核，将配置写到 `.config` 文件后，保存退出
+
+#### 步骤3：重新编译内核
 ```bash
 ./build.sh kernel
 ```
@@ -206,11 +204,27 @@ BR2_PACKAGE_PYTHON3_PY_PYC=y
 > 编译过程中弹出提示：`Found old config, override it? (y/n)` 选择 `y` 表示覆盖之前的 .config 文件。
 
 ### 6.2 方法二：图形化配置
-1. 编辑 `device/rockchip/common/scripts/mk-buildroot.sh`，注释掉相关代码
-2. 执行：
+
+#### 步骤1：Buildroot 编译脚本修改
+1. 编辑 `device/rockchip/common/scripts/mk-buildroot.sh`
+2. 找到并注释掉以下代码行：
+   ```bash
+   #make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" ${BUILDROOT_BOARD}_defconfig
+   ```
+
+#### 步骤2：图形化配置 Buildroot
+1. 执行：
+   ```bash
+   make menuconfig
+   ```
+2. 用户根据需求配置 buildroot，将配置写到 `.config` 文件后，保存退出
+
+#### 步骤3：重新编译 Buildroot
 ```bash
-make menuconfig
+./build.sh buildroot
 ```
+
+> **Tips**：如单独编译文件系统，并单独烧写后，发现显示界面中程序并没有正确添加，可将 `buildroot/configs/OK3568_defconfig` 中的 `BR2_PACKAGE_DWKEYBOARD=n` 配置项修改为 `y`，重新编译即可恢复正常。
 
 ### 6.3 常用配置项
 | 配置项 | 说明 |
@@ -227,8 +241,8 @@ make menuconfig
 
 | 类型 | 路径 |
 |------|------|
-| 驱动/内核编译链 | `buildroot/output/OK3568/host/bin/aarch64-linux-<xxx>` |
-| 文件系统应用（QT等）编译链 | `buildroot/output/OK3568/host/bin/aarch64-none-linux-gnu-<xxx>` |
+| 驱动/内核编译链 | `OK3568-linux-source/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-` |
+| 文件系统应用（QT等）编译链 | `OK3568-linux-source/buildroot/output/OK3568/host/bin/aarch64-linux-` |
 
 > **说明**：以上路径是执行 `./build.sh buildroot` 后的编译链生成位置。
 > 如果使用预置 `host.tar.bz2` 方式编译整包，需在编译完成后再解开 `host.tar.bz2` 即可获得编译链。
