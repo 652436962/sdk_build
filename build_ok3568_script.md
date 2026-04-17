@@ -129,11 +129,23 @@ chmod +x build.sh
 ## 四、SDK 编译指令
 在 Docker 容器内，直接执行编译命令，根据需求选择：
 
-### 4.1 全量编译（推荐，生成完整刷机固件）
+### 4.1 全量编译（编译 buildroot 推荐，生成完整刷机固件）
+```bash
+./build.sh chip
+```
+执行后会有选项输入，选择开发板芯片：
+```
+Pick a chip:
+
+1. OK3568
+2. rk3566_rk3568
+3. rk3588
+Which would you like? [1]: 1
+```
+输入 `1` 后按回车继续，然后执行：
 ```bash
 ./build.sh
 ```
-
 
 ### 4.2 单独编译各模块
 ```bash
