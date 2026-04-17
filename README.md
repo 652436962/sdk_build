@@ -121,4 +121,5 @@ docker exec -it t113i-sdk /bin/bash
 # 进入后
 cd /workspace/tina5.0_v2.5/tina5.0_v1.0
 source build/envsetup.sh
+
 ```

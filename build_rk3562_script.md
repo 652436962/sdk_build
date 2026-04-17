@@ -292,5 +292,8 @@ exit
 ---
 **备注**：本文档适配官方 RK3562 Ubuntu SDK，Docker 环境与官方编译要求完全一致。
 应用编译工具链 /home/tronlong/RK3562/Ubuntu/rk3562-ubuntu20.04-sdk-v1.0/environment
+本地路径  /home/lechi/tronlong/rk3562_sdk/ubuntu/rk3562-ubuntu20.04-sdk/rk3562-ubuntu20.04-sdk-v1.0/environment
 
 uboot和kernel编译工具链 export PATH=/home/tronlong/RK3562/ubuntu/rk3562-ubuntu20.04-sdk-v1.0/sysroots/x86_64-linux/bin/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH
+
+本地路径  /home/lechi/tronlong/rk3562_sdk/ubuntu/rk3562-ubuntu20.04-sdk/rk3562-ubuntu20.04-sdk-v1.0/sysroots/x86_64-linux/bin/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH
