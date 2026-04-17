@@ -254,35 +254,24 @@ CONFIG_USB_SERIAL_CH341=y
 
 > **注意**：图形化配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作，或使用 `nconfig`/`xconfig` 替代方案。
 
-> **注意**：修改图形化配置需（可选，避免重复配置）互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作，或使用 `nconfig`/`xconfig` 替代方案。
-
-#### 步骤1：修改内核编译脚本（可选，避免重复配置）
-1. 编辑文件 `device/rockchip/common/scripts/mk-kernel.sh`
-2. 找到如下代码行，**添加 `#` 注释掉整行**：
-   ```bash
-
-#### 步骤2：进入容器交互式终端手动配置
-由于rDocn_c 非交互模式不支持 mmnuconKMgK建议采用以下方案之ERK_KERNEL_CFG_FRAGMENTS
-
-**方案A：使用 nconfig（基于 ncurses，比 nucong更稳定）**
-```bs
-cd wsacOK3568-souekenel
-ke nf
+#### 方案A：使用 build.sh kernel-config（推荐）
+```bash
+./build.sh kernel-config
 ```
 
-**方案B：直接修改配置文件**
-直接编辑 `kerel/arm/cfigs/OK3568-C_defconfi步，添加项：使用 nconfig（基于 ncurses，比 menuconfig 更稳定）**
-bash
-CONFIG_USB_SERIsL_ac341eyurce/kernel
-n
+#### 方案B：使用 nconfig
+```bash
+cd /workspace/OK3568-linux-source/kernel
+make nconfig
+```
 
-**方案B：直接修改配置文件**
+#### 方案C：直接修改配置文件
 直接编辑 `kernel/arch/arm64/configs/OK3568-C-linux_defconfig`，添加配置项：
 ```bash
 CONFIG_USB_SERIAL_CH341=y
 ```
 
-#### 步骤3：重新编译内核
+#### 重新编译内核
 ```bash
 ./build.sh kernel
 ```
@@ -299,24 +288,20 @@ BR2_PACKAGE_PYTHON3_PY_PYC=y
 ```
 
 然后重新编译：
-```bash：图形化配置
-
-> **注意**配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形，建议在本机系统（非 Docker）环境下操作。
+```bash
 ./build.sh buildroot
-```方案A使用 b-config命令
-``bash
-c wospae/OK3568-lux-oure
-./buld.h 法
+```
+
+### 6.2 方法二：图形化配置
 
 > **注意**：图形化配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作。
-方案B直接修改文件
-编辑`b/config/OK3568_dpfe/OK35`，添加配置项：68-linux-source
-uilbash
-BR2_PACKAGE_PYTHON3=yd.sh buildroot-config
-BR`_PACKAGE_PYTHON3_PY_PYC=y
-`
 
-#### 直接修改配置文件
+#### 方案A：使用 build.sh buildroot-config
+```bash
+./build.sh buildroot-config
+```
+
+#### 方案B：直接修改配置文件
 编辑 `buildroot/configs/OK3568_defconfig`，添加配置项：
 ```bash
 BR2_PACKAGE_PYTHON3=y
