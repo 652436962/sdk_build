@@ -47,10 +47,11 @@ sudo chown -R $USER:$USER .
 ## 二、进入 Docker 编译环境
 ### 2.1 启动容器命令（首次执行）
 **先进入本机 RK3568 Buildroot SDK 根目录**，再执行以下命令，自动进入编译容器：
+
 ```bash
 cd /home/lechi/tronlong/rk3568_sdk/
 
-docker run -it \
+docker run -it --privileged \
 --name rk3568_sdk \
 -v $(pwd):/workspace \
 -w /workspace \
@@ -59,7 +60,7 @@ ubuntu:20.04 \
 /bin/bash
 ```
 
-> **注意**：此处已移除 `--rm` 参数，用于保留容器环境，避免每次重复安装依赖。
+> **注意**：`--privileged` 参数必须添加，否则后续挂载镜像时会报 `Operation not permitted` 错误。
 
 ### 2.2 命令参数说明
 | 参数 | 作用 |
@@ -81,6 +82,12 @@ docker start rk3568_sdk
 docker exec -it rk3568_sdk /bin/bash
 ```
 
+> **注意**：首次编译前需要设置时区（避免 tzdata 安装卡住），在容器内执行：
+> ```bash
+> ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+> echo 'Asia/Shanghai' > /etc/timezone
+> ```
+
 环境就绪标识：终端提示符变为
 `root@rk3568-build:/workspace#`
 
@@ -91,25 +98,52 @@ docker exec -it rk3568_sdk /bin/bash
 
 ```bash
 # 更新 apt-get 下载源
-sudo apt-get update
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
 
-# 提供编译程序必须软件包的列表信息
-sudo apt-get install build-essential
-
-# 用于生成基于文本的用户界面
-sudo apt-get install libncurses*
-
-# 基于 Lzo 库的压缩解压工具
-sudo apt-get install lzop
-
-# 网络配置工具
-sudo apt-get install net-tools
-
-# 必备工具包的安装
-sudo apt-get install openssh-server vim git fakeroot
-
-# 编译工具链和依赖（所有依赖合并安装）
-sudo apt-get install repo git ssh make gcc libssl-dev liblz4-tool expect g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler python-pip libncurses5-dev libgmp-dev libmpc-dev libicu-dev bsdmainutils
+# 安装所有编译依赖（合并为一条命令）
+apt-get install -y \
+build-essential \
+libncurses* \
+lzop \
+net-tools \
+openssh-server \
+vim \
+git \
+fakeroot \
+ssh \
+make \
+gcc \
+libssl-dev \
+liblz4-tool \
+expect \
+g++ \
+patchelf \
+chrpath \
+gawk \
+texinfo \
+diffstat \
+binfmt-support \
+qemu-user-static \
+live-build \
+bison \
+flex \
+cmake \
+gcc-multilib \
+g++-multilib \
+unzip \
+device-tree-compiler \
+python3-pip \
+python2 \
+libgmp-dev \
+libmpc-dev \
+libicu-dev \
+bsdmainutils \
+bc \
+sudo \
+time \
+uuid-runtime \
+rsync
 ```
 
 > **说明**：
@@ -117,11 +151,26 @@ sudo apt-get install repo git ssh make gcc libssl-dev liblz4-tool expect g++ pat
 > - `libncurses*` 用于生成基于文本的用户界面
 > - `lzop` 是基于 Lzo 库的压缩解压工具
 > - `net-tools` 是网络配置工具
+> - `python2` 是 U-Boot 编译必需的
+> - `sudo` 是挂载镜像的必需工具
+> - `time` 是打包 recovery 镜像的必需工具
+> - `rsync` 是打包固件的必需工具
 
 依赖安装完成后，给编译脚本添加执行权限：
 ```bash
-chmod +x ubuntu/build.sh
 chmod +x build.sh
+```
+
+如果需要修复 kconf 工具版本问题（GLIBC 版本不匹配），执行以下命令：
+```bash
+cd /workspace/OK3568-linux-source/buildroot/support/kconfig
+make -f Makefile.br HOSTCC=gcc conf
+cp conf /workspace/OK3568-linux-source/output/kconf/conf
+```
+
+创建 python 符号链接：
+```bash
+ln -sf /usr/bin/python3 /usr/bin/python
 ```
 
 ---
@@ -328,6 +377,30 @@ cd /home/lechi/tronlong/rk3568_sdk/
 sudo chown -R $USER:$USER .
 ```
 
+### 8.3 kconf 工具版本不匹配
+**现象**：
+```
+/lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.33' not found
+```
+
+**修复方法**（容器内执行）：
+```bash
+cd /workspace/OK3568-linux-source/buildroot/support/kconfig
+make -f Makefile.br HOSTCC=gcc conf
+cp conf /workspace/OK3568-linux-source/output/kconf/conf
+```
+
+### 8.4 Python 命令不存在
+**现象**：
+```
+/usr/bin/env: 'python': No such file or directory
+```
+
+**修复方法**：
+```bash
+ln -sf /usr/bin/python3 /usr/bin/python
+```
+
 ### 8.3 编译卡住或内存不足
 **现象**：编译过程中系统变卡或崩溃
 
@@ -369,16 +442,37 @@ make distclean
 # 1. 进入 SDK 目录
 cd /home/lechi/tronlong/rk3568_sdk/
 
-# 2. 启动容器（首次创建）
-docker run -it --name rk3568_sdk -v $(pwd):/workspace -w /workspace -h rk3568-build ubuntu:20.04 /bin/bash
+# 2. 启动容器（需要 --privileged 参数）
+docker run -it --privileged --name rk3568_sdk \
+  -v $(pwd):/workspace -w /workspace -h rk3568-build \
+  ubuntu:20.04 /bin/bash
 
-# 3. 在容器内安装编译依赖
-apt update && apt-get install -y git ssh make gcc libssl-dev liblz4-tool expect expect-dev g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler ncurses-dev bzip2 expat libgmp-dev libmpc-dev bc python-is-python3 python2 rsync bsdmainutils uuid-runtime swig build-essential libncurses-dev
+# 3. 设置时区（避免 tzdata 安装卡住）
+ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+echo 'Asia/Shanghai' > /etc/timezone
 
-# 4. 添加脚本执行权限
-chmod +x build.sh
+# 4. 安装编译依赖
+export DEBIAN_FRONTEND=noninteractive
+apt-get update && apt-get install -y build-essential libncurses* lzop net-tools \
+  openssh-server vim git fakeroot ssh make gcc libssl-dev liblz4-tool \
+  expect g++ patchelf chrpath gawk texinfo diffstat binfmt-support \
+  qemu-user-static live-build bison flex cmake gcc-multilib g++-multilib \
+  unzip device-tree-compiler python3-pip python2 libgmp-dev libmpc-dev \
+  libicu-dev bsdmainutils bc sudo time uuid-runtime rsync
 
-# 5. 执行编译
+# 5. 修复 kconf 工具（GLIBC 版本问题）
+cd /workspace/OK3568-linux-source/buildroot/support/kconfig
+make -f Makefile.br HOSTCC=gcc conf
+cp conf /workspace/OK3568-linux-source/output/kconf/conf
+
+# 6. 创建 python 符号链接
+ln -sf /usr/bin/python3 /usr/bin/python
+
+# 7. 添加脚本执行权限
+chmod +x /workspace/OK3568-linux-source/build.sh
+
+# 8. 执行编译
+cd /workspace/OK3568-linux-source
 ./build.sh
 ```
 
@@ -387,6 +481,6 @@ chmod +x build.sh
 cd /home/lechi/tronlong/rk3568_sdk/
 docker start rk3568_sdk
 docker exec -it rk3568_sdk /bin/bash
-cd /workspace
+cd /workspace/OK3568-linux-source
 ./build.sh
 ```
