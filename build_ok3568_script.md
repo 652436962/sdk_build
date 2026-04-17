@@ -254,7 +254,12 @@ CONFIG_USB_SERIAL_CH341=y
 
 > **注意**：图形化配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作，或使用 `nconfig`/`xconfig` 替代方案。
 
-#### 方案A：进入内核目录手动配置
+#### 方案A：使用 build.sh kernel-config（推荐）
+```bash
+./build.sh kernel-config
+```
+
+#### 方案B：进入内核目录手动配置
 ```bash
 cd /workspace/OK3568-linux-source/kernel
 make menuconfig
@@ -293,7 +298,12 @@ BR2_PACKAGE_PYTHON3_PY_PYC=y
 
 > **注意**：图形化配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作。
 
-#### 方案A：进入 buildroot 目录手动配置
+#### 方案A：使用 build.sh buildroot-config（推荐）
+```bash
+./build.sh buildroot-config
+```
+
+#### 方案B：进入 buildroot 目录手动配置
 ```bash
 cd /workspace/OK3568-linux-source/buildroot
 make menuconfig
