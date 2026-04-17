@@ -2,11 +2,13 @@
 *.zip
 *.tar.gz
 *.tar
+*.png
 
 # 忽略 SDK 目录（保留 md 文档）
 rk3562_sdk/
+RK3568_sdk/
+t527_openharmony/
 tina5.0_v2.5/
-t527 _openharmony/
 
 # 忽略编译产物
 out/
