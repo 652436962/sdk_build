@@ -261,6 +261,7 @@ CONFIG_USB_SERIAL_CH341=y
 
 #### 方案B：进入内核目录手动配置
 ```bash
+需要先修改 `device/rockchip/common/scripts/mk-kernel.sh`，将 `#run command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS` 注释掉：
 cd /workspace/OK3568-linux-source/kernel
 make menuconfig
 # 或使用 nconfig（基于 ncurses，更稳定）
@@ -305,6 +306,7 @@ BR2_PACKAGE_PYTHON3_PY_PYC=y
 
 #### 方案B：进入 buildroot 目录手动配置
 ```bash
+需要先修改 `device/rockchip/common/scripts/mk-buildroot.sh`，将 `make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" ${BUILDROOT_BOARD}_defconfig` 注释掉：
 cd /workspace/OK3568-linux-source/buildroot
 make menuconfig
 ```
@@ -423,7 +425,30 @@ cp conf /workspace/OK3568-linux-source/output/kconf/conf
 ln -sf /usr/bin/python3 /usr/bin/python
 ```
 
-### 8.3 编译卡住或内存不足
+### 8.5 buildroot-config 配置失败
+**现象**：
+```
+/tmp/tmp.XXX/build/buildroot-config/conf: No such file or directory
+ERROR: Running .../30-rootfs.sh - pre_build_hook failed!
+```
+
+**原因**：buildroot 尚未编译，conf 工具不存在。
+
+**修复方法**（选择其一）：
+
+**方法一：先执行一次全量编译**（推荐）
+```bash
+./build.sh
+```
+
+**方法二：手动进入 buildroot 目录配置**
+```bash
+cd /workspace/OK3568-linux-source/buildroot
+make rockchip_rk3568_defconfig
+make menuconfig
+```
+
+### 8.6 编译卡住或内存不足
 **现象**：编译过程中系统变卡或崩溃
 
 **修复方法**：
@@ -432,7 +457,7 @@ ln -sf /usr/bin/python3 /usr/bin/python
 docker run -it --memory=8g ...
 ```
 
-### 8.4 编译产物清理
+### 8.6 编译产物清理
 ```bash
 # 清理编译产物（保留源码）
 rm -rf buildroot/output
