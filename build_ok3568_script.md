@@ -87,22 +87,39 @@ docker exec -it rk3568_sdk /bin/bash
 ---
 
 ## 三、安装编译依赖（仅首次进入容器安装）
-在 Docker 容器内执行以下命令，一键安装 RK3568 Buildroot SDK 全部编译依赖：
+在 Docker 容器内执行以下命令，安装 RK3568 Buildroot SDK 编译依赖：
+
 ```bash
-apt update && apt-get install -y \
-git ssh make gcc libssl-dev \
-liblz4-tool expect expect-dev g++ patchelf chrpath gawk texinfo chrpath \
-diffstat binfmt-support qemu-user-static live-build bison flex fakeroot \
-cmake gcc-multilib g++-multilib unzip device-tree-compiler ncurses-dev \
-libgucharmap-2-90-dev bzip2 expat gpgv2 cpp-aarch64-linux-gnu libgmp-dev \
-libmpc-dev bc python-is-python3 python2 libpkgconf-dev rsync bsdmainutils \
-uuid-runtime swig build-essential libncurses-dev python3-distutils
+# 更新 apt-get 下载源
+sudo apt-get update
+
+# 提供编译程序必须软件包的列表信息
+sudo apt-get install build-essential
+
+# 用于生成基于文本的用户界面
+sudo apt-get install libncurses*
+
+# 基于 Lzo 库的压缩解压工具
+sudo apt-get install lzop
+
+# 网络配置工具
+sudo apt-get install net-tools
+
+# 必备工具包的安装
+sudo apt-get install openssh-server vim git fakeroot
+
+# 编译工具链和依赖
+sudo apt-get install repo git ssh make gcc libssl-dev liblz4-tool expect g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler python-pip libncurses5-dev
+
+# 其他必要依赖
+sudo apt-get install libgmp-dev libmpc-dev libicu-dev bsdmainutils
 ```
 
 > **说明**：
-> - `rsync` 和 `bsdmainutils`（包含 hexdump）是打包固件镜像时的必需依赖
-> - `uuid-runtime` 和 `swig` 是 Buildroot 配置工具的依赖
-> - `build-essential` 和 `libncurses-dev` 是交叉编译工具链的依赖
+> - `build-essential` 提供编译程序必须软件包
+> - `libncurses*` 用于生成基于文本的用户界面
+> - `lzop` 是基于 Lzo 库的压缩解压工具
+> - `net-tools` 是网络配置工具
 
 依赖安装完成后，给编译脚本添加执行权限：
 ```bash
