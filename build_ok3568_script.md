@@ -108,11 +108,8 @@ sudo apt-get install net-tools
 # 必备工具包的安装
 sudo apt-get install openssh-server vim git fakeroot
 
-# 编译工具链和依赖
-sudo apt-get install repo git ssh make gcc libssl-dev liblz4-tool expect g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler python-pip libncurses5-dev
-
-# 其他必要依赖
-sudo apt-get install libgmp-dev libmpc-dev libicu-dev bsdmainutils
+# 编译工具链和依赖（所有依赖合并安装）
+sudo apt-get install repo git ssh make gcc libssl-dev liblz4-tool expect g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler python-pip libncurses5-dev libgmp-dev libmpc-dev libicu-dev bsdmainutils
 ```
 
 > **说明**：
