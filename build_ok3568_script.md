@@ -88,6 +88,21 @@ docker exec -it rk3568_sdk /bin/bash
 > echo 'Asia/Shanghai' > /etc/timezone
 > ```
 
+> **解决中文乱码**：如目录中文名显示乱码（如 `''$'\346\272\220\347\240\201''`），执行：
+> ```bash
+> # 安装中文语言包
+> apt-get install -y locales
+> 
+> # 配置中文 locale
+> sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen
+> sed -i '/zh_CN.UTF-8/s/^# //g' /etc/locale.gen
+> locale-gen
+> 
+> # 设置环境变量
+> export LANG=zh_CN.UTF-8
+> export LC_ALL=zh_CN.UTF-8
+> ```
+
 环境就绪标识：终端提示符变为
 `root@rk3568-build:/workspace#`
 
@@ -237,23 +252,35 @@ CONFIG_USB_SERIAL_CH341=y
 
 ### 5.2 方法二：图形化配置
 
-#### 步骤1：内核编译脚本修改
+> **注意**：图形化配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作，或使用 `nconfig`/`xconfig` 替代方案。
+
+> **注意**：修改图形化配置需（可选，避免重复配置）互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作，或使用 `nconfig`/`xconfig` 替代方案。
+
+#### 步骤1：修改内核编译脚本（可选，避免重复配置）
 1. 编辑文件 `device/rockchip/common/scripts/mk-kernel.sh`
 2. 找到如下代码行，**添加 `#` 注释掉整行**：
    ```bash
-   # run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
-   ```
-3. 编辑 `kernel/Makefile` 文件，在第一行添加交叉编译器路径：
-   ```makefile
-   CROSS_COMPILE=/path/to/your/sdk/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
-   ```
 
-#### 步骤2：图形化配置内核
-1. 执行：
-   ```bash
-   make ARCH=arm64 menuconfig
-   ```
-2. 用户根据需求配置内核，将配置写到 `.config` 文件后，保存退出
+#### 步骤2：进入容器交互式终端手动配置
+由于rDocn_c 非交互模式不支持 mmnuconKMgK建议采用以下方案之ERK_KERNEL_CFG_FRAGMENTS
+
+**方案A：使用 nconfig（基于 ncurses，比 nucong更稳定）**
+```bs
+cd wsacOK3568-souekenel
+ke nf
+```
+
+**方案B：直接修改配置文件**
+直接编辑 `kerel/arm/cfigs/OK3568-C_defconfi步，添加项：使用 nconfig（基于 ncurses，比 menuconfig 更稳定）**
+bash
+CONFIG_USB_SERIsL_ac341eyurce/kernel
+n
+
+**方案B：直接修改配置文件**
+直接编辑 `kernel/arch/arm64/configs/OK3568-C-linux_defconfig`，添加配置项：
+```bash
+CONFIG_USB_SERIAL_CH341=y
+```
 
 #### 步骤3：重新编译内核
 ```bash
@@ -272,29 +299,31 @@ BR2_PACKAGE_PYTHON3_PY_PYC=y
 ```
 
 然后重新编译：
-```bash
+```bash：图形化配置
+
+> **注意**配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形，建议在本机系统（非 Docker）环境下操作。
 ./build.sh buildroot
+```方案A使用 b-config命令
+``bash
+c wospae/OK3568-lux-oure
+./buld.h 法
+
+> **注意**：图形化配置需要交互式终端，在 Docker 非交互模式下会失败。如需使用图形配置，建议在本机系统（非 Docker）环境下操作。
+方案B直接修改文件
+编辑`b/config/OK3568_dpfe/OK35`，添加配置项：68-linux-source
+uilbash
+BR2_PACKAGE_PYTHON3=yd.sh buildroot-config
+BR`_PACKAGE_PYTHON3_PY_PYC=y
+`
+
+#### 直接修改配置文件
+编辑 `buildroot/configs/OK3568_defconfig`，添加配置项：
+```bash
+BR2_PACKAGE_PYTHON3=y
+BR2_PACKAGE_PYTHON3_PY_PYC=y
 ```
 
-> 编译过程中弹出提示：`Found old config, override it? (y/n)` 选择 `y` 表示覆盖之前的 .config 文件。
-
-### 6.2 方法二：图形化配置
-
-#### 步骤1：Buildroot 编译脚本修改
-1. 编辑 `device/rockchip/common/scripts/mk-buildroot.sh`
-2. 找到并注释掉以下代码行：
-   ```bash
-   #make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" ${BUILDROOT_BOARD}_defconfig
-   ```
-
-#### 步骤2：图形化配置 Buildroot
-1. 执行：
-   ```bash
-   make menuconfig
-   ```
-2. 用户根据需求配置 buildroot，将配置写到 `.config` 文件后，保存退出
-
-#### 步骤3：重新编译 Buildroot
+#### 重新编译 Buildroot
 ```bash
 ./build.sh buildroot
 ```
