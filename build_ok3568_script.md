@@ -194,10 +194,7 @@ ln -sf /usr/bin/python3 /usr/bin/python
 在 Docker 容器内，直接执行编译命令，根据需求选择：
 
 ### 4.1 全量编译（编译 buildroot 推荐，生成完整刷机固件）
-```bash
-./build.sh allsave
-```
-或者直接执行（默认就是 allsave）：
+
 ```bash
 ./build.sh
 ```
