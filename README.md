@@ -15,7 +15,21 @@ tronlong
 ├── build_rk3562_script.md           # RK3562 SDK Docker 编译环境完整文档
 ├── build_T113i_script.md            # T113i SDK Docker 编译环境完整文档
 ├── build_T527_openharmony_script.md # T527 OpenHarmony 5.0 SDK Docker 编译环境完整文档
+├── OpenixCLI_Tutorial.md           # OpenixCLI 全志烧录工具使用说明
 ├── README.md                         # 本文件：SDK 目录结构说明
+├── upgrade_tool_Tutorial.md         # Rockchip upgrade_tool 烧录工具使用说明
+├── forlinx_cmd                      # 飞凌测试程序源码（含 CANFD、UART、SPI 等测试工具）
+│   ├── fltest_canfdtest             # CANFD 测试程序
+│   ├── fltest_keytest               # 按键测试程序
+│   ├── fltest_screenshooter         # 截屏测试程序
+│   ├── fltest_spidev_test           # SPI 测试程序
+│   ├── fltest_uarttest              # UART 测试程序
+│   ├── fltest_watchdog              # 看门狗测试程序
+│   ├── fltest_watchdogrestart       # 看门狗重启测试程序
+│   ├── fltest_hostapd.sh            # WiFi AP 模式脚本
+│   ├── fltest_wifi.sh               # WiFi 测试脚本
+│   ├── memory_bandwidth.sh          # 内存带宽测试脚本
+│   └── Makefile                     # 统一编译 Makefile
 ├── rk3562_sdk                       # RK3562 SDK 根目录
 │   ├── init.sh                      # 初始化脚本
 │   └── ubuntu                       # Ubuntu 编译相关目录（含 Kernel、U-boot、rootfs 等）
@@ -71,6 +85,23 @@ tronlong
 | `tina5.0_v2.5/tina5.0_v1.0/` | Tina SDK 实际编译工作目录，执行 `./build.sh` 的位置 |
 | `tina5.0_v2.5/dl.tar.gz` | buildroot 依赖包缓存，可加速离线编译 |
 | `build_T113i_script.md` | T113i 完整编译流程文档（Docker Ubuntu 18.04） |
+
+### 飞凌测试程序相关
+| 路径 | 说明 |
+|------|------|
+| `forlinx_cmd/` | 飞凌测试程序源码目录 |
+| `forlinx_cmd/fltest_canfdtest/` | CANFD 测试程序源码 |
+| `forlinx_cmd/fltest_keytest/` | 按键测试程序源码 |
+| `forlinx_cmd/fltest_uarttest/` | UART 测试程序源码 |
+| `forlinx_cmd/fltest_spidev_test/` | SPI 测试程序源码 |
+| `forlinx_cmd/fltest_watchdog/` | 看门狗测试程序源码 |
+| `forlinx_cmd/Makefile` | 统一编译 Makefile |
+
+### 烧录工具相关
+| 路径 | 说明 |
+|------|------|
+| `OpenixCLI_Tutorial.md` | OpenixCLI 全志烧录工具使用说明 |
+| `upgrade_tool_Tutorial.md` | Rockchip upgrade_tool 烧录工具使用说明 |
 
 ---
 
