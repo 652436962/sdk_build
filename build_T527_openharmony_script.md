@@ -121,13 +121,10 @@ sudo docker exec -it okt527-oh5.0 /bin/bash
 sudo apt-get update
 sudo apt-get install -y python3-pip
 
-# Ubuntu 24.04+ 需要设置此环境变量解决 externally-managed-environment 错误
-export PIP_BREAK_SYSTEM_PACKAGES=1
-```
 
 ### 3.2 执行预处理脚本
 ```bash
-cd /home/lechi/tronlong/t527_openharmony
+cd /home/lechi/tronlong/t527_openharmony/forlinx-5.0-release
 cd device/board/forlinx/okt527/patch
 ./pre_build.sh
 cd -
@@ -137,6 +134,12 @@ bash build/prebuilts_download.sh
 ---
 
 ## 四、Docker 容器内编译
+
+### 4.0 安装必要工具
+```bash
+sudo apt update
+sudo apt install -y python3-rich
+```
 
 ### 4.1 初始化编译环境
 ```bash
