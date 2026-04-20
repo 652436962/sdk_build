@@ -18,7 +18,7 @@ tronlong
 ├── OpenixCLI_Tutorial.md           # OpenixCLI 全志烧录工具使用说明
 ├── README.md                         # 本文件：SDK 目录结构说明
 ├── upgrade_tool_Tutorial.md         # Rockchip upgrade_tool 烧录工具使用说明
-├── forlinx_cmd                      # 飞凌测试程序源码（含 CANFD、UART、SPI 等测试工具）
+├── forlinx_cmd                      # 飞凌测试程序源码（含 GPIO、CANFD、UART、SPI 等测试工具）
 │   ├── fltest_canfdtest             # CANFD 测试程序
 │   ├── fltest_keytest               # 按键测试程序
 │   ├── fltest_screenshooter         # 截屏测试程序
@@ -28,6 +28,7 @@ tronlong
 │   ├── fltest_watchdogrestart       # 看门狗重启测试程序
 │   ├── fltest_hostapd.sh            # WiFi AP 模式脚本
 │   ├── fltest_wifi.sh               # WiFi 测试脚本
+│   ├── lctest_gpio.sh               # GPIO 测试脚本（全志/瑞芯微引脚支持）
 │   ├── memory_bandwidth.sh          # 内存带宽测试脚本
 │   └── Makefile                     # 统一编译 Makefile
 ├── rk3562_sdk                       # RK3562 SDK 根目录
@@ -95,6 +96,7 @@ tronlong
 | `forlinx_cmd/fltest_uarttest/` | UART 测试程序源码 |
 | `forlinx_cmd/fltest_spidev_test/` | SPI 测试程序源码 |
 | `forlinx_cmd/fltest_watchdog/` | 看门狗测试程序源码 |
+| `forlinx_cmd/lctest_gpio.sh` | GPIO 测试脚本（支持全志/瑞芯微引脚格式） |
 | `forlinx_cmd/Makefile` | 统一编译 Makefile |
 
 ### 烧录工具相关
