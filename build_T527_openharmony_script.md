@@ -116,6 +116,13 @@ sudo docker exec -it okt527-oh5.0 /bin/bash
 
 以下命令在**主机终端**执行（不需要进入 Docker 容器）：
 
+### 3.1 安装必要工具
+```bash
+sudo apt-get update
+sudo apt-get install -y python3-pip
+```
+
+### 3.2 执行预处理脚本
 ```bash
 cd /home/lechi/tronlong/t527_openharmony
 cd device/board/forlinx/okt527/patch
