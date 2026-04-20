@@ -119,7 +119,7 @@ sudo docker exec -it okt527-oh5.0 /bin/bash
 ```bash
 cd /home/lechi/tronlong/t527_openharmony
 cd device/board/forlinx/okt527/patch
-./per_build.sh
+./pre_build.sh
 cd -
 bash build/prebuilts_download.sh
 ```
