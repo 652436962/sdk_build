@@ -195,9 +195,14 @@ ln -sf /usr/bin/python3 /usr/bin/python
 
 ### 4.1 全量编译（编译 buildroot 推荐，生成完整刷机固件）
 ```bash
-./build.sh chip
+./build.sh allsave
 ```
-执行后会有选项输入，选择开发板芯片：
+或者直接执行（默认就是 allsave）：
+```bash
+./build.sh
+```
+
+执行后会提示选择开发板芯片：
 ```
 Pick a chip:
 
@@ -206,10 +211,7 @@ Pick a chip:
 3. rk3588
 Which would you like? [1]: 1
 ```
-输入 `1` 后按回车继续，然后执行：
-```bash
-./build.sh
-```
+输入 `1` 后按回车继续编译。
 
 ### 4.2 单独编译各模块
 ```bash
