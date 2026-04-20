@@ -112,11 +112,23 @@ sudo docker exec -it okt527-oh5.0 /bin/bash
 
 ---
 
-## 三、SDK 编译指令
+## 三、主机端准备工作（在 Docker 外执行）
 
-在 Docker 容器内，执行以下命令初始化编译环境：
+以下命令在**主机终端**执行（不需要进入 Docker 容器）：
 
-### 3.1 初始化编译环境
+```bash
+cd /home/lechi/tronlong/t527_openharmony
+cd device/board/forlinx/okt527/patch
+./per_build.sh
+cd -
+bash build/prebuilts_download.sh
+```
+
+---
+
+## 四、Docker 容器内编译
+
+### 4.1 初始化编译环境
 ```bash
 # 进入 SDK 工作目录
 cd /home/openharmony
@@ -125,25 +137,19 @@ cd /home/openharmony
 ls -la build.sh
 ```
 
-### 3.2 全量编译（推荐，生成完整刷机固件）
+### 4.2 全量编译（推荐，生成完整刷机固件）
 ```bash
-cd device/board/forlinx/okt527/pacth
-./per_build.sh
-cd -
-bash build/prebuilts_download.sh
-./build.sh --product-name okt527 --ccache
-
 ./build.sh --product-name okt527 --ccache
 ```
 
-### 3.3 单独编译内核
+### 4.3 单独编译内核
 <!--
 ```bash
 ./build.sh --product-name okt527 --ccache --build-target kernel
 ```
 -->
 
-### 3.4 单独编译子系统
+### 4.4 单独编译子系统
 <!--
 ```bash
 # 编译内核
@@ -157,7 +163,7 @@ bash build/prebuilts_download.sh
 ```
 -->
 
-### 3.5 编译选项说明
+### 4.5 编译选项说明
 | 选项 | 说明 |
 |------|------|
 | `--product-name` | 产品名称，飞凌 T527 使用 `okt527` |
