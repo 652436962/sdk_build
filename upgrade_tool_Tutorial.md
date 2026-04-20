@@ -42,19 +42,21 @@ sudo pacman -S libusb
 tools/linux/Linux_Upgrade_Tool/upgrade_tool
 ```
 
-#### 方法二：下载独立版本
+#### 方法二：从 Radxa 官方下载（推荐）
 
 ```bash
-# 下载（以 v1.24 为例）
-wget https://github.com/vicharak-in/Linux_Upgrade_Tool/raw/refs/heads/main/Linux_Upgrade_Tool_v1.24.zip
+# 下载最新版本（v2.30）
+wget https://dl.radxa.com/rock/tools/linux/upgrade_tool_v2.30_for_linux.zip
+
+# 或下载 v2.1 版本
+wget https://dl.radxa.com/rock/tools/linux/Linux_Upgrade_Tool_V2.1.zip
 
 # 解压
-unzip Linux_Upgrade_Tool_v1.24.zip
+unzip upgrade_tool_v2.30_for_linux.zip
 
 # 安装
-cd Linux_Upgrade_Tool_v1.24
+chmod +x upgrade_tool
 sudo mv upgrade_tool /usr/local/bin/
-sudo chmod +x /usr/local/bin/upgrade_tool
 sudo chown root:root /usr/local/bin/upgrade_tool
 ```
 
