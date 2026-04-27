@@ -74,10 +74,15 @@ sudo chown root:root /usr/local/bin/upgrade_tool
 | Loader | 引导加载器模式，可烧录固件 |
 
 **进入方法**：
+方法一
 1. 断开设备电源
 2. 按住 **RECOVERY** 键（或其他指定按键）
 3. 连接 USB 线
 4. 两秒后松开按键
+方法二
+reboot  loader
+方法三
+启动时，调试串口上电时ctrl＋d也能进loader模式
 
 ---
 
@@ -229,8 +234,9 @@ sudo upgrade_tool ef
 - 或配置 udev 规则：
 
 ```bash
-echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0666"' | sudo tee /etc/udev/rules.d/50-rockchip.rules
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0666"' | sudo tee /etc/udev/rules.d/99-rockchip.rules
 sudo udevadm control --reload-rules
+sudo udevadm trigger
 ```
 
 ---
