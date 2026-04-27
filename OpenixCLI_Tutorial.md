@@ -46,6 +46,18 @@ cargo build --release
 sudo apt install libusb-1.0-0-dev pkg-config
 ```
 
+### USB 权限配置
+
+为避免每次运行 OpenixCLI 都需要 root 权限，可添加以下 udev 规则（适用于全志设备，vendor ID `1f3a`）：
+
+```bash
+sudo sh -c 'echo "ACTION==\"add\", SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"1f3a\", ATTRS{idProduct}==\"efe8\", MODE=\"666\", GROUP=\"users\" TEST==\"power/autosuspend\", ATTR{power/autosuspend}=\"-1\"" > /etc/udev/rules.d/99-allwinner.rules'
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+添加后重新插拔设备即可无需 `sudo` 直接使用 `openixcli`。
+
 ---
 
 ## 使用方法
