@@ -51,7 +51,7 @@ sudo apt install libusb-1.0-0-dev pkg-config
 为避免每次运行 OpenixCLI 都需要 root 权限，可添加以下 udev 规则（适用于全志设备，vendor ID `1f3a`）：
 
 ```bash
-sudo sh -c 'echo "ACTION==\"add\", SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"1f3a\", ATTRS{idProduct}==\"efe8\", MODE=\"666\", GROUP=\"users\" TEST==\"power/autosuspend\", ATTR{power/autosuspend}=\"-1\"" > /etc/udev/rules.d/99-allwinner.rules'
+echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1f3a", ATTRS{idProduct}=="efe8", MODE="0666"' | sudo tee /etc/udev/rules.d/99-allwinner.rules
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```

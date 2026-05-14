@@ -35,7 +35,7 @@ sudo usermod -aG docker $USER
 进入 RK3568 Buildroot SDK 根目录，修复文件权限，避免编译时报读写权限错误：
 ```bash
 # 进入 SDK 根目录（替换为你实际的 SDK 路径）
-cd /home/lechi/tronlong/rk3568_sdk/
+cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk
 # 修复目录归属（推荐）
 sudo chown -R $USER:$USER .
 # 备用命令（上一条命令报错时使用）
@@ -49,7 +49,7 @@ sudo chown -R $USER:$USER .
 **先进入本机 RK3568 Buildroot SDK 根目录**，再执行以下命令，自动进入编译容器：
 
 ```bash
-cd /home/lechi/tronlong/rk3568_sdk/
+cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk
 
 docker run -it --privileged \
 --name rk3568_sdk \
@@ -357,7 +357,7 @@ exit
 ### 7.2 下次编译流程
 1. 进入本机 SDK 根目录
    ```bash
-   cd /home/lechi/tronlong/rk3568_sdk/
+   cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk
    ```
 2. 执行以下命令重新进入已存在的容器：
    ```bash
@@ -396,7 +396,7 @@ permission denied
 
 **修复方法**（本机执行）：
 ```bash
-cd /home/lechi/tronlong/rk3568_sdk/
+cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk
 sudo chown -R $USER:$USER .
 ```
 
@@ -486,7 +486,7 @@ make distclean
 ### 首次使用（创建容器并进入）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/rk3568_sdk/
+cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk
 
 # 2. 启动容器（需要 --privileged 参数）
 docker run -it --privileged --name rk3568_sdk \
@@ -524,7 +524,7 @@ cd /workspace/OK3568-linux-source
 
 ### 下次使用（重新进入容器并编译）
 ```bash
-cd /home/lechi/tronlong/rk3568_sdk/
+cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk
 docker start rk3568_sdk
 docker exec -it rk3568_sdk /bin/bash
 cd /workspace/OK3568-linux-source

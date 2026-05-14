@@ -44,13 +44,85 @@ sudo usermod -aG docker $USER
 进入 T527 OpenHarmony SDK 根目录，修复文件权限：
 ```bash
 # 进入 SDK 根目录（替换为你实际的 SDK 路径）
-cd /home/lechi/tronlong/t527_openharmony/
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 
 # 修复目录归属（推荐）
 sudo chown -R $USER:$USER .
 ```
 
-### 1.4 关键文件路径
+### 1.4 SDK 下载与源码准备
+
+#### 1.4.1 源码下载
+```bash
+# ==============================================
+# 步骤1：创建本地工作目录
+# 本地路径示例：/media/lechi/linuxsdk/linuxsdk/t527_openharmony
+# ==============================================
+mkdir forlinx-5.0-release
+cd forlinx-5.0-release
+
+# ==============================================
+# 步骤2：初始化 OpenHarmony 仓库
+# 本地路径：~/forlinx-5.0-release
+# 说明：需要注册 gitee.com 账号并配置 SSH 密钥
+# ==============================================
+repo init -u https://gitee.com/openharmony/manifest -b refs/tags/OpenHarmony-v5.0.0-Release --no-repo-verify
+
+# ==============================================
+# 步骤3：同步源码到本地
+# 本地路径：~/forlinx-5.0-release
+# 说明：下载 OpenHarmony 5.0 版本核心源码
+# ==============================================
+repo sync -c
+
+# ==============================================
+# 步骤4：拉取 LFS 大文件
+# 本地路径：~/forlinx-5.0-release
+# 说明：下载 Git LFS 托管的二进制文件（如预编译工具链）
+# ==============================================
+repo forall -c 'git lfs pull'
+```
+
+> **注意**：采用 `repo init` 方式需要先注册 gitee.com 账号，并将 gitee.com 账号的用户名密码信息配置到 SSH 密钥中，否则会报错提示 "Permission denied"。
+
+#### 1.4.2 解压设备厂商代码
+```bash
+# ==============================================
+# 步骤1：解压飞凌设备厂商代码
+# 本地路径：~/forlinx-5.0-release
+# 说明：解压 device 和 vendor 目录的厂商定制代码
+# ==============================================
+tar xvf device-board-forlinx.tar.bz2
+tar xvf vendor-forlinx.tar.bz2
+
+# ==============================================
+# 步骤2：执行平台补丁脚本
+# 本地路径：~/forlinx-5.0-release/device/board/forlinx/okt527/pacth
+# 说明：应用飞凌 OK527 开发板的专属补丁
+# ==============================================
+cd device/board/forlinx/okt527/pacth
+./per_build.sh
+cd -
+
+# ==============================================
+# 步骤3：下载预编译依赖
+# 本地路径：~/forlinx-5.0-release
+# 说明：下载编译所需的预编译工具和依赖库
+# ==============================================
+bash build/prebuilts_download.sh
+```
+
+#### 1.4.3 执行编译
+```bash
+# ==============================================
+# 执行完整编译
+# 本地路径：~/forlinx-5.0-release
+# 说明：编译 okt527 产品镜像，启用 ccache 加速
+# ==============================================
+./build.sh --product-name okt527 --ccache
+```
+
+### 1.5 关键文件路径
 以下是飞凌 T527 开发板的关键配置文件路径：
 
 | 类型 | 路径 |
@@ -67,7 +139,7 @@ sudo chown -R $USER:$USER .
 **先进入本机 T527 OpenHarmony SDK 根目录**，再执行以下命令，自动进入编译容器：
 
 ```bash
-cd /home/lechi/tronlong/t527_openharmony/
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 
 docker run -it --privileged \
 --name t527 \
@@ -198,10 +270,7 @@ cd device/board/forlinx/okt527/patch
 cd /home/openharmony/forlinx-5.0-release
 ```
 
-### 3.7 添加脚本执行权限
-```bash
-chmod +x build.sh
-```
+bash build/prebuilts_download.sh
 
 ---
 
@@ -288,11 +357,10 @@ cd /home/openharmony/forlinx-5.0-release
 ```
 
 ### 5.2 图形化配置（需要交互式终端）
-```bash
-cd /home/openharmony/forlinx-5.0-release/kernel/linux/linux-5.10
-make menuconfig
-# 或使用 nconfig（基于 ncurses，更稳定）
-make nconfig
+```
+内核配置:
+#./make_kernel.sh t527 linux-5.10 arm64 /home/xxxxxx/workspace/ohostagv5.0 menuconfig
+#./make_kernel.sh t527 linux-5.10 arm64 /home/xxxxxx/workspace/ohostagv5.0 saveconfig
 ```
 
 ---
@@ -308,7 +376,7 @@ exit
 ### 6.2 下次编译流程
 1. 进入本机 SDK 根目录：
    ```bash
-   cd /home/lechi/tronlong/t527_openharmony/
+   cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
    ```
 2. 重新进入已存在的容器：
    ```bash
@@ -336,7 +404,24 @@ exit
 
 ## 七、常见问题与修复
 
-### 7.1 Docker 拉取镜像失败
+### 7.1 编译出现死机
+
+**现象**：编译内核时系统死机或无响应。
+
+**原因**：编译线程数过多，导致系统资源耗尽。
+
+**修复方法**：
+修改 `device/board/forlinx/okt527/kernel/build/scripts/mkkernel.sh` 文件，将编译线程数固定为 10：
+
+```bash
+# 修改前
+MAKE+=" ARCH=${ARCH} -j${LICHEE_JLEVEL} O=${BUILD_OUT_DIR}"
+
+# 修改后
+MAKE+=" ARCH=${ARCH} -j10 O=${BUILD_OUT_DIR}"
+```
+
+### 7.2 Docker 拉取镜像失败
 **现象**：
 ```
 Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: lookup registry-1.docker.io: no such host
@@ -363,7 +448,7 @@ permission denied
 
 **修复方法**（本机执行）：
 ```bash
-cd /home/lechi/tronlong/t527_openharmony/
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 sudo chown -R $USER:$USER .
 ```
 
@@ -377,20 +462,6 @@ sudo chown -R $USER:$USER .
 ```bash
 ln -sf /usr/bin/python3.8 /usr/bin/python
 ```
-
-### 7.4 编译卡住或内存不足
-**现象**：编译过程中系统变卡或崩溃
-
-**修复方法**：
-1. 修改并行编译线程数，限制并发数：
-   ```bash
-   # 在编译命令前设置
-   export NINJA_JOBS=8
-   ```
-2. 或限制 Docker 容器内存使用（根据机器配置调整）：
-   ```bash
-   docker run -it --memory=8g --name t527-oh5.0-build ...
-   ```
 
 ### 7.5 编译产物清理
 ```bash
@@ -427,7 +498,7 @@ apt-get update && apt-get install -y qemu-user-static
 > docker exec -it t527 /bin/bash
 > ```
 
-### 7.7 打包失败 — dragon 段错误
+### 7.7 打包失败 — dragon 段错误 (按正常步骤不需要，此步骤烧写的镜像未验证)
 **现象**：执行 `./pack.sh` 时出现：
 ```
 qemu: uncaught target signal 11 (Segmentation fault) - core dumped
@@ -501,26 +572,6 @@ git config user.name "Your Name"
 git commit -m "Add rtc_time64_to_tm stub for blackbox"
 ```
 
-### 7.11 内核 memory_security Makefile 错误
-**现象**：`make[3]: *** [fs/proc/memory_security/built-in.a] Error 1` - ar 命令参数错误
-
-**原因**：`kernel/linux/common_modules/memory_security/Makefile` 中 `obj-y` 包含 `-I$(obj)` 参数
-
-**修复方法**：修改 `kernel/linux/common_modules/memory_security/Makefile`
-移除错误的 `-I$(obj)` 参数：
-```makefile
-obj-$(CONFIG_HIDE_MEM_ADDRESS) += \
-    src/hideaddr.o \
-    module.o
-
-obj-$(CONFIG_JIT_MEM_CONTROL) += \
-    src/jit_space_list.o \
-    src/jit_process.o \
-    src/jit_memory.o \
-    src/jit_memory_module.o \
-    module.o
-```
-
 ---
 
 ## 八、编译结果验证
@@ -567,7 +618,7 @@ obj-$(CONFIG_JIT_MEM_CONTROL) += \
 ### 首次使用（创建容器并进入）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/t527_openharmony/
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 
 # 2. 启动容器（需要 --privileged 参数，使用 Ubuntu 22.04）
 docker run -it --privileged --name t527 \
@@ -595,8 +646,7 @@ cd device/board/forlinx/okt527/patch
 ./pre_build.sh
 cd /home/openharmony/forlinx-5.0-release
 
-# 8. 添加脚本执行权限
-chmod +x build.sh
+bash build/prebuilts_download.sh
 
 # 9. 全量编译
 ./build.sh --product-name okt527 --ccache
@@ -606,7 +656,7 @@ chmod +x build.sh
 cd /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/
 ./pack.sh
 
-# 方式二：dragon.real（如 pack.sh 遇到 qemu 段错误时使用）
+# 方式二：dragon.real（如 pack.sh 遇到 qemu 段错误时使用，目前测试编译的镜像不能正常启动）
 # cd /home/openharmony/forlinx-5.0-release/out/pack_out
 # /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
 
@@ -617,7 +667,7 @@ exit
 ### 后续使用（直接进入已存在容器）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/t527_openharmony/
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 
 # 2. 启动并进入容器
 docker start t527
@@ -629,12 +679,12 @@ cd /home/openharmony/forlinx-5.0-release
 
 # 4. 打包生成固件（任选其一）
 # 方式一：pack.sh
-cd /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/
+cd device/board/forlinx/okt527/kernel/build/
 ./pack.sh
 
 # 方式二：dragon.real（如 pack.sh 遇到 qemu 段错误时使用）
-# cd /home/openharmony/forlinx-5.0-release/out/pack_out
-# /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
+ cd /home/openharmony/forlinx-5.0-release/out/pack_out
+ /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
 
 # 5. 退出
 exit

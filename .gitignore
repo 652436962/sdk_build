@@ -1,20 +1,32 @@
-# 忽略 SDK 压缩包和临时文件
-*.zip
-*.tar.gz
-*.tar
-*.png
-
-# 忽略 SDK 目录（保留 md 文档）
+# ===== SDK 源码目录（体积过大，不同步） =====
 rk3562_sdk/
 rk3568_sdk/
-t527_openharmony/
+openharmony_T527/
 tina5.0_v2.5/
 
-# 忽略编译产物
-out/
-build/
+# ===== 归档包 / 压缩包 =====
+*.tar.gz
+*.tar.xz
+*.tar.bz2
+*.tgz
+*.zip
+*.7z
+*.rar
+*.img
+*.bin
 
-# 忽略临时文件
-.DS_Store
+# ===== 日志与临时文件 =====
+*.log
 *.swp
-*.swo
+*.tmp
+*~
+.DS_Store
+
+# ===== IDE / 编辑器配置 =====
+.qoder/
+.vscode/
+.idea/
+
+# ===== 其他 =====
+node_modules/
+__pycache__/

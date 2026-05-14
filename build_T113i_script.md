@@ -1,6 +1,6 @@
 # T113i SDK Docker 编译环境完整使用文档
 **适用系统**：Ubuntu 18.04
-**适用平台**：全志 T113i 系列开发板
+**适用平台**：全志 T113i 系列开发板（创龙）
 **核心优势**：Docker 隔离环境，不污染本机系统，无依赖冲突、版本兼容问题，编译环境稳定纯净。
 
 ## 前言
@@ -35,7 +35,7 @@ sudo usermod -aG docker $USER
 进入 T113i SDK 根目录，修复文件权限，避免编译时报读写权限错误：
 ```bash
 # 进入 SDK 根目录（替换为你实际的 SDK 路径）
-cd /home/lechi/tronlong/tina5.0_v2.5
+cd /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5
 # 修复目录归属（推荐）
 sudo chown -R $USER:$USER .
 # 备用命令（上一条命令报错时使用）
@@ -118,7 +118,7 @@ git --version
 ### 4.1 初始化编译环境
 ```bash
 # 进入 SDK 工作目录
-cd /workspace/tina5.0_v2.5/tina5.0_v1.0
+cd /workspace/tina5.0_v1.0
 # 加载编译环境
 source build/envsetup.sh
 ```
@@ -179,7 +179,7 @@ exit
    ```
 2. 进入 SDK 目录并加载编译环境：
    ```bash
-   cd /workspace/tina5.0_v2.5/tina5.0_v1.0
+   cd /workspace/tina5.0_v1.0
    source build/envsetup.sh
    ```
 3. 直接执行编译命令，**无需重复安装依赖**：
@@ -341,7 +341,7 @@ date
 ### 首次使用（创建容器并安装依赖）
 ```bash
 # 1. 进入 SDK 目录
-cd /home/lechi/tronlong/tina5.0_v2.5
+cd /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5
 
 # 2. 启动 Docker 容器（首次创建）
 docker run -it --name t113i-sdk -v $(pwd):/workspace -w /workspace -h t113i-build ubuntu:18.04 /bin/bash
@@ -354,14 +354,18 @@ sudo tee /etc/docker/daemon.json <<EOF
 EOF
 sudo systemctl daemon-reload && sudo systemctl restart docker
 
-# 3. 在容器内安装全部依赖
-apt update && apt-get install -y git ssh make gcc libssl-dev liblz4-tool expect g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot libfakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler libncurses5-dev zlib1g-dev libglib2.0-dev gettext libelf-dev bzip2 expat gpgv2 bc python3 python3-pip pkg-config rsync bsdmainutils wget curl cpio swig libpython3-dev libpython3.7 libpython3.7-dev libffi-dev xxd vim-common busybox
+# 3. 在容器内安装全部依赖（预设时区，避免 tzdata 卡死交互）
+export DEBIAN_FRONTEND=noninteractive
+export TZ=Asia/Shanghai
+ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+apt update && apt-get install -y -o Dpkg::Options::="--force-confnew" tzdata
+apt-get install -y git ssh make gcc libssl-dev liblz4-tool expect g++ patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot libfakeroot cmake gcc-multilib g++-multilib unzip device-tree-compiler libncurses5-dev zlib1g-dev libglib2.0-dev gettext libelf-dev bzip2 expat gpgv2 bc python3 python3-pip pkg-config rsync bsdmainutils wget curl cpio swig libpython3-dev libpython3.7 libpython3.7-dev libffi-dev xxd vim-common busybox
 
 # 4. 创建 python 软链接
 ln -sf /usr/bin/python3 /usr/bin/python
 
 # 5. 进入 SDK 工作目录并加载编译环境
-cd /workspace/tina5.0_v2.5/tina5.0_v1.0
+cd /workspace/tina5.0_v1.0
 source build/envsetup.sh
 
 # 6. 选择编译方案
@@ -384,7 +388,7 @@ docker start t113i-sdk
 # 2. 进入容器
 docker exec -it t113i-sdk /bin/bash
 # 3. 进入 SDK 工作目录并加载编译环境
-cd /workspace/tina5.0_v2.5/tina5.0_v1.0
+cd /workspace/tina5.0_v1.0
 source build/envsetup.sh
 # 4. 直接编译（无需重复安装依赖）
 ./build.sh
