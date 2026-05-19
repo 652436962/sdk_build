@@ -1,21 +1,21 @@
 # T527 OpenHarmony 5.0 SDK Docker 编译环境完整使用文档
-**适用系统**：Ubuntu 20.04 / 22.04
+**系统**：Ubuntu 20.04
 **适用平台**：全志 T527 系列开发板（飞凌 OK527-C）
 **核心优势**：Docker 隔离环境，不污染本机系统，无依赖冲突、版本兼容问题，编译环境稳定纯净。
 
 ## 前言
 
-本文专为飞凌 OK527-C 开发板的 OpenHarmony 5.0 SDK 编译打造，基于 Docker 自建 Ubuntu 22.04 标准编译环境，完全适配官方编译要求，彻底解决本机编译常见的依赖缺失、权限冲突、工具链版本不兼容等问题。
+本文专为飞凌 OK527-C 开发板的 OpenHarmony 5.0 SDK 编译打造，基于 Docker 自建 Ubuntu 20.04 标准编译环境，完全适配官方编译要求，彻底解决本机编译常见的依赖缺失、权限冲突、工具链版本不兼容等问题。
 核心原则：**保留编译环境，避免每次重复安装依赖**，保证编译流程稳定、高效。
 
-> **重要提示**：推荐使用 Ubuntu 22.04，GLIBC 版本更高（2.35），可避免编译工具兼容性问题。
+> **重要提示**：推荐使用 Ubuntu 20.04，GLIBC 版本更高（2.35），可避免编译工具兼容性问题。
 
 ---
 
 ## 一、前期准备
 
 ### 1.1 前提条件
-1. 本机系统：Ubuntu 20.04 / 22.04（推荐 22.04，GLIBC 版本更高）
+1. 本机系统：Ubuntu 20.04
 2. 飞凌 T527 OpenHarmony 5.0 SDK 已解压完成，**存放路径无中文、空格、特殊字符**
 3. 网络正常，可拉取 Docker 镜像、下载系统依赖包
 
@@ -55,35 +55,12 @@ sudo chown -R $USER:$USER .
 #### 1.4.1 源码下载
 ```bash
 # ==============================================
-# 步骤1：创建本地工作目录
+# 步骤 1：创建本地工作目录
 # 本地路径示例：/media/lechi/linuxsdk/linuxsdk/t527_openharmony
 # ==============================================
-mkdir forlinx-5.0-release
-cd forlinx-5.0-release
-
-# ==============================================
-# 步骤2：初始化 OpenHarmony 仓库
-# 本地路径：~/forlinx-5.0-release
-# 说明：需要注册 gitee.com 账号并配置 SSH 密钥
-# ==============================================
-repo init -u https://gitee.com/openharmony/manifest -b refs/tags/OpenHarmony-v5.0.0-Release --no-repo-verify
-
-# ==============================================
-# 步骤3：同步源码到本地
-# 本地路径：~/forlinx-5.0-release
-# 说明：下载 OpenHarmony 5.0 版本核心源码
-# ==============================================
-repo sync -c
-
-# ==============================================
-# 步骤4：拉取 LFS 大文件
-# 本地路径：~/forlinx-5.0-release
-# 说明：下载 Git LFS 托管的二进制文件（如预编译工具链）
-# ==============================================
-repo forall -c 'git lfs pull'
+mkdir -p /media/lechi/linuxsdk/linuxsdk/t527_openharmony
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 ```
-
-> **注意**：采用 `repo init` 方式需要先注册 gitee.com 账号，并将 gitee.com 账号的用户名密码信息配置到 SSH 密钥中，否则会报错提示 "Permission denied"。
 
 #### 1.4.2 解压设备厂商代码
 ```bash
@@ -91,35 +68,10 @@ repo forall -c 'git lfs pull'
 # 步骤1：解压飞凌设备厂商代码
 # 本地路径：~/forlinx-5.0-release
 # 说明：解压 device 和 vendor 目录的厂商定制代码
-# ==============================================
-tar xvf device-board-forlinx.tar.bz2
-tar xvf vendor-forlinx.tar.bz2
 
+cd /media/lechi/linuxsdk/linuxsdk/openharmony_T527/source
+tar -xvf forlinx-5.0-release.tar.bz2 -C ../
 # ==============================================
-# 步骤2：执行平台补丁脚本
-# 本地路径：~/forlinx-5.0-release/device/board/forlinx/okt527/pacth
-# 说明：应用飞凌 OK527 开发板的专属补丁
-# ==============================================
-cd device/board/forlinx/okt527/pacth
-./per_build.sh
-cd -
-
-# ==============================================
-# 步骤3：下载预编译依赖
-# 本地路径：~/forlinx-5.0-release
-# 说明：下载编译所需的预编译工具和依赖库
-# ==============================================
-bash build/prebuilts_download.sh
-```
-
-#### 1.4.3 执行编译
-```bash
-# ==============================================
-# 执行完整编译
-# 本地路径：~/forlinx-5.0-release
-# 说明：编译 okt527 产品镜像，启用 ccache 加速
-# ==============================================
-./build.sh --product-name okt527 --ccache
 ```
 
 ### 1.5 关键文件路径
@@ -127,9 +79,9 @@ bash build/prebuilts_download.sh
 
 | 类型 | 路径 |
 |------|------|
-| 设备树（Bootloader） | `device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts` |
-| 设备树（DTSI） | `device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi` |
-| 编译配置 | `device/soc/allwinner/t527/patches/config/t527_standard_defconfig` |
+| 设备树（Bootloader） | [`device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts) |
+| 设备树（DTSI） | [`device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi) |
+| 编译配置 | [`device/soc/allwinner/t527/patches/config/t527_standard_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig) |
 
 ---
 
@@ -142,12 +94,15 @@ bash build/prebuilts_download.sh
 cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 
 docker run -it --privileged \
---name t527 \
--v $(pwd):/home/openharmony \
--w /home/openharmony \
--h t527 \
-ubuntu:22.04 \
-/bin/bash
+   -m 27g \
+   --memory-swap 34g
+   --shm-size=2g \
+   --cpus=$(nproc) \
+   -v $(pwd):/home/openharmony \
+   -w /home/openharmony \
+   -h t527-openharmony \
+   --name t527_openharmony \
+   ubuntu:20.04 /bin/bash
 ```
 
 > **注意**：`--privileged` 参数必须添加，否则后续挂载镜像或执行打包工具时会报 `Operation not permitted` 错误。
@@ -155,10 +110,10 @@ ubuntu:22.04 \
 ### 2.2 命令参数说明
 | 参数 | 作用 |
 |------|------|
-| `--name t527` | 容器命名，简短易记 |
+| `--name t527_openharmony` | 容器命名，区别于 Linux SDK 容器 |
 | `-v $(pwd):/home/openharmony` | 本机 SDK 目录映射到容器，文件双向同步 |
 | `-w /home/openharmony` | 容器内默认进入 SDK 工作目录 |
-| `-h t527` | 设置容器主机名，方便识别 |
+| `-h t527-openharmony` | 设置容器主机名，方便识别 |
 
 ### 2.3 重新进入已存在的容器
 查看已有容器：
@@ -168,12 +123,12 @@ docker ps -a
 
 如果容器已创建（非首次启动），使用以下命令重新进入：
 ```bash
-docker start t527
-docker exec -it t527 /bin/bash
+docker start t527_openharmony
+docker exec -it t527_openharmony /bin/bash
 ```
 
 环境就绪标识：终端提示符变为
-`root@t527:/home/openharmony#`
+`root@t527-openharmony:/home/openharmony#`
 
 ---
 
@@ -230,7 +185,7 @@ apt-get install -y repo make gcc g++ expect patchelf chrpath gawk texinfo diffst
 # 数学/编码库
 apt-get install -y libgmp-dev libmpc-dev libicu-dev bsdmainutils
 
-# Python 3.10 及 pip（Ubuntu 22.04 默认版本）
+# Python 3.10 及 pip（Ubuntu 20.04 默认版本）
 apt-get install -y python3 python3-pip python3-distutils
 
 # 其他编译工具
@@ -280,7 +235,38 @@ bash build/prebuilts_download.sh
 
 ```bash
 cd /home/openharmony/forlinx-5.0-release
+
+# 进入 docker 容器，执行以下命令
+cd device/board/forlinx/okt527/patch
+./pre_build.sh
+cd -
+git config --global user.email "652436962@qq.com"
+git config --global user.name "freeor"
+# ==============================================
+# 步骤 3：下载预编译依赖
+# 本地路径：~/forlinx-5.0-release
+# 说明：下载编译所需的预编译工具和依赖库
+# ==============================================
+bash build/prebuilts_download.sh
 ```
+
+# =============================================
+# 步骤 4：git 配置
+# 说明 git配置
+
+
+
+#### 1.4.3 执行编译
+```bash
+
+# ==============================================
+# 执行完整编译
+# 本地路径：~/forlinx-5.0-release
+# 说明：编译 okt527 产品镜像，启用 ccache 加速
+# ==============================================
+./build.sh --product-name okt527 --ccache
+```
+
 
 ### 4.1 全量编译（推荐，生成完整刷机固件）
 ```bash
@@ -320,14 +306,6 @@ cd /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/buil
 ./pack.sh
 ```
 
-> **注意**：此方式在 Docker Ubuntu 22.04 环境下，`dragon` 工具通过 `qemu-i386-static` 模拟运行 32 位程序，**可能触发段错误**（见 [7.7 节](#77-打包失败--dragon-段错误)）。如遇到段错误，请使用方式二。
-
-**方式二：使用 `dragon.real`（绕过 qemu）**
-```bash
-cd /home/openharmony/forlinx-5.0-release/out/pack_out
-/home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
-```
-
 **固件输出路径**：`out/pack_out/` 目录，生成的固件文件为 `t527_linux_okt527_uart0.img` 或类似文件。
 
 ---
@@ -344,8 +322,9 @@ cd /home/openharmony/forlinx-5.0-release/kernel/linux/linux-5.10
 修改完成后需提交到本地 git 仓库，否则编译时克隆的源码不包含修改：
 ```bash
 cd /home/openharmony/forlinx-5.0-release/kernel/linux/linux-5.10
-git config user.email "your@email.com"
-git config user.name "Your Name"
+git config user.email "652436962@qq.com"
+git config user.name "freeor"
+
 git add <modified-files>
 git commit -m "Fix description"
 ```
@@ -380,24 +359,19 @@ exit
    ```
 2. 重新进入已存在的容器：
    ```bash
-   docker start t527
-   docker exec -it t527 /bin/bash
+   docker start t527_openharmony
+   docker exec -it t527_openharmony /bin/bash
    ```
 3. 进入 SDK 目录并编译，**无需重复安装依赖**：
    ```bash
    cd /home/openharmony/forlinx-5.0-release
    ./build.sh --product-name okt527 --ccache
    ```
-4. 打包固件（任选其一）：
+4. 打包固件：
    - 方式一（`pack.sh`）：
      ```bash
      cd /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/
      ./pack.sh
-     ```
-   - 方式二（`dragon.real`，绕过 qemu 避免段错误）：
-     ```bash
-     cd /home/openharmony/forlinx-5.0-release/out/pack_out
-     /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
      ```
 
 ---
@@ -411,15 +385,35 @@ exit
 **原因**：编译线程数过多，导致系统资源耗尽。
 
 **修复方法**：
-修改 `device/board/forlinx/okt527/kernel/build/scripts/mkkernel.sh` 文件，将编译线程数固定为 10：
+1、修改 `kernel/linux/common_modules/memory_security/Makefile` 文件，在 `ccflags-*` 中新增 `-I$(obj)` 编译参数：
 
-```bash
-# 修改前
-MAKE+=" ARCH=${ARCH} -j${LICHEE_JLEVEL} O=${BUILD_OUT_DIR}"
+```makefile
+ccflags-$(CONFIG_HIDE_MEM_ADDRESS) += \
+    -I$(obj) \
+    -I$(srctree)/fs/proc \
+    -I$(srctree)/fs/proc/memory_security/include \
+    -I$(srctree)/security/selinux/include \
+    -I$(srctree)/security/selinux
 
-# 修改后
-MAKE+=" ARCH=${ARCH} -j10 O=${BUILD_OUT_DIR}"
+ccflags-$(CONFIG_JIT_MEM_CONTROL) += \
+    -I$(obj) \
+    -I$(srctree)/fs/proc \
+    -I$(srctree)/fs/proc/memory_security/include \
+    -I$(srctree)/security/selinux/include \
+    -I$(srctree)/security/selinux
 ```
+
+2、修改 `device/board/forlinx/okt527/kernel/build/scripts/mkkernel.sh` 文件。
+找到以下代码行：
+```bash
+MAKE+=" ARCH=${ARCH} -j${LICHEE_JLEVEL} O=${BUILD_OUT_DIR}"
+```
+将其修改为：
+```bash
+#MAKE+=" ARCH=${ARCH} -j${LICHEE_JLEVEL} O=${BUILD_OUT_DIR}"
+MAKE+=" ARCH=${ARCH} -j8 O=${BUILD_OUT_DIR}"
+```
+
 
 ### 7.2 Docker 拉取镜像失败
 **现象**：
@@ -440,7 +434,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
-### 7.2 权限问题
+### 7.3 权限问题
 **现象**：
 ```
 permission denied
@@ -452,7 +446,7 @@ cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 sudo chown -R $USER:$USER .
 ```
 
-### 7.3 Python 命令不存在
+### 7.4 Python 命令不存在
 **现象**：
 ```
 /usr/bin/env: 'python': No such file or directory
@@ -463,7 +457,7 @@ sudo chown -R $USER:$USER .
 ln -sf /usr/bin/python3.8 /usr/bin/python
 ```
 
-### 7.5 编译产物清理
+### 7.6 编译产物清理
 ```bash
 # 清理编译产物（保留源码）
 cd /home/openharmony/forlinx-5.0-release
@@ -483,96 +477,6 @@ pack 脚本使用 `busybox unix2dos` 处理配置文件，如未安装会中断�
 apt-get update && apt-get install -y busybox
 ```
 
-**现象 B**：执行 `./pack.sh` 提示 `/usr/bin/qemu-i386-static: No such file or directory`
-
-dragon 脚本依赖 `qemu-i386-static` 来运行 32 位打包工具 `dragon.real`。
-
-**修复方法**：
-```bash
-apt-get update && apt-get install -y qemu-user-static
-```
-
-> **注意**：以上两条命令必须在 **Docker 容器内**执行。如在宿主机上运行 pack.sh，请先进入容器：
-> ```bash
-> docker start t527
-> docker exec -it t527 /bin/bash
-> ```
-
-### 7.7 打包失败 — dragon 段错误 (按正常步骤不需要，此步骤烧写的镜像未验证)
-**现象**：执行 `./pack.sh` 时出现：
-```
-qemu: uncaught target signal 11 (Segmentation fault) - core dumped
-dragon image.cfg    sys_partition.fex
-Segmentation fault
-```
-
-**原因**：qemu-i386 运行 dragon.real 时发生段错误。
-
-**修复方法**：直接运行 dragon.real，跳过 qemu
-```bash
-cd /home/openharmony/forlinx-5.0-release/out/pack_out
-# 直接运行 dragon.real
-/home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
-
-# 如果生成了固件，手动拷贝到 out 目录
-cp /home/openharmony/forlinx-5.0-release/out/pack_out/t527_linux_okt527_uart0.img /home/openharmony/forlinx-5.0-release/out/
-```
-
-### 7.8 编译报错 — FileNotFoundError: error.log
-**现象**：编译过程中出现 `FileNotFoundError: error.log` 等错误
-
-**修复方法**：这是 hb 工具的 bug，不影响实际编译结果，可忽略。检查 `out` 目录下是否有生成的产物。
-
-### 7.9 GPIO 驱动编译错误
-**现象**：`gpio_adapter.c` 中 `gpiod_get_direction` 和 `gpio_to_desc` 隐式声明错误
-
-**修复方法**：修改 `drivers/hdf_core/adapter/khdf/linux/platform/gpio/gpio_adapter.c`
-在 `#include` 部分添加头文件：
-```c
-#include <linux/gpio.h>
-#include <linux/gpio/consumer.h>
-#include <linux/gpio/driver.h>
-#include <linux/interrupt.h>
-```
-
-并将 `gpiochip_find` 调用条件编译：
-```c
-#if 0
-    (void)gpiochip_find(device, LinuxGpioMatchProbe);
-#endif
-```
-
-### 7.10 rtc_time64_to_tm 未定义引用
-**现象**：内核链接时 `blackbox_common.o` 报 `rtc_time64_to_tm` 未定义引用
-
-**修复方法**：
-1. 修改 `kernel/linux/linux-5.10/drivers/staging/blackbox/blackbox_common.c`
-在文件开头添加 `rtc_time64_to_tm` 函数的本地实现：
-```c
-#include <linux/timekeeping.h>
-
-void rtc_time64_to_tm(time64_t time, struct rtc_time *tm)
-{
-	if (tm == NULL) return;
-	tm->tm_sec = time % 60;
-	tm->tm_min = (time / 60) % 60;
-	tm->tm_hour = (time / 3600) % 24;
-	tm->tm_mday = (time / 86400) + 1;
-	tm->tm_mon = ((time / 86400) / 30) % 12;
-	tm->tm_year = ((time / 86400) / 365) + 70;
-}
-```
-
-2. 提交更改到本地 git 仓库：
-```bash
-cd /home/openharmony/forlinx-5.0-release/kernel/linux/linux-5.10
-git add drivers/staging/blackbox/blackbox_common.c
-git config user.email "your@email.com"
-git config user.name "Your Name"
-git commit -m "Add rtc_time64_to_tm stub for blackbox"
-```
-
----
 
 ## 八、编译结果验证
 
@@ -605,7 +509,7 @@ git commit -m "Add rtc_time64_to_tm stub for blackbox"
 2. 编译过程中**不要关闭终端、不要中断进程**，否则固件损坏
 3. 如需彻底删除容器重建环境，执行：
    ```bash
-   docker stop t527 && docker rm t527
+   docker stop t527_openharmony && docker rm t527_openharmony
    ```
 4. 首次进入容器需要安装依赖，耗时较长，请耐心等待
 5. OpenHarmony 编译会下载大量源码包，请确保网络稳定
@@ -620,16 +524,23 @@ git commit -m "Add rtc_time64_to_tm stub for blackbox"
 # 1. 进入 SDK 目录
 cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 
-# 2. 启动容器（需要 --privileged 参数，使用 Ubuntu 22.04）
-docker run -it --privileged --name t527 \
-  -v $(pwd):/home/openharmony -w /home/openharmony -h t527 \
-  ubuntu:22.04 /bin/bash
+# 2. 启动容器（需要 --privileged 参数，使用 Ubuntu 20.04）
+docker run -it --privileged \
+  -m 27g \
+  --memory-swap 34g
+  --shm-size=2g \
+  --cpus=$(nproc) \
+  -v $(pwd):/home/openharmony \
+  -w /home/openharmony \
+  -h t527-openharmony \
+  --name t527_openharmony \
+  ubuntu:20.04 /bin/bash
 
 # 3. 设置时区（避免 tzdata 安装卡住）
 ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 echo 'Asia/Shanghai' > /etc/timezone
 
-# 4. 安装编译依赖（Ubuntu 22.04）
+# 4. 安装编译依赖（Ubuntu 20.04）
 apt-get update
 apt-get install -y build-essential libncurses5-dev libncursesw5-dev lzop liblz4-tool net-tools ssh openssh-server vim git git-lfs fakeroot busybox make gcc g++ expect patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex cmake gcc-multilib g++-multilib unzip device-tree-compiler libgmp-dev libmpc-dev libicu-dev bsdmainutils python3 python3-pip python3-distutils apt-utils binutils bc mtd-utils u-boot-tools zip curl wget ruby dosfstools mtools default-jre default-jdk scons perl openssl libssl-dev cpio m4 ccache zlib1g-dev tar rsync genext2fs binutils-dev e2fsprogs gnupg gnutls-bin gperf libffi-dev libelf-dev libx11-dev libgl1-mesa-dev lib32z1-dev xsltproc x11proto-core-dev libxml2-dev libdwarf-dev grsync xxd libglib2.0-dev libpixman-1-dev kmod jfsutils reiserfsprogs xfsprogs squashfs-tools pcmciautils quota ppp libtinfo-dev libtinfo5 libstdc++6 gcc-arm-none-eabi locales libxinerama-dev libxcursor-dev libxrandr-dev libxi-dev llvm
 pip3 install rich
@@ -653,12 +564,10 @@ bash build/prebuilts_download.sh
 
 # 10. 打包生成固件（任选其一）
 # 方式一：pack.sh
-cd /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/
+```bash
+cd device/board/forlinx/okt527/kernel/build/
 ./pack.sh
-
-# 方式二：dragon.real（如 pack.sh 遇到 qemu 段错误时使用，目前测试编译的镜像不能正常启动）
-# cd /home/openharmony/forlinx-5.0-release/out/pack_out
-# /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
+```
 
 # 11. 退出
 exit
@@ -670,8 +579,8 @@ exit
 cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
 
 # 2. 启动并进入容器
-docker start t527
-docker exec -it t527 /bin/bash
+docker start t527_openharmony
+docker exec -it t527_openharmony /bin/bash
 
 # 3. 进入 SDK 目录并编译
 cd /home/openharmony/forlinx-5.0-release
@@ -679,12 +588,10 @@ cd /home/openharmony/forlinx-5.0-release
 
 # 4. 打包生成固件（任选其一）
 # 方式一：pack.sh
+```bash
 cd device/board/forlinx/okt527/kernel/build/
 ./pack.sh
-
-# 方式二：dragon.real（如 pack.sh 遇到 qemu 段错误时使用）
- cd /home/openharmony/forlinx-5.0-release/out/pack_out
- /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
+```
 
 # 5. 退出
 exit
@@ -698,7 +605,7 @@ exit
 - **OpenHarmony 官方文档**：https://gitee.com/openharmony/docs
 - **飞凌嵌入式**：https://www.forlinx.com
 
-- 串口调试：
+### 串口调试
 ```bash
 sudo apt-get install picocom
 picocom -b 115200 /dev/ttyUSB0
@@ -706,4 +613,4 @@ picocom -b 115200 /dev/ttyUSB0
 
 ---
 
-**备注**：本文档适配飞凌 OK527-C 开发板的 OpenHarmony 5.0 SDK，基于 Docker 自建 Ubuntu 22.04 编译环境。固件烧录工具推荐使用官方工具（详情请参考飞凌提供的烧录文档）。
+**备注**：本文档适配飞凌 OK527-C 开发板的 OpenHarmony 5.0 SDK，基于 Docker 自建 Ubuntu 20.04 编译环境。固件烧录工具推荐使用官方工具（详情请参考飞凌提供的烧录文档）。

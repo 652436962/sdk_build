@@ -15,8 +15,12 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 ├── build_ok3568_script.md            # RK3568 Buildroot SDK Docker 编译环境完整文档
 ├── build_rk3562_script.md            # RK3562 SDK Docker 编译环境完整文档
 ├── build_T113i_script.md             # T113i SDK Docker 编译环境完整文档
-├── build_T527_script.md              # T527 Linux SDK Docker 编译环境完整文档
+├── build_T527_linuxsdk_script.md     # T527 Linux SDK Docker 编译环境完整文档
 ├── build_T527_openharmony_script.md  # T527 OpenHarmony 5.0 SDK Docker 编译环境完整文档
+├── build_T527_ubuntu20_op_script.md  # T527 OpenHarmony 5.0 Ubuntu 20.04 编译环境文档
+├── t527_sdk/                         # T527 Linux SDK 根目录
+├── t527_openharmony/                 # T527 OpenHarmony Docker 工作目录（挂载点）
+├── forlinx_cmd/                       # 飞凌测试工具源码（CAN/UART/SPI/GPIO/Watchdog 等）
 ├── rk3562_sdk/                       # RK3562 SDK 根目录
 │   ├── Lechi/                        # 自定义测试与调试脚本目录
 │   ├── hardware_peripherals.md       # RK3562 外设硬件说明
@@ -50,6 +54,7 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 │   └── oprk3568_4g.md                # RK3568 4G 模块适配文档
 ├── skills/                            # Qoder 自定义 Skill 目录
 │   └── build-sdk/                    # SDK 编译相关 Skill
+├── .gitignore
 ├── .qoder/                            # Qoder IDE 配置目录
 ├── rk3562_sdk.tar.gz                 # RK3562 SDK 完整归档
 ├── rk3562_sdk.zip                    # RK3562 SDK 压缩包（备份）
@@ -81,12 +86,13 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 ### T527 OpenHarmony 相关
 | 路径 | 说明 |
 |------|------|
-| `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/` | T527 OpenHarmony 5.0 SDK 根目录，挂载至 Docker 容器 `/workspace` |
+| `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/` | T527 OpenHarmony 5.0 SDK 源代码目录 |
+| `/media/lechi/linuxsdk/linuxsdk/t527_openharmony/` | T527 OpenHarmony Docker 挂载点，映射至容器 `/home/openharmony` |
 | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/` | 飞凌 T527 OpenHarmony 发布版本（实际编译工作目录） |
-| `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/openharmony_prebuilts/` | OpenHarmony 预编译工具链 |
 | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/飞凌板级支持包/` | 飞凌 T527 BSP 参考资料 |
-| `/media/lechi/linuxsdk/linuxsdk/build_T527_openharmony_script.md` | T527 OpenHarmony 5.0 完整编译流程文档（Docker OpenHarmony 3.2） |
-| `/media/lechi/linuxsdk/linuxsdk/build_T527_script.md` | T527 Linux SDK 编译流程文档 |
+| `/media/lechi/linuxsdk/linuxsdk/build_T527_openharmony_script.md` | T527 OpenHarmony 5.0 完整编译流程文档（Docker Ubuntu 20.04） |
+| `/media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md` | T527 OpenHarmony 5.0 编译流程文档（Ubuntu 20.04 详细版） |
+| `/media/lechi/linuxsdk/linuxsdk/build_T527_linuxsdk_script.md` | T527 Linux SDK 完整编译流程文档 |
 | `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/OK527.md` | 飞凌 OK527 原厂编译/使用文档 |
 
 ### T113i 相关
@@ -124,14 +130,25 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 
 | 容器名 | 基础镜像 | 挂载目录 | 对应平台 |
 |--------|----------|----------|----------|
+| `t527_linuxsdk` | `ubuntu:20.04` | `/media/lechi/linuxsdk/linuxsdk/t527_sdk/` → `/workspace` | 全志 T527 Linux |
+| `t527_openharmony` | `ubuntu:20.04` | `/media/lechi/linuxsdk/linuxsdk/t527_openharmony/` → `/home/openharmony` | 全志 T527 OpenHarmony |
 | `rk3568_sdk` | `ubuntu:20.04` | `/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/` → `/workspace` | 瑞芯微 RK3568 Buildroot |
 | `rk3562-sdk` | `ubuntu:20.04` | `/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/` → `/workspace` | 瑞芯微 RK3562 |
-| `t527-oh5.0` | `openharmony:3.2` | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/` → `/workspace` | 全志 T527 OpenHarmony |
 | `t113i-sdk` | `ubuntu:18.04` | `/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/` → `/workspace` | 全志 T113i |
 
 ---
 
 ## 快速进入编译环境
+
+### T527 Linux SDK
+```bash
+cd /media/lechi/linuxsdk/linuxsdk/t527_sdk
+docker start t527_linuxsdk
+docker exec -it t527_linuxsdk /bin/bash
+cd /workspace/OKT527-linux-sdk
+./build.sh          # 全量编译
+./build.sh pack     # 打包生成固件
+```
 
 ### RK3568 Buildroot
 ```bash
@@ -152,11 +169,13 @@ cd /workspace/ubuntu/
 
 ### T527 OpenHarmony 5.0
 ```bash
-cd /media/lechi/linuxsdk/linuxsdk/openharmony_T527
-docker start t527-oh5.0
-docker exec -it t527-oh5.0 /bin/bash
-cd /workspace/forlinx-5.0-release
-./build.sh --product-name okt527 --ccache
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
+docker start t527_openharmony
+docker exec -it t527_openharmony /bin/bash
+cd /home/openharmony/forlinx-5.0-release
+./build.sh --product-name okt527 --ccache    # 全量编译
+cd device/board/forlinx/okt527/kernel/build/
+./pack.sh                                     # 打包生成固件
 ```
 
 ### T113i
@@ -164,9 +183,11 @@ cd /workspace/forlinx-5.0-release
 cd /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5
 docker start t113i-sdk
 docker exec -it t113i-sdk /bin/bash
-# 进入后
 cd /workspace/tina5.0_v1.0
-source build/envsetup.sh
+source build/envsetup.sh    # 初始化环境
+#lunch                       # 选择编译目标
+./build.sh            # 全量编译
+./build.sh pack             # 打包生成固件
 ```
 
 ---
@@ -179,7 +200,7 @@ source build/envsetup.sh
 
 | Skill 名称 | 路径 | 作用 |
 |------------|------|------|
-| `build-sdk` | `skills/build-sdk/SKILL.md` | SDK 编译任务选择器，覆盖 T527 / T527 OH5.0 / T113i / RK3562 / RK3568 五个平台的 Docker 容器启动、SDK 编译与固件打包流程 |
+| `build-sdk` | `skills/build-sdk/SKILL.md` | SDK 编译任务选择器，覆盖 T527 Linux / T527 OH5.0 / T113i / RK3562 / RK3568 五个平台的 Docker 容器启动、SDK 编译与固件打包流程 |
 
 ### 触发方式
 
@@ -194,7 +215,7 @@ source build/envsetup.sh
 
 ### 工作流程（由 Skill 自动执行）
 
-1. **识别目标平台** —— 未指定平台时会弹出选择交互（T527 / T527 OH5.0 / T113i / RK3562 / RK3568）
+1. **识别目标平台** —— 未指定平台时会弹出选择交互（T527 Linux / T527 OH5.0 / T113i / RK3562 / RK3568）
 2. **读取对应 `build_*_script.md` 文档** —— 所有细节步骤以该文档为准
 3. **环境检查三连** —— 容器是否存在、SDK 目录权限、是否需要 `chown`
 4. **按文档执行编译** —— 推荐 `docker exec -d ... | tee build.log` 后台运行
@@ -212,7 +233,7 @@ source build/envsetup.sh
 ### 使用注意事项
 
 1. 首次编译 OpenHarmony 必须先执行 `bash build/prebuilts_download.sh`（约 10 GB 下载），否则 `build.sh` 立即报错。
-2. 容器名区分平台：T527 OH5.0 用 `okt527-oh5.0`，T113i 用 `t113i`，RK3562 用 `rk3562`，RK3568 用 `ok3568`。
+2. 容器名区分平台：T527 Linux 用 `t527_linuxsdk`，T527 OH5.0 用 `t527_openharmony`，T113i 用 `t113i-sdk`，RK3562 用 `rk3562-sdk`，RK3568 用 `rk3568_sdk`。
 3. 长任务建议用 `docker exec -d <name> bash -c "cmd 2>&1 | tee build.log"` 后台执行，再 `tail -f build.log` 跟踪。
 4. 遇源码/镜像权限报错，到本机 SDK 根目录执行 `sudo chown -R $USER:$USER .`。
 5. 避免多个平台并行编译，磁盘 I/O 与内存压力会拖垮整机，请逐平台串行。

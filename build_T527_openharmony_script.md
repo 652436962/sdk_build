@@ -70,6 +70,7 @@ sudo chown -R $USER:$USER .
 | 设备树（Bootloader） | `device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts` |
 | 设备树（DTSI） | `device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi` |
 | 编译配置 | `device/soc/allwinner/t527/patches/config/t527_standard_defconfig` |
+| init 启动配置 | `base/startup/init/services/etc/init.cfg` |
 
 ---
 
@@ -199,7 +200,7 @@ ls -la build.sh
 ### 4.3 打包生成固件
 编译完成后，需要执行打包脚本生成最终的可烧录固件：
 ```bash
-cd /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/
+cd device/board/forlinx/okt527/kernel/build/
 ./pack.sh
 ```
 
@@ -398,26 +399,6 @@ git commit -m "Fix description"
 docker exec okt527-oh5.0 apt-get update && docker exec okt527-oh5.0 apt-get install -y busybox
 ```
 
-#### 6.9.2 dragon 段错误 (按正常步骤不需要，此步骤烧写的镜像未验证)
-如果执行 ./pack.sh 时出现 dragon 段错误：
-```
-qemu: uncaught target signal 11 (Segmentation fault) - core dumped
-dragon image.cfg    sys_partition.fex
-Segmentation fault
-```
-
-**原因**：qemu-i386 运行 dragon.real 时发生段错误。
-
-**修复方法**：直接运行 dragon.real，跳过 qemu
-```bash
-cd /home/openharmony/forlinx-5.0-release/out/pack_out
-# 重新生成 image.cfg（如果需要）
-# 然后直接运行 dragon.real
-/home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/build/tools/pack/eDragonEx/dragon.real image.cfg sys_partition.fex
-
-# 如果生成了固件在 pack_out 目录，手动拷贝到 out 目录
-cp /home/openharmony/forlinx-5.0-release/out/pack_out/t527_linux_okt527_uart0.img /home/openharmony/forlinx-5.0-release/out/
-```
 
 
 

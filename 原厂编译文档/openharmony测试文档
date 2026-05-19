@@ -1,0 +1,354 @@
+## 3.1主界面
+目前支持LVDS、HDMI显示。HDMI和LVDS同显目前有问题，建议只使用其中一个屏幕。
+
+在LVDS上，屏保界面向上滑动，即可出现下面的界面：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/jpg/50461850/1757039824724-913ce69e-e023-4c67-abde-4d64561d40b5.jpg" width="1280" title="null" crop="0,0,1,1" id="bwAYn" class="ne-image">
+
+注意：软件版本更新完成后可能会有细微差别，不作为日后每次版本更新后的实际图片，仅供参考。
+
+## 3.2 设置语言
+在应用程序界面点击“<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1744177832007-51d17201-9f51-4edc-8609-f09b11ba665a.png" width="100" title="" crop="0,0,1,1" id="FqJWT" class="ne-image">”，进入设置界面：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516726830-21fb1f17-4fbe-47ee-a26f-cb6271584e1a.png" width="1268" title="null" crop="0,0,1,1" id="w54X3" class="ne-image">
+
+在应用程序界面点击 “系统” 进入系统界面。
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727043-aa4fad30-8c28-413c-ab02-99dd018dc87e.png" width="1920" title="null" crop="0,0,1,1" id="uvXNx" class="ne-image">
+
+点击“语言设置”，进入语言设置界面：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727119-194db41d-c6d8-4d80-acd5-ad9bde69fa3c.png" width="1920" title="null" crop="0,0,1,1" id="kRAnB" class="ne-image">
+
+点击”语言与地区”，进入语言选择界面：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727215-780fcdbe-2fb1-4f5c-9232-e7946896e3fa.png" width="1920" title="null" crop="0,0,1,1" id="wZt3g" class="ne-image">
+
+点击“添加语言”进行新的语言添加。
+
+若您想移除已安装的某一种语言，您可以点击编辑，选择对应语言后X，删除语言。
+
+## 3.3 WIFI 测试
+注意：测试之前，需保证天线已连接。
+
+打开 “设置->wlan”如下图 ：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727344-da98f063-8835-47e7-9926-9b49134665ec.png" width="1280" title="null" crop="0,0,1,1" id="IOPks" class="ne-image">
+
+打开 wlan的开关：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727487-16430555-d0e7-4cab-964d-55c330d1a0e0.png" width="1280" title="null" crop="0,0,1,1" id="McF6Q" class="ne-image">
+
+可看到当前可用的热点，选择 forlinx-wlan，需要输入密码：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727563-0e39231f-3544-4b6a-a2de-fb24740dbaf0.png" width="1280" title="null" crop="0,0,1,1" id="Pz996" class="ne-image">
+
+输入密码结束之后，选择“返回”，选择“连接”：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727643-8154f361-bab4-488e-8064-e83e7902e2c7.png" width="1280" title="null" crop="0,0,1,1" id="G8kHm" class="ne-image">
+
+连接上之后，如下图：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727715-d50bebf8-53fa-4dc2-ac39-69255c1e9d43.png" width="1280" title="null" crop="0,0,1,1" id="InmGc" class="ne-image">
+
+可通过浏览器验证wifi 已连接。
+
+## 3.4 浏览器测试
+测试前，请先连接wifi。
+
+点击<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730526289786-09dcb5f7-ba7f-442d-915e-86f02080bcb3.png" width="42" title="null" crop="0,0,1,1" id="FnCuf" class="ne-image">按钮，进入浏览器应用，可进入百度首页，如图：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1757039824893-0ba1e73b-33db-4906-ad0f-68ebdaf5bb7f.png" width="1280" title="null" crop="0,0,1,1" id="CoN0D" class="ne-image">
+
+## 3.5 视频播放器测试
+默认未放置视频文件，可通过hdc将视频传到开发板，操作方法参考3.10.5章节
+
+打开“视频播放器”，第一次打开会弹出“允许视频播放器访问文件”的权限申请窗口，点击“允许”。
+
+查看放入的视频文件，forlinx.mp4，如下图：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727867-b28b1373-de5f-46fb-b72f-63b4cf47de81.png" width="1280" title="null" crop="0,0,1,1" id="JWgAc" class="ne-image">
+
+点击视频源，进行播放，如下：
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516727963-180df00a-a6be-4026-a159-d9dcc4a3c37b.png" width="1280" title="null" crop="0,0,1,1" id="l9CMt" class="ne-image">
+
+耳机播放声音，按V+/V- 进行音量的控制。
+
+## 3.6 串口与GPIO测试
+串口与GPIO测试demo如有需要，请联系飞凌。
+
+## 3.7 按键测试
+本开发板上有VOL+/Recovery，VOL-，ESC, HOME, PWRON, RESET共6个按键。
+
+| **按键** | **功能** |
+| :---: | :---: |
+| VOL+ | 音量加 |
+| VOL- | 音量减 |
+| PWRON | 休眠唤醒、开关机 |
+| Recovery | 和RESET配合进入maskrom模式 |
+| RESET | 复位 |
+| HOME | 返回桌面 |
+| ESC | 返回上一界面 |
+
+
+默认出厂设置为不休眠状态，此时轻按PWRON键可熄灭屏幕，再次轻按PWRON键，点亮屏幕显示锁屏界面。
+
+长按PWRON可以进行“关机”、“重启”。
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1757039824978-9a9e2c00-449c-4d95-980d-6d06f91eb6d0.png" width="1280" title="null" crop="0,0,1,1" id="KPAff" class="ne-image">
+
+## 3.8 蓝牙测试
+在桌面设置应用中打开蓝牙，如下图 ：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/jpeg/50461850/1757039825068-febf7de1-3b1b-4985-a0c1-7e2868845e4d.jpeg" width="1280" title="null" crop="0,0,1,1" id="i2LpP" class="ne-image">
+
+点击右侧的按钮，打开蓝牙：（打开时可能需要等待一会界面才会变化为下图）
+
+<img src="https://cdn.nlark.com/yuque/0/2025/jpeg/50461850/1757039825177-2c509bbf-05ac-4782-aa44-e0283be43e60.jpeg" width="1280" title="null" crop="0,0,1,1" id="eY3GE" class="ne-image">
+
+打开后，等待扫描设备，在“可用设备”中点击要配对的设备后，将弹出配对窗口，分别在开发板和配对设备上点击“配对”：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/jpeg/50461850/1757039825274-06f653e8-8c23-42c8-adaf-40b399a71e67.jpeg" width="1280" title="null" crop="0,0,1,1" id="WDf44" class="ne-image">
+
+<img src="https://cdn.nlark.com/yuque/0/2025/jpg/50461850/1757039825363-41c236ba-61f7-4795-ab39-187e3787f74f.jpg" width="1200" title="null" crop="0,0,1,1" id="hYAUB" class="ne-image">
+
+配对成功后会在“已配对的设备”中显示：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/jpeg/50461850/1757039825456-a85265ae-9820-4603-b54b-849b0eef64ac.jpeg" width="1280" title="null" crop="0,0,1,1" id="YoboP" class="ne-image">
+
+注意：openharmony 蓝牙功能目前不支持收发文件，如需二次连接，需要将设备从“已配对的设备”中删除。该功能是鸿蒙的蓝牙协议只做到了这种程度，并不是飞凌没有配置。
+
+## 3.9 USB摄像头测试
+插入USB摄像头后，打开“相机”应用，可预览摄像头画面：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/jpeg/50461850/1757039825545-6d0d4526-2cb4-4aee-a9af-20179d47ef2b.jpeg" width="1280" title="null" crop="0,0,1,1" id="u41cO" class="ne-image">
+
+## 3.10 命令行测试
+### 3.10.1 有线网卡测试
+插入网线到P14 ETH0上，设置IP，测试前先关闭无线网络。可ping 通局域网。同样 ETH1 类似，不再单独测试。
+
+注意：以下测试命令中的IP地址仅为演示，使用时请根据实际情况替换IP地址。
+
+```bash
+# ifconfig eth0 192.168.0.232 netmask 255.255.255.0 up  /*设置IP*/
+# ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr d8:1a:56:a6:7c:d2  Driver rk_gmac-dwmac
+          inet addr:192.168.0.232  Bcast:192.168.0.255  Mask:255.255.255.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:1147 errors:0 dropped:5 overruns:0 frame:0
+          TX packets:92 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:118374 TX bytes:25784
+          Interrupt:47
+# busybox route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0      *               255.255.255.0   U     0      0        0 eth0
+# ping 192.168.0.233 -I eth0
+Ping 192.168.0.233 (192.168.0.233) from eth0 (192.168.0.232): 56(84) bytes.
+64 bytes from 192.168.0.233: icmp_seq=1 ttl=128 time=1 ms
+64 bytes from 192.168.0.233: icmp_seq=2 ttl=128 time=1 ms
+64 bytes from 192.168.0.233: icmp_seq=3 ttl=128 time=1 ms
+
+--- 192.168.0.233 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss
+round-trip min/avg/max = 1/1/1 ms 
+```
+
+### 3.10.2 TF卡及USB存储测试
+本测试为TF卡及usb存储设备测试。将U盘设备插入到OK3568 USB Host口中。系统将自动检测到U盘的插入。
+
+U盘挂载到/mnt/external 路径下，比如挂载到EEA3-9B12，暂不支持界面读写U盘内容。
+
+```bash
+/dev/block/vol-8-1 on /mnt/external/EEA3-9B12 type vfat (rw,relatime,uid=1006,gid=1006,fmask=0007,dmask=0007,allow_utime=0020,codepage=936,iocharset=utf8,shortname=mixed,errors=remount-ro)
+```
+
+TF卡测试
+
+TF卡挂载到/mnt/external 路径下，比如挂载到/mnt/external/C8A0-78CE，暂不支持界面读写TF卡内容。
+
+```bash
+# mount | grep external
+/dev/block/vol-179-97 on /mnt/external/C8A0-78CE type vfat (rw,relatime,uid=1006,gid=1006,fmask=0007,dmask=0007,allow_utime=0020,codepage=936,iocharset=utf8,shortname=mixed,errors=remount-ro)
+```
+
+### 3.10.3 GPIO测试
+OK3568开发板上P7排针引出了部分gpio，以gpio3B3为例进行测试。
+
+```bash
+# echo 107 >  /sys/class/gpio/export
+# echo out > /sys/class/gpio/gpio107/direction
+# echo 1 > /sys/class/gpio/gpio107/value        //使用万用表测量gpio引脚，此时是高电平
+# echo 0 > /sys/class/gpio/gpio107/value        //使用万用表测量gpio引脚，此时是低电平
+```
+
+### 3.10.4 串口测试
+串口3 4 5 短接测试。uart3/4/5分别对应/dev/ttyS3、/dev/ttyS4、/dev/ttyS5节点。
+
+以串口3为例测试，短接P7上的RX3、TX3：
+
+```bash
+# uarttest -d /dev/ttyS3
+Welcome to uart test
+Send test data:
+forlinx_uart_test.1234567890...
+Read Test Data finished,Read:
+forlinx_uart_test.1234567890...
+```
+
+### 3.10.5 HDC测试
+Hdc（harmonyOS Device Connector）是为开发人员提供的用于设备连接调试的命令行工具，通过该工具可以在windows/linux系统上与设备进行交互。
+
+Hdc功能连接开发板有两种方式：USB和TCP。
+
+另外，openharmony5.1增加了图形界面查看开发板文件的功能。
+
+#### 3.10.5.1 USB连接开发板
+USB连接开发板硬件上需要进行的操作：
+
+使用Type-C线，usb一端连接windows主机，Type-C一端连接开发板上usb3.0下方的Type-C接口；将S2拨码切换到OFF。
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516728061-b377e68b-8811-4c88-88a7-bd87b03215e5.png" width="575" title="null" crop="0,0,1,1" id="rMAM2" class="ne-image">
+
+在windows中，右击“此电脑”，选择“管理”，在“计算机管理”窗口中选择“设备管理器”。Hdc设备连接成功后，设备管理器中会新增一项“通用串行总线设备”，该项有一个“HDC Device”设备。
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516728143-435f2831-2762-407c-995d-49083bf478a9.png" width="723" title="null" crop="0,0,1,1" id="IljjM" class="ne-image">
+
+ 路径：用户资料\ OpenHarmony5.1\3-工具\toolchains-windows-x64-5.1.0.108-Release.zip
+
+将上述路径文件解压到任意目录，打开toolchains文件夹，删除下图中路径后，输入“cmd”，打开命令行窗口。
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516728244-1ba55da3-4e6d-4e21-8920-559168e14a48.png" width="748" title="null" crop="0,0,1,1" id="mJm73" class="ne-image">
+
+<img src="https://cdn.nlark.com/yuque/0/2024/png/49874024/1730516728308-2c1aaed0-0a33-4ef3-8a16-261ea86870e2.png" width="831" title="null" crop="0,0,1,1" id="hAoVI" class="ne-image">
+
+Hdc的使用方法如下：
+
+```bash
+C:\Users\Administrator\Desktop\toolchains>hdc -v              //查看hdc工具版本
+Ver: 1.2.0a
+
+C:\Users\Administrator\Desktop\toolchains>hdc -h              //查看hdc工具帮助
+
+                         OpenHarmony device connector(HDC) ...
+
+---------------------------------global commands:----------------------------------
+ -h/help                               - Print hdc help
+ -v/version                            - Print hdc version
+……（工具帮助的详细信息省略）
+
+C:\Users\Administrator\Desktop\toolchains>hdc list targets        //查看设备
+4501004447343031360167bb9c2caa00
+
+C:\Users\Administrator\Desktop\toolchains>hdc list targets -v     //查看设备的详细信息
+4501004447343031360167bb9c2caa00                USB     Connected       localhost       hdc
+COM1            UART    Ready           hdc
+
+C:\Users\Administrator\Desktop\toolchains>hdc file send <filename1> <path1>  //发送文件到开发板，filename1为windows上文件名，path1为开发板上的路径，发送的结果有以下两种
+FileTransfer finish, Size:xxx, File count = 1, time: xxx ms rate: xxx kB/s    //发送成功
+[Fail]Error opening file: read-only file system, path://xxxx                 //发送失败，失败原因：指定的开发板上path路径是只读的，可以在开发板上使用mount -o remount,rw <path> 命令解除只读
+
+C:\Users\Administrator\Desktop\toolchains>hdc file recv <filename2> <path2>  //从开发板拷贝文件，filename2为开发板上文件名，path2为windows上的路径
+
+C:\Users\Administrator\Desktop\toolchains>hdc install xxx.hap       //安装HAP应用
+
+//注意：如果有多个hdc设备，hdc shell命令无法进入shell终端
+C:\Users\Administrator\Desktop\toolchains>hdc shell                //打开shell终端
+# ls              //打开成功后会出现“#”标识，使用exit命令可退出shell终端
+bin        config       eng_system  lost+found     storage   tmp
+chip_ckm   data         etc         mnt            sys       updater
+chip_prod  dev          init        module_update  sys_prod  vendor
+chipset    eng_chipset  lib         proc           system
+# exit
+C:\Users\Administrator\Desktop\toolchains>
+
+C:\Users\Administrator\Desktop\toolchains>hdc shell <command>    //不进入shell终端运行command命令，例如：hdc shell ls
+C:\Users\Administrator\Desktop\toolchains>hdc shell ls
+bin
+chip_ckm
+chip_prod
+chipset
+…（此处省略输出信息）
+C:\Users\Administrator\Desktop\toolchains>
+```
+
+上述命令是hdc使用的简单介绍，详细使用方法可以参考Openharmony官网。
+
+#### 3.10.5.2 TCP连接开发板
+   TCP连接开发板，需要使用IP地址。开发板连接网线，参照3.8.1章节配置网口IP。
+
+	注意：以下测试命令中的IP地址仅为演示，使用时请根据实际情况替换IP地址。
+
+在调试串口终端，查看tcp端口号：
+
+```bash
+# param get | grep port			 # 获取hdc 端口信息
+    persist.hdc.port = 52188
+    persist.sys.abilityms.support.ecologicalrulemgrservice = true
+    persist.sys.abilityms.support_anco_app = false
+    const.telephony.satellite.supported = 0
+    
+# param set persist.hdc.port 43051		#若没有hdc.port，则指定hdc端口
+
+# hdcd -t &                  # 开启tcp选项
+[1] 4063
+Option TCP enabled
+# netstat -tuln                # 查看tcp端口号，这里端口号是：43051
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 0.0.0.0:52188           0.0.0.0:*               LISTEN     
+tcp        0      0 0.0.0.0:43051           0.0.0.0:*               LISTEN
+udp        0      0 0.0.0.0:8710            0.0.0.0:*
+udp        0      0 0.0.0.0:8710            0.0.0.0:*
+```
+
+在windows cmd中打开hdc工具，使用IP连接开发板：
+
+```bash
+C:\Users\Administrator\Desktop\toolchains>hdc tconn 192.168.0.232:43051     //使用ip连接开发板
+Connect OK
+
+C:\Users\Administrator\Desktop\toolchains>hdc -t 192.168.0.232:43051 shell    //打开shell终端
+# exit                                                                   //退出shell终端
+
+C:\Users\Administrator\Desktop\toolchains>
+
+C:\Users\Administrator\Desktop\toolchains>hdc -t <IP>:<端口号> <command>
+//USB连接开发板的hdc命令添加上-t <IP>:<端口号>，即为IP连接开发板时hdc命令
+C:\Users\Administrator\Desktop\toolchains>hdc -t 192.168.0.232:43051 file send <filename1> <path1>
+C:\Users\Administrator\Desktop\toolchains>hdc -t 192.168.0.232:43051 file recv <filename2> <path2>
+C:\Users\Administrator\Desktop\toolchains>hdc -t 192.168.0.232:43051 install xxx.hap
+```
+
+#### 3.10.5.3 图形界面传输文件图片
+按照“3.10.5.1 USB连接开发板”中连接usb线后，开发板屏幕桌面将显示下图弹窗，类似手机通数据线连接到电脑：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1757039825644-df6e90f3-0836-40f9-ab7e-33c7b355f8a8.png" width="1280" title="null" crop="0,0,1,1" id="O6iy0" class="ne-image">
+
+有“仅充电”、“传输图片”、“传输文件”3个选项：
+
+如果不需要图形界面打开开发板，可以选择“仅充电”；
+
+如果只涉及图库中图片和视频的传输，可以选择“传输图片”：
+
+windows电脑上打开“此电脑”，可以看到“openharmony5.1”设备。
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1757039825759-f9fae7d4-1f8e-41d4-baa5-bf592f189ab4.png" width="1014" title="null" crop="0,0,1,1" id="mar4s" class="ne-image">
+
+将图片或视频复制到 “此电脑\OpenHarmony 5.1\内部存储\其它” 路径下，就可以在开发板的“图库”应用中看到图片或视频。
+
+注意：只能将图片复制到“其它”文件夹中，不能做其他修改，例如删除、重命名“其它”文件夹中的图片或视频；
+
+ “此电脑\OpenHarmony 5.1\内部存储\截图” 路径下存放的是开发板上进行截图得到的图片。
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1757039825874-b43e6965-a965-4354-9745-8923ad5a8f61.png" width="1014" title="null" crop="0,0,1,1" id="ZN4v9" class="ne-image">
+
+如果需要传输文件，可以选择“传输文件”，windows电脑上打开“此电脑”，可以看到“openharmony5.1”设备，此时“此电脑\OpenHarmony 5.1\内部存储”路径下的内容如下图：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1757039825956-bb414607-e1e1-429d-bd95-50cadf586ecd.png" width="1014" title="null" crop="0,0,1,1" id="CYn6z" class="ne-image">
+
+如果开发板上插入了TF卡或U盘，也能在“此电脑\OpenHarmony 5.1"路径下打开TF卡和U盘：
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/50461850/1757039826033-daaa6717-dcff-4df1-ad1b-885ac563630d.png" width="1012" title="null" crop="0,0,1,1" id="FbMUg" class="ne-image">

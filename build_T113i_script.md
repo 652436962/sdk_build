@@ -369,7 +369,7 @@ cd /workspace/tina5.0_v1.0
 source build/envsetup.sh
 
 # 6. 选择编译方案
-./build.sh config
+#./build.sh config
 
 # 7. 全量编译
 ./build.sh
@@ -389,7 +389,7 @@ docker start t113i-sdk
 docker exec -it t113i-sdk /bin/bash
 # 3. 进入 SDK 工作目录并加载编译环境
 cd /workspace/tina5.0_v1.0
-source build/envsetup.sh
+#source build/envsetup.sh
 # 4. 直接编译（无需重复安装依赖）
 ./build.sh
 # 5. 打包固件

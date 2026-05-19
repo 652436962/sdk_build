@@ -31,7 +31,7 @@ description: SDK 编译任务选择器，引导用户在 T527 / T113i / RK3562 /
 # T527
 read_file /media/lechi/linuxsdk/linuxsdk/build_T527_script.md
 # T527 OpenHarmony 5.0
-read_file /media/lechi/linuxsdk/linuxsdk/build_T527_openharmony_script.md
+read_file /media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md
 # T113i
 read_file /media/lechi/linuxsdk/linuxsdk/build_T113i_script.md
 # RK3562
@@ -54,14 +54,38 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 
 使用 `docker exec -d` 后台启动并 `tee build.log`，避免长流程因终端断连失败。
 
+#### 持续监控编译状态
+
+启动编译后，从宿主机实时跟踪进度：
+
+```bash
+# 方式一：持续滚动（Ctrl+C 退出）
+docker exec <容器名> tail -f <SDK路径>/build.log
+
+# 方式二：定时轮询（配合 watch 自动刷新）
+watch -n 5 "docker exec <容器名> tail -20 <SDK路径>/build.log"
+```
+
+各平台监控命令速查：
+
+| 平台 | 容器名 | build.log 路径 |
+|------|--------|----------------|
+| T527 Linux | `t527_linuxsdk` | `/workspace/OKT527-linux-sdk/build.log` |
+| T527 OH5.0 | `t527_openharmony` | `/home/openharmony/forlinx-5.0-release/build.log` |
+| T113i | `t113i-sdk` | `/workspace/tina5.0_v1.0/build.log` |
+| RK3562 | `rk3562-sdk` | `/home/ubuntu/rk3562/build.log` |
+| RK3568 | `rk3568_sdk` | `/home/ubuntu/OK3568-linux-source/build.log` |
+
+编译完成标志：`=====build  successful=====`（各平台类似）
+
 ---
 
 ## 可用平台列表
 
 | 序号 | 平台 | 开发板 | 编译文档 | OS 形态 |
 |------|------|--------|----------|---------|
-| 1 | T527 | 飞凌 OK527-C | `build_T527_script.md` | Linux + OpenHarmony 3.2 |
-| 1.1 | T527 OH5.0 | 飞凌 OK527-C | `build_T527_openharmony_script.md` | OpenHarmony 5.0 |
+| 1 | T527 | 飞凌 OK527-C | `build_T527_linuxsdk_script.md` | Linux |
+| 1.1 | T527 OH5.0 | 飞凌 OK527-C | `build_T527_ubuntu20_op_script.md` | OpenHarmony 5.0 |
 | 2 | T113i | 创龙 TL113i | `build_T113i_script.md` | Tina Linux 5.0 |
 | 3 | RK3562 | 创龙 TL3562 | `build_rk3562_script.md` | Buildroot / Ubuntu |
 | 4 | RK3568 | 飞凌 OK3568-C | `build_ok3568_script.md` | Buildroot |
@@ -74,11 +98,11 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 
 ```bash
 # 进入 SDK 目录
-cd /media/lechi/linuxsdk/linuxsdk/openharmony_T527/
+cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony/
 
 # 启动并进入容器
-sudo docker start okt527-oh5.0
-sudo docker exec -it okt527-oh5.0 /bin/bash
+docker start t527_openharmony
+docker exec -it t527_openharmony /bin/bash
 
 # 容器内：首次必须先跑预编译工具链（约 10 GB）
 cd /home/openharmony/forlinx-5.0-release
@@ -99,11 +123,11 @@ cd device/board/forlinx/okt527/kernel/build/
 cd /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5
 
 # 启动并进入容器
-docker start t113i
-docker exec -it t113i /bin/bash
+docker start t113i-sdk
+docker exec -it t113i-sdk /bin/bash
 
 # 容器内：编译 + 打包
-cd /home/ubuntu/tina
+cd /workspace/tina5.0_v1.0
 source build/envsetup.sh
 ./build.sh
 ./build.sh pack
@@ -116,8 +140,8 @@ source build/envsetup.sh
 cd /media/lechi/linuxsdk/linuxsdk/rk3562_sdk
 
 # 启动并进入容器
-docker start rk3562
-docker exec -it rk3562 /bin/bash
+docker start rk3562-sdk
+docker exec -it rk3562-sdk /bin/bash
 
 # 容器内：全量编译（约 1~2 小时，最终 update.img 约 5.9G）
 cd /home/ubuntu/rk3562
@@ -131,8 +155,8 @@ cd /home/ubuntu/rk3562
 cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk
 
 # 启动并进入容器
-docker start ok3568
-docker exec -it ok3568 /bin/bash
+docker start rk3568_sdk
+docker exec -it rk3568_sdk /bin/bash
 
 # 容器内：全量编译
 cd /home/ubuntu/OK3568-linux-source
@@ -145,7 +169,7 @@ cd /home/ubuntu/OK3568-linux-source
 
 ```bash
 # 查看所有相关容器状态
-docker ps -a | grep -E "t527|okt527|t113i|rk3562|ok3568"
+docker ps -a | grep -E "t527_linuxsdk|t527_openharmony|t113i-sdk|rk3562-sdk|rk3568_sdk"
 
 # 查看容器运行时间
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Created}}"
@@ -171,7 +195,7 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 ## 常见注意事项
 
 1. **首次编译 OpenHarmony 必须跑** `bash build/prebuilts_download.sh`，否则 `build.sh` 立即报错。
-2. **容器名一定区分平台**：T527 用 `okt527-oh5.0`，T113i 用 `t113i`，RK3562 用 `rk3562`，RK3568 用 `ok3568`。
+2. **容器名一定区分平台**：T527 Linux 用 `t527_linuxsdk`，T527 OH5.0 用 `t527_openharmony`，T113i 用 `t113i-sdk`，RK3562 用 `rk3562-sdk`，RK3568 用 `rk3568_sdk`。
 3. **后台长任务**：使用 `docker exec -d <name> bash -c "cmd 2>&1 | tee build.log"`，配合 `tail -f build.log` 跟踪。
 4. **镜像/源码权限报错**：到本机 SDK 根目录执行 `sudo chown -R $USER:$USER .`。
 5. **不打开多个并行编译**：磁盘 I/O 与内存压力会拖垮整机，逐平台串行。
