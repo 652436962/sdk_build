@@ -3,6 +3,8 @@ rk3562_sdk/
 rk3568_sdk/
 openharmony_T527/
 tina5.0_v2.5/
+t527_sdk/
+t527_openharmony/
 
 # ===== 归档包 / 压缩包 =====
 *.tar.gz

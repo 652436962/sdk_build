@@ -19,8 +19,12 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 ├── build_T527_openharmony_script.md  # T527 OpenHarmony 5.0 SDK Docker 编译环境完整文档
 ├── build_T527_ubuntu20_op_script.md  # T527 OpenHarmony 5.0 Ubuntu 20.04 编译环境文档
 ├── t527_sdk/                         # T527 Linux SDK 根目录
+│   ├── OKT527-linux-sdk/             # 飞凌 T527 Linux SDK（实际编译工作目录）
+│   ├── Source/                       # T527 源码目录
+│   ├── build.log                     # 编译日志
+│   ├── extract.log                   # 解压日志
+│   └── install_deps.log              # 依赖安装日志
 ├── t527_openharmony/                 # T527 OpenHarmony Docker 工作目录（挂载点）
-├── forlinx_cmd/                       # 飞凌测试工具源码（CAN/UART/SPI/GPIO/Watchdog 等）
 ├── rk3562_sdk/                       # RK3562 SDK 根目录
 │   ├── Lechi/                        # 自定义测试与调试脚本目录
 │   ├── hardware_peripherals.md       # RK3562 外设硬件说明
@@ -31,27 +35,32 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 │   └── OK3568-linux-source/          # RK3568 Linux 内核源码
 ├── openharmony_T527/                 # T527 OpenHarmony 5.0 SDK 根目录
 │   ├── forlinx-5.0-release/          # 飞凌 T527 OpenHarmony 发布版本（实际编译工作目录）
-│   ├── openharmony_prebuilts/        # OpenHarmony 预编译工具链
-│   └── 飞凌板级支持包/                  # 飞凌 T527 BSP 资料
+│   └── source/                       # OpenHarmony 源代码目录
 ├── tina5.0_v2.5/                     # T113i Tina Linux SDK 根目录
 │   ├── tina5.0_v1.0/                 # Tina 5.0 SDK 解压目录（实际编译工作目录）
 │   ├── dl.tar.gz                     # buildroot 下载缓存包
 │   ├── LinuxSDK-v2.1.tar.gz          # Linux SDK 归档包
 │   ├── tina5.0_fh_v1.0.tar.gz        # Tina 5.0 归档包
-│   ├── tina5.0_v1.0_2026-2-26.tar.gz # Tina SDK 带日期归档包
-│   ├── build.log                     # 编译日志
-│   └── install_deps.log              # 依赖安装日志
+│   └── tina5.0_v1.0_2026-2-26.tar.gz # Tina SDK 带日期归档包
 ├── 原厂编译文档/                        # 各平台原厂/工具使用文档
 │   ├── OK527.md                      # 飞凌 OK527 原厂编译文档
+│   ├── ok527编译linuxSDK.md           # T527 Linux SDK 编译说明（飞凌原版）
 │   ├── OpenixCLI_Tutorial.md         # OpenixCLI 全志烧录工具使用说明
 │   ├── upgrade_tool_Tutorial.md      # Rockchip upgrade_tool 烧录工具使用说明
 │   ├── HDC_INSTALL.md                # HDC 工具安装说明（OpenHarmony）
-│   └── build_rk3562_commands.md      # RK3562 常用编译命令速查
+│   ├── HDC_USAGE.md                  # HDC 工具使用说明（推送/调试）
+│   ├── OK3568-OH5.1-交叉编译应用.md    # RK3568 OpenHarmony 交叉编译应用指南
+│   ├── RK3562评估板测试手册.md          # RK3562 评估板硬件测试手册
+│   ├── build_rk3562_commands.md      # RK3562 常用编译命令速查
+│   └── openharmony测试文档             # OpenHarmony 测试说明文档
 ├── 模块/                               # 外设模块驱动与适配文档
 │   ├── aic8800/                      # AIC8800 WiFi/蓝牙驱动文档
 │   ├── ch340/                        # CH340/CH341 USB 转串口驱动
 │   ├── opT527_4g.md                  # T527 4G 模块适配文档
-│   └── oprk3568_4g.md                # RK3568 4G 模块适配文档
+│   ├── oprk3568_4g.md                # RK3568 4G 模块适配文档
+│   ├── T113-gpadc.md                 # T113i GPADC 驱动配置文档
+│   ├── T113-spiadc.md                # T113i SPI ADC 驱动配置文档
+│   └── rk3568_MCP23S17.md            # RK3568 MCP23S17 SPI GPIO 扩展芯片配置
 ├── skills/                            # Qoder 自定义 Skill 目录
 │   └── build-sdk/                    # SDK 编译相关 Skill
 ├── .gitignore
@@ -83,13 +92,22 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/` | RK3568 Linux 内核源码 |
 | `/media/lechi/linuxsdk/linuxsdk/build_ok3568_script.md` | RK3568 Buildroot 完整编译流程文档（Docker Ubuntu 20.04） |
 
+### T527 Linux SDK 相关
+| 路径 | 说明 |
+|------|------|
+| `/media/lechi/linuxsdk/linuxsdk/t527_sdk/` | T527 Linux SDK 根目录，挂载至 Docker 容器 `/workspace` |
+| `/media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/` | 飞凌 T527 Linux SDK（实际编译工作目录） |
+| `/media/lechi/linuxsdk/linuxsdk/t527_sdk/Source/` | T527 源码目录 |
+| `/media/lechi/linuxsdk/linuxsdk/build_T527_linuxsdk_script.md` | T527 Linux SDK 完整编译流程文档（Docker Ubuntu 20.04） |
+| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/ok527编译linuxSDK.md` | T527 Linux SDK 编译说明（飞凌原版） |
+
 ### T527 OpenHarmony 相关
 | 路径 | 说明 |
 |------|------|
 | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/` | T527 OpenHarmony 5.0 SDK 源代码目录 |
 | `/media/lechi/linuxsdk/linuxsdk/t527_openharmony/` | T527 OpenHarmony Docker 挂载点，映射至容器 `/home/openharmony` |
 | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/` | 飞凌 T527 OpenHarmony 发布版本（实际编译工作目录） |
-| `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/飞凌板级支持包/` | 飞凌 T527 BSP 参考资料 |
+| `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/source/` | OpenHarmony 源代码目录 |
 | `/media/lechi/linuxsdk/linuxsdk/build_T527_openharmony_script.md` | T527 OpenHarmony 5.0 完整编译流程文档（Docker Ubuntu 20.04） |
 | `/media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md` | T527 OpenHarmony 5.0 编译流程文档（Ubuntu 20.04 详细版） |
 | `/media/lechi/linuxsdk/linuxsdk/build_T527_linuxsdk_script.md` | T527 Linux SDK 完整编译流程文档 |
@@ -110,6 +128,9 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/模块/ch340/CH341SER_LINUX/` | CH340/CH341 USB 转串口 Linux 驱动源码 |
 | `/media/lechi/linuxsdk/linuxsdk/模块/opT527_4g.md` | T527 4G 模块适配文档 |
 | `/media/lechi/linuxsdk/linuxsdk/模块/oprk3568_4g.md` | RK3568 4G 模块适配文档 |
+| `/media/lechi/linuxsdk/linuxsdk/模块/T113-gpadc.md` | T113i GPADC 驱动配置与使用文档 |
+| `/media/lechi/linuxsdk/linuxsdk/模块/T113-spiadc.md` | T113i SPI ADC 驱动配置与使用文档 |
+| `/media/lechi/linuxsdk/linuxsdk/模块/rk3568_MCP23S17.md` | RK3568 MCP23S17 SPI GPIO 扩展芯片配置文档 |
 
 ### 烧录与工具文档
 | 路径 | 说明 |
@@ -117,6 +138,11 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/OpenixCLI_Tutorial.md` | OpenixCLI 全志烧录工具使用说明 |
 | `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/upgrade_tool_Tutorial.md` | Rockchip upgrade_tool 烧录工具使用说明 |
 | `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/HDC_INSTALL.md` | OpenHarmony HDC 调试工具安装说明 |
+| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/HDC_USAGE.md` | OpenHarmony HDC 工具详细使用说明（推送/调试） |
+| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/ok527编译linuxSDK.md` | T527 Linux SDK 编译说明（飞凌原版） |
+| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/OK3568-OH5.1-交叉编译应用.md` | RK3568 OpenHarmony 5.1 交叉编译应用指南 |
+| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/RK3562评估板测试手册.md` | RK3562 评估板硬件测试手册 |
+| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/openharmony测试文档` | OpenHarmony 测试说明文档 |
 
 ### Qoder 辅助目录
 | 路径 | 说明 |
