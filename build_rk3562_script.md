@@ -135,12 +135,13 @@ chmod +x ubuntu/build.sh
 内核默认编译的设备树为 **tl3562-evm**，支持 TL3562-EVM 开发板的基本外设（网口、USB、UART、GPIO、eMMC、SD卡、音频等）。
 
 **设备树源文件路径**：
-```
-ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts
-```
 
- defconfig arch/arm64/configs/rockchip_linux_defconfig
-
+| 文件类型 | 路径 |
+|---------|------|
+| 设备树（DTS） | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`]
+(file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
+| 内核 defconfig | [`ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig`]
+(file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig) |
 
 
 该设备树引用以下 dtsi 公共配置文件：

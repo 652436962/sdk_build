@@ -79,9 +79,12 @@ tar -xvf forlinx-5.0-release.tar.bz2 -C ../
 
 | 类型 | 路径 |
 |------|------|
-| 设备树（Bootloader） | [`device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts) |
-| 设备树（DTSI） | [`device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi) |
-| 编译配置 | [`device/soc/allwinner/t527/patches/config/t527_standard_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig) |
+| 设备树（Bootloader） | [`device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts`]
+(file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts) |
+| 设备树（DTSI） | [`device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi`]
+(file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi) |
+| 编译配置 | [`device/soc/allwinner/t527/patches/config/t527_standard_defconfig`]
+(file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig) |
 
 ---
 
@@ -585,6 +588,12 @@ docker exec -it t527_openharmony /bin/bash
 # 3. 进入 SDK 目录并编译
 cd /home/openharmony/forlinx-5.0-release
 ./build.sh --product-name okt527 --ccache
+
+# 注意
+//全编译；如果进行了修改，编译后发现修改不生效，需要先删掉out目录再编译
+//单独编译内核，如果对内核进行了修改，需要先删掉out/KERNEL_OBJ，再运行单独编译内核命令
+./build.sh --product-name okt527 --ccache --build-target kernel --gn-args linux_kernel_version=\"linux-5.10\"
+
 
 # 4. 打包生成固件（任选其一）
 # 方式一：pack.sh
