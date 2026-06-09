@@ -163,6 +163,19 @@ Temp = (Tadc - 500) / 10  (℃)
 
 > T527 平台下 NTC 温度传感器线性校准公式。500(mV) 为零点偏移，10(mV/℃) 为比例系数。
 
+### 5.4 关于 bc 命令中的 scale
+
+```
+echo "scale=N;表达式" | bc
+                        ↑
+                        bc 内置变量，控制计算结果保留 N 位小数
+                        不是 IIO 的 in_voltage_scale（ADC 量程比例系数）
+```
+
+> T527 GPADC 的 `cat data` 返回的就是毫伏(mV)，无需乘以任何比例系数。  
+> 脚本中 `scale=2` 仅控制 `bc` 的小数精度，与硬件无关。  
+> **不要**与 RK3562 IIO ADC 的 `/sys/bus/iio/devices/iio:device1/in_voltage_scale` 混淆。
+
 ---
 
 ## 六、采集脚本
