@@ -150,8 +150,8 @@ I    = Iadc / RS / GAIN  (A)
      = 测量值 / 5  (mA)
      = 测量值 / 5000  (A)
 
-RS = 50 mΩ（采样电阻）
-GAIN = 100（放大器增益）
+RS = 100 mΩ（采样电阻）
+GAIN = 50（放大器增益）
 ```
 
 ### 5.3 温度
@@ -173,8 +173,8 @@ echo "=== T527 GPADC 电压+电流+温度实时采集 (Ctrl+C 退出) ==="
 
 GPADC_PATH="/sys/class/gpadc/gpadc_chip0/data"
 KV=8.32
-RS=0.05
-GAIN=100.0
+RS=0.1
+GAIN=50.0
 
 while true; do
 	# 电压 CH4
