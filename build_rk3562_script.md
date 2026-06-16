@@ -547,13 +547,13 @@ exit
 # 1. 启动已存在的容器
 docker start rk3562-sdk
 # 2. 进入容器，执行编译
-docker exec -it rk3562-sdk bash -c "cd /workspace/rk3562_sdk/ubuntu && ./build.sh all"
+docker exec -it rk3562-sdk bash -c "cd /workspace/ubuntu && ./build.sh all"
 ```
 
 ### overlay 变更快速打包（跳过 U-Boot/内核）
 ```bash
 # 仅 overlay 内容变更时，无需完整重编
-docker exec -it rk3562-sdk bash -c "cd /workspace/rk3562_sdk/ubuntu && cp rootfs/rootfs.img rockchip/output/Image/ && cd rockchip && ./mkimage.sh pack"
+docker exec -it rk3562-sdk bash -c "cd /workspace/ubuntu && cp rootfs/rootfs.img rockchip/output/Image/ && cd rockchip && ./mkimage.sh pack"
 ```
 
 ### 烧写固件到板端
@@ -574,6 +574,14 @@ cat /opt/boot_count.log              # 预期：Boot #N ...
 
 ---
 **备注**：本文档适配官方 RK3562 Ubuntu SDK，Docker 环境与官方编译要求完全一致。
+
+
+
+
+
+
+
+
 
 ## 附录：交叉编译工具链（备选）
 
