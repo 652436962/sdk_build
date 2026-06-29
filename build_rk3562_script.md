@@ -130,114 +130,6 @@ chmod +x ubuntu/build.sh
 编译时长：10~30 分钟（取决于 CPU 核心数与内存）
 **固件输出路径**：`ubuntu/rockchip/output/update/Image/` 文件夹
 
-### 4.3 设备树说明
-
-内核默认编译的设备树为 **tl3562-evm**，支持 TL3562-EVM 开发板的基本外设（网口、USB、UART、GPIO、eMMC、SD卡、音频等）。
-
-**设备树源文件路径**：
-
-| 文件类型 | 路径 |
-|---------|------|
-| 设备树（DTS） | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`]
-(file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
-| 内核 defconfig | [`ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig`]
-(file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig) |
-
-
-该设备树引用以下 dtsi 公共配置文件：
-| 文件 | 说明 |
-|------|------|
-
-| `rk3562-evb2-ddr4-v10.dtsi` | DDR4 内存配置 |
-| `rk3562-linux.dtsi` | Linux 通用外设配置 |
-| `rk3562-rk809.dtsi` | RK809 电源管理芯片配置 |
-| `rk3562-amp.dtsi` | AMP（非对称多处理）配置 |
-
-**SDK 中存在的设备树文件**：
-
-| 文件 | 说明 |
-|------|------|
-| `tl3562-evm.dts` | 默认编译的设备树，支持TL3562-EVM基本外设（网口、USB、UART、GPIO、eMMC、SD卡、音频等），不支持MIPI LCD、LVDS LCD、SDIO WIFI以及蓝牙音频设备（通过WIFI/BT接口接入TL8800I模块实现）。 |
-| `tl3562-evm-bluetooth-audio.dts` | 基于默认设备树，支持蓝牙音频设备（通过WIFI/BT接口接入TL8800I模块实现），不支持MIC、喇叭、有线耳机。 |
-| `tl3562-evm-lvds-lcd.dts` | 基于默认设备树，支持LVDS LCD显示，不支持HDMI OUT显示。 |
-| `tl3562-evm-mipi-lcd.dts` | 基于默认设备树，支持MIPI LCD显示，不支持HDMI OUT显示。 |
-| `tl3562-evm-sdio-wifi.dts` | 基于默认设备树，支持SDIO WIFI，不支持5G。 |
-
-
-> 编译内核时，`build.sh` 会自动使用 `tl3562-evm.dts` 作为默认设备树，编译生成 `tl3562-evm.img` 内核镜像。
-
-### 4.4 Overlay 自定义集成（rootfs 定制）
-
-SDK 支持通过 **overlay 机制** 将自定义配置（主机名、systemd 服务、脚本程序等）自动集成到 rootfs 中，编译烧写后即可开箱即用，无需手动 scp 部署。
-
-#### 原理
-
-`mkimage.sh pack` 打包阶段会自动调用 `post-overlay.sh`，将 `overlays/rootfs/` 下的文件通过 rsync 覆盖到 rootfs：
-
-```
-overlays/rootfs/lechi/            mkimage.sh pack
-    ├── etc/hostname          ──→  ┌─────────────────┐
-    ├── etc/hosts             ──→  │  post-overlay.sh │  ──→  rootfs.img（含所有自定义配置）
-    ├── opt/watchdog/         ──→  │  (rsync +        │
-    ├── opt/rebootcheck/      ──→  │   systemd link)  │
-    ├── etc/systemd/system/   ──→  └─────────────────┘
-    └── install.sh
-```
-
-#### Overlay 目录结构
-
-```
-ubuntu/rockchip/device/rockchip/common/overlays/rootfs/lechi/
-├── install.sh                                    # 安装脚本（SDK 自动调用）
-├── etc/
-│   ├── hostname                                  # 主机名 → Lechi
-│   ├── hosts                                     # hosts 映射（127.0.1.1 Lechi）
-│   └── systemd/system/
-│       ├── watchdog.service                      # GPIO 看门狗喂狗服务（Type=simple）
-│       └── rebootcheck.service                   # 重启检测服务（Type=oneshot）
-└── opt/
-    ├── watchdog/
-    │   └── watchdog.sh                           # GPIO 495 翻转喂狗脚本
-    └── rebootcheck/
-        └── fltest_rebootcheck                    # 启动计数二进制程序
-└── gpio/
-    └── lctest_gpio.sh                       # GPIO 控制脚本（全志/瑞芯微）
-```
-
-#### install.sh 核心逻辑
-
-```bash
-#!/bin/bash -e
-TARGET_DIR="$1"
-POST_OS="$2"
-
-# 1. rsync 所有文件到 rootfs（排除 install.sh 自身）
-$RK_RSYNC "${0%/*}/" "$TARGET_DIR/" --exclude install.sh
-
-# 2. 创建 systemd 符号链接实现开机自启
-mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
-ln -sf /etc/systemd/system/watchdog.service "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/"
-ln -sf /etc/systemd/system/rebootcheck.service "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/"
-```
-
-> 详细步骤参考 `rootfs_mount_guide.md` 第二章节。
-
-#### 添加新 overlay 的步骤
-
-1. 在 `overlays/rootfs/` 下创建子目录，按板端目标路径组织文件
-2. 编写 `install.sh`（rsync 文件 + systemd 符号链接）
-3. `chmod +x install.sh`
-4. 执行 `./build.sh all` 重新编译打包，overlay 即自动生效
-
-#### 仅 overlay 变更时的快速打包
-
-若仅 overlay 内容变更（无需重编 U-Boot 和内核），可直接执行：
-
-```bash
-cp ubuntu/rootfs/rootfs.img ubuntu/rockchip/output/Image/
-cd ubuntu/rockchip && ./mkimage.sh pack
-```
-
 ---
 
 ## 五、退出与重新进入
@@ -583,16 +475,122 @@ cat /opt/boot_count.log              # 预期：Boot #N ...
 
 
 
-## 附录：交叉编译工具链（备选）
+## 附录
+
+### 设备树说明
+
+内核默认编译的设备树为 **tl3562-evm**，支持 TL3562-EVM 开发板的基本外设（网口、USB、UART、GPIO、eMMC、SD卡、音频等）。
+
+**设备树源文件路径**：
+
+| 文件类型 | 路径 |
+|---------|------|
+| 设备树（DTS） | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
+| 内核 defconfig | [`ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig) |
+
+该设备树引用以下 dtsi 公共配置文件：
+
+| 文件 | 说明 |
+|------|------|
+| `rk3562-evb2-ddr4-v10.dtsi` | DDR4 内存配置 |
+| `rk3562-linux.dtsi` | Linux 通用外设配置 |
+| `rk3562-rk809.dtsi` | RK809 电源管理芯片配置 |
+| `rk3562-amp.dtsi` | AMP（非对称多处理）配置 |
+
+**SDK 中存在的设备树文件**：
+
+| 文件 | 说明 |
+|------|------|
+| `tl3562-evm.dts` | 默认编译的设备树，支持TL3562-EVM基本外设（网口、USB、UART、GPIO、eMMC、SD卡、音频等），不支持MIPI LCD、LVDS LCD、SDIO WIFI以及蓝牙音频设备（通过WIFI/BT接口接入TL8800I模块实现）。 |
+| `tl3562-evm-bluetooth-audio.dts` | 基于默认设备树，支持蓝牙音频设备（通过WIFI/BT接口接入TL8800I模块实现），不支持MIC、喇叭、有线耳机。 |
+| `tl3562-evm-lvds-lcd.dts` | 基于默认设备树，支持LVDS LCD显示，不支持HDMI OUT显示。 |
+| `tl3562-evm-mipi-lcd.dts` | 基于默认设备树，支持MIPI LCD显示，不支持HDMI OUT显示。 |
+| `tl3562-evm-sdio-wifi.dts` | 基于默认设备树，支持SDIO WIFI，不支持5G。 |
+
+> 编译内核时，`build.sh` 会自动使用 `tl3562-evm.dts` 作为默认设备树，编译生成 `tl3562-evm.img` 内核镜像。
+
+### Overlay 自定义集成（rootfs 定制）
+
+SDK 支持通过 **overlay 机制** 将自定义配置（主机名、systemd 服务、脚本程序等）自动集成到 rootfs 中，编译烧写后即可开箱即用，无需手动 scp 部署。
+
+#### 原理
+
+`mkimage.sh pack` 打包阶段会自动调用 `post-overlay.sh`，将 `overlays/rootfs/` 下的文件通过 rsync 覆盖到 rootfs：
+
+```
+overlays/rootfs/lechi/            mkimage.sh pack
+    ├── etc/hostname          ──→  ┌─────────────────┐
+    ├── etc/hosts             ──→  │  post-overlay.sh │  ──→  rootfs.img（含所有自定义配置）
+    ├── opt/watchdog/         ──→  │  (rsync +        │
+    ├── opt/rebootcheck/      ──→  │   systemd link)  │
+    ├── etc/systemd/system/   ──→  └─────────────────┘
+    └── install.sh
+```
+
+#### Overlay 目录结构
+
+```
+ubuntu/rockchip/device/rockchip/common/overlays/rootfs/lechi/
+├── install.sh                                    # 安装脚本（SDK 自动调用）
+├── etc/
+│   ├── hostname                                  # 主机名 → Lechi
+│   ├── hosts                                     # hosts 映射（127.0.1.1 Lechi）
+│   └── systemd/system/
+│       ├── watchdog.service                      # GPIO 看门狗喂狗服务（Type=simple）
+│       └── rebootcheck.service                   # 重启检测服务（Type=oneshot）
+└── opt/
+    ├── watchdog/
+    │   └── watchdog.sh                           # GPIO 495 翻转喂狗脚本
+    └── rebootcheck/
+        └── fltest_rebootcheck                    # 启动计数二进制程序
+└── gpio/
+    └── lctest_gpio.sh                       # GPIO 控制脚本（全志/瑞芯微）
+```
+
+#### install.sh 核心逻辑
+
+```bash
+#!/bin/bash -e
+TARGET_DIR="$1"
+POST_OS="$2"
+
+# 1. rsync 所有文件到 rootfs（排除 install.sh 自身）
+$RK_RSYNC "${0%/*}/" "$TARGET_DIR/" --exclude install.sh
+
+# 2. 创建 systemd 符号链接实现开机自启
+mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+ln -sf /etc/systemd/system/watchdog.service "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/"
+ln -sf /etc/systemd/system/rebootcheck.service "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/"
+```
+
+> 详细步骤参考 `rootfs_mount_guide.md` 第二章节。
+
+#### 添加新 overlay 的步骤
+
+1. 在 `overlays/rootfs/` 下创建子目录，按板端目标路径组织文件
+2. 编写 `install.sh`（rsync 文件 + systemd 符号链接）
+3. `chmod +x install.sh`
+4. 执行 `./build.sh all` 重新编译打包，overlay 即自动生效
+
+#### 仅 overlay 变更时的快速打包
+
+若仅 overlay 内容变更（无需重编 U-Boot 和内核），可直接执行：
+
+```bash
+cp ubuntu/rootfs/rootfs.img ubuntu/rockchip/output/Image/
+cd ubuntu/rockchip && ./mkimage.sh pack
+```
+
+### 交叉编译工具链（备选）
 
 编译脚本已自动设置工具链，如需手动设置，可执行以下命令：
 
-### 1. U-Boot 和内核编译工具链
+#### 1. U-Boot 和内核编译工具链
 ```bash
 export PATH=/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rk3562-ubuntu20.04-sdk/rk3562-ubuntu20.04-sdk-v1.0/sysroots/x86_64-linux/bin/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH
 ```
 
-### 2. 应用编译工具链
+#### 2. 应用编译工具链
 ```bash
 export PATH=/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rk3562-ubuntu20.04-sdk/rk3562-ubuntu20.04-sdk-v1.0/environment:$PATH
 ```

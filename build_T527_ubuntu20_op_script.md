@@ -74,18 +74,6 @@ tar -xvf forlinx-5.0-release.tar.bz2 -C ../
 # ==============================================
 ```
 
-### 1.5 关键文件路径
-以下是飞凌 T527 开发板的关键配置文件路径：
-
-| 类型 | 路径 |
-|------|------|
-| 设备树（Bootloader） | [`device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts`]
-(file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts) |
-| 设备树（DTSI） | [`device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi`]
-(file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi) |
-| 编译配置 | [`device/soc/allwinner/t527/patches/config/t527_standard_defconfig`]
-(file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig) |
-
 ---
 
 ## 二、进入 Docker 编译环境
@@ -623,3 +611,14 @@ picocom -b 115200 /dev/ttyUSB0
 ---
 
 **备注**：本文档适配飞凌 OK527-C 开发板的 OpenHarmony 5.0 SDK，基于 Docker 自建 Ubuntu 20.04 编译环境。固件烧录工具推荐使用官方工具（详情请参考飞凌提供的烧录文档）。
+
+---
+
+## 附录：关键文件路径
+以下是飞凌 T527 开发板的关键配置文件路径：
+
+| 类型 | 路径 |
+|------|------|
+| 设备树（Bootloader） | [`device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts) |
+| 设备树（DTSI） | [`device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi) |
+| 编译配置 | [`device/soc/allwinner/t527/patches/config/t527_standard_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig) |

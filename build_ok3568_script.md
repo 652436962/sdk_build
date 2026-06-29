@@ -334,17 +334,6 @@ BR2_PACKAGE_PYTHON3_PY_PYC=y
 | Kernel | 内核配置 |
 | Target packages | 目标软件包选择 |
 
-### 6.4 交叉编译链位置
-编译完成后，交叉编译链位于以下路径：
-
-| 类型 | 路径 |
-|------|------|
-| 驱动/内核编译链 | `OK3568-linux-source/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-` |
-| 文件系统应用（QT等）编译链 | `OK3568-linux-source/buildroot/output/OK3568/host/bin/aarch64-linux-` |
-
-> **说明**：以上路径是执行 `./build.sh buildroot` 后的编译链生成位置。
-> 如果使用预置 `host.tar.bz2` 方式编译整包，需在编译完成后再解开 `host.tar.bz2` 即可获得编译链。
-
 ---
 
 ## 七、退出与重新进入
@@ -530,3 +519,28 @@ docker exec -it rk3568_sdk /bin/bash
 cd /workspace/OK3568-linux-source
 ./build.sh
 ```
+
+---
+
+## 附录：交叉编译链位置
+编译完成后，交叉编译链位于以下路径：
+
+| 类型 | 路径 |
+|------|------|
+| 驱动/内核编译链 | `OK3568-linux-source/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-` |
+| 文件系统应用（QT等）编译链 | `OK3568-linux-source/buildroot/output/OK3568/host/bin/aarch64-linux-` |
+
+> **说明**：以上路径是执行 `./build.sh buildroot` 后的编译链生成位置。
+> 如果使用预置 `host.tar.bz2` 方式编译整包，需在编译完成后再解开 `host.tar.bz2` 即可获得编译链。
+
+### 关键文件路径
+
+| 文件类型 | 路径 |
+|---------|------|
+| 内核 defconfig | [`kernel/arch/arm64/configs/OK3568-C-linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/configs/OK3568-C-linux_defconfig) |
+| 设备树（DTS） | [`kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts`](file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts) |
+| Buildroot defconfig | [`buildroot/configs/OK3568_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/buildroot/configs/OK3568_defconfig) |
+| U-Boot defconfig | `u-boot/configs/OK3568-C_defconfig` |
+| 分区参数 | [`device/rockchip/ok3568/parameter-buildroot-fit.txt`](file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/parameter-buildroot-fit.txt) |
+| BoardConfig | [`device/rockchip/ok3568/BoardConfig-ok3568.mk`](file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/BoardConfig-ok3568.mk) |
+| FIT 镜像描述 | [`device/rockchip/ok3568/boot.its`](file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/boot.its) |

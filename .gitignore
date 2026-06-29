@@ -1,6 +1,7 @@
 # ===== SDK 源码目录（体积过大，不同步） =====
 rk3562_sdk/
 rk3568_sdk/
+rk3568_ubuntu/
 openharmony_T527/
 tina5.0_v2.5/
 t527_sdk/

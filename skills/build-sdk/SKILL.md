@@ -12,7 +12,7 @@ description: SDK 编译任务选择器，引导用户在 T527 / T113i / RK3562 /
 - "编译 SDK" / "编译固件" / "build sdk" / "build firmware"
 - "开始编译" / "重新编译" / "全量编译"
 - "打包固件" / "生成镜像" / "出刷机包"
-- 提到具体平台名（T527、T113i、RK3562、RK3568）并要求构建
+- 提到具体平台名（T527、T113i、RK3562、RK3568、RK3568 Ubuntu）并要求构建
 
 ## 工作流程
 
@@ -21,7 +21,7 @@ description: SDK 编译任务选择器，引导用户在 T527 / T113i / RK3562 /
 读取下方"可用平台列表"表格，与用户的输入做匹配：
 
 - 用户已指定平台 → 直接进入步骤 2
-- 用户未指定平台 → 用 AskUserQuestion 让用户从 4 个选项中选择
+- 用户未指定平台 → 用 AskUserQuestion 让用户从 5 个选项中选择
 
 ### 步骤 2：读取对应平台的详细文档
 
@@ -36,8 +36,10 @@ read_file /media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md
 read_file /media/lechi/linuxsdk/linuxsdk/build_T113i_script.md
 # RK3562
 read_file /media/lechi/linuxsdk/linuxsdk/build_rk3562_script.md
-# RK3568
+# RK3568 Buildroot
 read_file /media/lechi/linuxsdk/linuxsdk/build_ok3568_script.md
+# RK3568 Ubuntu (Forlinx Desktop 20.04)
+read_file /media/lechi/linuxsdk/linuxsdk/build_rk3568_ubuntu22_script.md
 ```
 
 ### 步骤 3：环境检查（容器内编译统一三连）
@@ -74,7 +76,8 @@ watch -n 5 "docker exec <容器名> tail -20 <SDK路径>/build.log"
 | T527 OH5.0 | `t527_openharmony` | `/home/openharmony/forlinx-5.0-release/build.log` |
 | T113i | `t113i-sdk` | `/workspace/tina5.0_v1.0/build.log` |
 | RK3562 | `rk3562-sdk` | `/home/ubuntu/rk3562/build.log` |
-| RK3568 | `rk3568_sdk` | `/home/ubuntu/OK3568-linux-source/build.log` |
+| RK3568 Buildroot | `rk3568_sdk` | `/home/ubuntu/OK3568-linux-source/build.log` |
+| RK3568 Ubuntu | `rk3568_ubuntu` | `/workspace/OK3568-linux-source/build.log` |
 
 编译完成标志：`=====build  successful=====`（各平台类似）
 
@@ -89,6 +92,7 @@ watch -n 5 "docker exec <容器名> tail -20 <SDK路径>/build.log"
 | 2 | T113i | 创龙 TL113i | `build_T113i_script.md` | Tina Linux 5.0 |
 | 3 | RK3562 | 创龙 TL3562 | `build_rk3562_script.md` | Buildroot / Ubuntu |
 | 4 | RK3568 | 飞凌 OK3568-C | `build_ok3568_script.md` | Buildroot |
+| 5 | RK3568 Ubuntu | 飞凌 OK3568-C | `build_rk3568_ubuntu22_script.md` | Forlinx Desktop 20.04 |
 
 ---
 
@@ -163,13 +167,32 @@ cd /home/ubuntu/OK3568-linux-source
 ./build.sh
 ```
 
+### RK3568 Ubuntu (Forlinx Desktop 20.04)
+
+```bash
+# 进入 SDK 目录
+cd /media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu
+
+# 启动并进入容器
+docker start rk3568_ubuntu
+docker exec -it rk3568_ubuntu /bin/bash
+
+# 容器内：全编译 + 打包 Ubuntu 镜像
+cd /workspace/OK3568-linux-source
+./build.sh
+ln -rsf ubuntu-20.04-release/parameter.txt rockdev/parameter.txt
+ln -rsf ubuntu-20.04-release/ubuntu.img rockdev/rootfs.img
+./build.sh updateimg
+# 输出: rockdev/update.img
+```
+
 ---
 
 ## 状态检查命令
 
 ```bash
 # 查看所有相关容器状态
-docker ps -a | grep -E "t527_linuxsdk|t527_openharmony|t113i-sdk|rk3562-sdk|rk3568_sdk"
+docker ps -a | grep -E "t527_linuxsdk|t527_openharmony|t113i-sdk|rk3562-sdk|rk3568_sdk|rk3568_ubuntu"
 
 # 查看容器运行时间
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Created}}"
@@ -188,14 +211,15 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 | T527 (OH5.0) | `out/pack_out/okt527_uart0.img` | `out/pack_out/` |
 | T113i | `out/t113i_uart0.img` | `out/pack_out/` |
 | RK3562 | `ubuntu/rockchip/output/update/Image/update.img` | - |
-| RK3568 | `OK3568-linux-source/output/` | - |
+| RK3568 Buildroot | `rockdev/` | - |
+| RK3568 Ubuntu | `rockdev/update.img` | - |
 
 ---
 
 ## 常见注意事项
 
 1. **首次编译 OpenHarmony 必须跑** `bash build/prebuilts_download.sh`，否则 `build.sh` 立即报错。
-2. **容器名一定区分平台**：T527 Linux 用 `t527_linuxsdk`，T527 OH5.0 用 `t527_openharmony`，T113i 用 `t113i-sdk`，RK3562 用 `rk3562-sdk`，RK3568 用 `rk3568_sdk`。
+2. **容器名一定区分平台**：T527 Linux 用 `t527_linuxsdk`，T527 OH5.0 用 `t527_openharmony`，T113i 用 `t113i-sdk`，RK3562 用 `rk3562-sdk`，RK3568 Buildroot 用 `rk3568_sdk`，RK3568 Ubuntu 用 `rk3568_ubuntu`。
 3. **后台长任务**：使用 `docker exec -d <name> bash -c "cmd 2>&1 | tee build.log"`，配合 `tail -f build.log` 跟踪。
 4. **镜像/源码权限报错**：到本机 SDK 根目录执行 `sudo chown -R $USER:$USER .`。
 5. **不打开多个并行编译**：磁盘 I/O 与内存压力会拖垮整机，逐平台串行。

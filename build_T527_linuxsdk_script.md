@@ -260,39 +260,7 @@ cp your-logo.bmp device/config/chips/t527/boot-resource/boot-resource/bootlogo.b
 
 ---
 
-## 五、关键文件路径说明
-SDK 根目录 `OKT527-linux-sdk/` 下的关键配置文件：
-
-| 文件类型 | 路径 |
-|---------|------|
-| 内核配置 | [`buildroot/buildroot-202205/configs/OKT527-C-Linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/buildroot/buildroot-202205/configs/OKT527-C-Linux_defconfig) |
-| 设备树（DTSI） | [`bsp/configs/linux-5.15/sun55iw3p1.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/bsp/configs/linux-5.15/sun55iw3p1.dtsi) |
-| 设备树（公共） | [`kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Common.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Common.dtsi) |
-| 设备树（板级） | [`kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Linux.dts`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Linux.dts) |
-| sysconfig.fex | [`device/config/chips/t527/configs/okt527/sys_config.fex`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/device/config/chips/t527/configs/okt527/sys_config.fex) |
-| 文件系统 overlay | [`buildroot/buildroot-202205/board/forlinx/okt527/fs-overlay/`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/buildroot/buildroot-202205/board/forlinx/okt527/fs-overlay/) |
-| Buildroot target | [`out/t527/okt527/buildroot/buildroot/target/`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/out/t527/okt527/buildroot/buildroot/target/) |
-| U-Boot 环境变量 | [`device/config/chips/t527/configs/okt527/buildroot/env.cfg`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/device/config/chips/t527/configs/okt527/buildroot/env.cfg) |
-| 启动 logo | [`device/config/chips/t527/boot-resource/boot-resource/bootlogo.bmp`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/device/config/chips/t527/boot-resource/boot-resource/bootlogo.bmp) |
-
-> **说明**：编译时 `fs-overlay/` 内的文件会覆盖 `target/` 内同路径同名文件，修改文件系统优先在 `fs-overlay/` 下操作。
-
-### 5.1 测试程序源码路径
-| 类型 | 子目录 |
-|------|--------|
-| 命令行测试程序 | `platform/forlinx/forlinx_cmd_demo/` |
-| Qt 测试程序 | `platform/forlinx/forlinx_qt_demo/` |
-| 脚本测试（wifi/ap/gpio） | `buildroot/buildroot-202205/board/forlinx/okt527/fs-overlay/usr/bin/fltest_*.sh` |
-
-### 5.2 交叉编译链
-| 类型 | 路径 |
-|------|------|
-| 内核编译链 | `OKT527-linux-sdk/out/toolchain/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-` |
-| 应用编译链（Buildroot） | `OKT527-linux-sdk/out/t527/okt527/buildroot/buildroot/host/bin/aarch64-none-linux-gnu-` |
-
----
-
-## 六、内核与文件系统配置
+## 五、内核与文件系统配置
 ### 6.1 修改内核配置
 直接编辑 defconfig：
 ```bash
@@ -489,3 +457,35 @@ cd /workspace/OKT527-linux-sdk
 ./build.sh 2>&1 | tee build.log
 ./build.sh pack
 ```
+
+---
+
+## 附录：关键文件路径说明
+SDK 根目录 `OKT527-linux-sdk/` 下的关键配置文件：
+
+| 文件类型 | 路径 |
+|---------|------|
+| 内核配置 | [`buildroot/buildroot-202205/configs/OKT527-C-Linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/buildroot/buildroot-202205/configs/OKT527-C-Linux_defconfig) |
+| 设备树（DTSI） | [`bsp/configs/linux-5.15/sun55iw3p1.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/bsp/configs/linux-5.15/sun55iw3p1.dtsi) |
+| 设备树（公共） | [`kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Common.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Common.dtsi) |
+| 设备树（板级） | [`kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Linux.dts`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/kernel/linux-5.15/arch/arm64/boot/dts/allwinner/OKT527-C-Linux.dts) |
+| sysconfig.fex | [`device/config/chips/t527/configs/okt527/sys_config.fex`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/device/config/chips/t527/configs/okt527/sys_config.fex) |
+| 文件系统 overlay | [`buildroot/buildroot-202205/board/forlinx/okt527/fs-overlay/`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/buildroot/buildroot-202205/board/forlinx/okt527/fs-overlay/) |
+| Buildroot target | [`out/t527/okt527/buildroot/buildroot/target/`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/out/t527/okt527/buildroot/buildroot/target/) |
+| U-Boot 环境变量 | [`device/config/chips/t527/configs/okt527/buildroot/env.cfg`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/device/config/chips/t527/configs/okt527/buildroot/env.cfg) |
+| 启动 logo | [`device/config/chips/t527/boot-resource/boot-resource/bootlogo.bmp`](file:///media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/device/config/chips/t527/boot-resource/boot-resource/bootlogo.bmp) |
+
+> **说明**：编译时 `fs-overlay/` 内的文件会覆盖 `target/` 内同路径同名文件，修改文件系统优先在 `fs-overlay/` 下操作。
+
+### 测试程序源码路径
+| 类型 | 子目录 |
+|------|--------|
+| 命令行测试程序 | `platform/forlinx/forlinx_cmd_demo/` |
+| Qt 测试程序 | `platform/forlinx/forlinx_qt_demo/` |
+| 脚本测试（wifi/ap/gpio） | `buildroot/buildroot-202205/board/forlinx/okt527/fs-overlay/usr/bin/fltest_*.sh` |
+
+### 交叉编译链
+| 类型 | 路径 |
+|------|------|
+| 内核编译链 | `OKT527-linux-sdk/out/toolchain/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-` |
+| 应用编译链（Buildroot） | `OKT527-linux-sdk/out/t527/okt527/buildroot/buildroot/host/bin/aarch64-none-linux-gnu-` |
