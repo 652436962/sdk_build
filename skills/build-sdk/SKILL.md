@@ -58,7 +58,7 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 
 #### 持续监控编译状态
 
-启动编译后，从宿主机实时跟踪进度：
+**Agent 必须在启动编译后主动轮询日志，直到编译完成，不可只告知用户自行监控。**
 
 ```bash
 # 方式一：持续滚动（Ctrl+C 退出）
@@ -68,18 +68,45 @@ docker exec <容器名> tail -f <SDK路径>/build.log
 watch -n 5 "docker exec <容器名> tail -20 <SDK路径>/build.log"
 ```
 
+**Agent 轮询策略**：
+
+1. 启动 `docker exec -d` 后，等待 5~8 秒让编译初始化
+2. 执行 `tail -30` 检查日志是否开始输出，确认编译已进入编译阶段
+3. 每隔 60 秒用 `tail -20` 快速检查进度，向用户报告当前阶段（如 brandy / kernel / buildroot）
+4. 当检测到完成标志后，进入步骤 5
+
 各平台监控命令速查：
 
-| 平台 | 容器名 | build.log 路径 |
-|------|--------|----------------|
-| T527 Linux | `t527_linuxsdk` | `/workspace/OKT527-linux-sdk/build.log` |
-| T527 OH5.0 | `t527_openharmony` | `/home/openharmony/forlinx-5.0-release/build.log` |
-| T113i | `t113i-sdk` | `/workspace/tina5.0_v1.0/build.log` |
-| RK3562 | `rk3562-sdk` | `/home/ubuntu/rk3562/build.log` |
-| RK3568 Buildroot | `rk3568_sdk` | `/home/ubuntu/OK3568-linux-source/build.log` |
-| RK3568 Ubuntu | `rk3568_ubuntu` | `/workspace/OK3568-linux-source/build.log` |
+| 平台 | 容器名 | build.log 路径 | 成功标志 |
+|------|--------|----------------|----------|
+| T527 Linux | `t527_linuxsdk` | `/workspace/OKT527-linux-sdk/build.log` | `=====build  successful=====` |
+| T527 OH5.0 | `t527_openharmony` | `/home/openharmony/forlinx-5.0-release/build.log` | `=====build  successful=====` |
+| T113i | `t113i-sdk` | `/workspace/tina5.0_v1.0/build.log` | `INFO: build OK.` + `pack finish` |
+| RK3562 | `rk3562-sdk` | `/home/ubuntu/rk3562/build.log` | `=====build  successful=====` |
+| RK3568 Buildroot | `rk3568_sdk` | `/home/ubuntu/OK3568-linux-source/build.log` | `=====build  successful=====` |
+| RK3568 Ubuntu | `rk3568_ubuntu` | `/workspace/OK3568-linux-source/build.log` | `=====build  successful=====` |
 
-编译完成标志：`=====build  successful=====`（各平台类似）
+编译完成标志：各平台略有不同 — T113i 为 `INFO: build OK.`（编译）+ `pack finish`（打包），其余平台类似 `=====build  successful=====`
+
+### 步骤 5：询问是否烧写固件
+
+编译 + 打包全部成功后，**必须**用 `AskUserQuestion` 询问用户：
+
+> "编译已成功完成，是否需要将固件烧写到开发板？"
+
+- 用户选择"跳过" → 结束流程，告知固件路径
+- 用户选择对应烧写方式 → 根据下方「各平台烧写命令」执行
+
+烧写前先确认设备连接：
+
+```bash
+# Rockchip 平台（RK3562 / RK3568）
+lsusb | grep -i rockchip
+sudo upgrade_tool LD
+
+# Allwinner 平台（T113i / T527）
+openixcli scan
+```
 
 ---
 
@@ -130,12 +157,18 @@ cd /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5
 docker start t113i-sdk
 docker exec -it t113i-sdk /bin/bash
 
-# 容器内：编译 + 打包
+# 容器内：编译 + 打包（两步都必须执行，否则不生成最终 .img 镜像）
 cd /workspace/tina5.0_v1.0
 source build/envsetup.sh
-./build.sh
-./build.sh pack
+./build.sh          # 编译内核、U-Boot、rootfs
+./build.sh pack     # 打包生成最终 .img 刷机镜像（必须显式执行）
 ```
+
+> **后台编译**：`./build.sh` 和 `./build.sh pack` 必须链式执行，缺一不可：
+> ```bash
+> docker exec -d t113i-sdk bash -c \
+>   "cd /workspace/tina5.0_v1.0 && source build/envsetup.sh && ./build.sh 2>&1 | tee build.log && ./build.sh pack 2>&1 | tee -a build.log"
+> ```
 
 ### RK3562 Buildroot
 
@@ -188,6 +221,107 @@ ln -rsf ubuntu-20.04-release/ubuntu.img rockdev/rootfs.img
 
 ---
 
+## 各平台烧写命令
+
+烧写通过宿主机（非容器内）执行。Linux 下使用 USB OTG 线连接开发板。
+
+### 烧写前准备
+
+```bash
+# 检查烧写工具是否可用
+which upgrade_tool    # Rockchip 平台
+which openixcli       # Allwinner 平台
+
+# 扫描已连接设备
+openixcli scan        # Allwinner
+sudo upgrade_tool LD  # Rockchip
+```
+
+### 设备进入烧写模式
+
+| 平台 | 进入方式 |
+|------|----------|
+| **T113i** | 断电 → 按住 FEL 键 → 上电 → 松键 |
+| **T527** | 断电 → 按住 FEL 键 → 上电 → 松键 |
+| **RK3562** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
+| **RK3568** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
+
+### T113i Tina Linux（Allwinner，openixcli）
+
+```bash
+# 1. 扫描设备（应先进入 FEL 模式再执行）
+openixcli scan
+
+# 2. 烧写固件
+openixcli flash /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i_linux_tlt113-evm-emmc_uart0.img
+
+# 常用选项：
+# openixcli flash --verify false <img>    # 跳过校验（加速）
+# openixcli flash --mode partition <img>  # 仅烧写分区（保留数据）
+```
+
+### T527 Linux / T527 OH5.0（Allwinner，openixcli）
+
+```bash
+# 1. 扫描设备
+openixcli scan
+
+# 2. 烧写固件（路径见「编译输出路径」表格）
+openixcli flash /media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/out/t527_linux_okt527_uart0.img
+
+# T527 OH5.0 镜像：
+# openixcli flash /media/lechi/linuxsdk/linuxsdk/t527_openharmony/forlinx-5.0-release/out/pack_out/okt527_uart0.img
+```
+
+### RK3562 Buildroot（Rockchip，upgrade_tool）
+
+```bash
+# 1. 检查设备连接（应显示 Maskrom 或 Loader 模式）
+sudo upgrade_tool LD
+
+# 2. 全量烧写 update.img
+sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/output/update/Image/update.img
+
+# 预期输出：
+# Download Firmware Start
+# Download Image... (100%)
+# Download Firmware Success
+# Upgrade firmware ok.
+
+# 烧写完成后设备自动重启
+```
+
+### RK3568 Buildroot（Rockchip，upgrade_tool）
+
+```bash
+# 1. 检查设备连接
+sudo upgrade_tool LD
+
+# 2. 全量烧写
+sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3568_sdk/rockdev/update.img
+
+# 3. 分步烧写（仅更新部分分区）
+cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk/rockdev/
+sudo upgrade_tool ul MiniLoaderAll.bin
+sudo upgrade_tool di -p parameter.txt
+sudo upgrade_tool di -u uboot.img
+sudo upgrade_tool di -b boot.img
+sudo upgrade_tool di -rootfs rootfs.img
+sudo upgrade_tool rd   # 重启
+```
+
+### RK3568 Ubuntu（Rockchip，upgrade_tool / TF 卡）
+
+```bash
+# 全量烧写
+sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu/rockdev/update.img
+
+# 或写入 TF 卡后插入开发板启动
+# sudo dd if=/media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu/rockdev/update.img of=/dev/sdX bs=1M status=progress
+```
+
+---
+
 ## 状态检查命令
 
 ```bash
@@ -209,7 +343,7 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 |------|--------|----------|
 | T527 (Linux) | `out/t527_linux_okt527_uart0.img` | `out/pack_out/` |
 | T527 (OH5.0) | `out/pack_out/okt527_uart0.img` | `out/pack_out/` |
-| T113i | `out/t113i_uart0.img` | `out/pack_out/` |
+| T113i | `out/t113_i_linux_tlt113-evm-emmc_uart0.img` | `out/t113_i/tlt113-evm-emmc/pack_out/` |
 | RK3562 | `ubuntu/rockchip/output/update/Image/update.img` | - |
 | RK3568 Buildroot | `rockdev/` | - |
 | RK3568 Ubuntu | `rockdev/update.img` | - |
@@ -223,6 +357,8 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 3. **后台长任务**：使用 `docker exec -d <name> bash -c "cmd 2>&1 | tee build.log"`，配合 `tail -f build.log` 跟踪。
 4. **镜像/源码权限报错**：到本机 SDK 根目录执行 `sudo chown -R $USER:$USER .`。
 5. **不打开多个并行编译**：磁盘 I/O 与内存压力会拖垮整机，逐平台串行。
+6. **T113i 编译 = 两步**：`./build.sh` 只编译组件（内核、U-Boot、rootfs），**不会**生成最终 `.img` 镜像。必须显式执行 `./build.sh pack` 才能打包出刷机镜像，否则镜像文件日期不会更新。
+7. **烧写前确认设备模式**：Rockchip 需 `sudo upgrade_tool LD` 看到 Maskrom/Loader，Allwinner 需进入 FEL 模式。烧写全程不拔 USB 线。
 
 ---
 
