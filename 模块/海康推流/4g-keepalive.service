@@ -1,0 +1,13 @@
+[Unit]
+Description=4G Keepalive Monitor — 断线自动重拨和重建路由
+After=4g-route.service
+Requires=4g-route.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/4g_keepalive.sh
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

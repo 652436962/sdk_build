@@ -619,6 +619,9 @@ picocom -b 115200 /dev/ttyUSB0
 
 | 类型 | 路径 |
 |------|------|
-| 设备树（Bootloader） | [`device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts) |
-| 设备树（DTSI） | [`device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi) |
-| 编译配置 | [`device/soc/allwinner/t527/patches/config/t527_standard_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig) |
+| 设备树（Bootloader） | `device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts` |
+|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/okt527/linux-5.10/board.dts |
+| 设备树（DTSI） | `device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi` |
+|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi |
+| 编译配置 | `device/soc/allwinner/t527/patches/config/t527_standard_defconfig` |
+|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig |

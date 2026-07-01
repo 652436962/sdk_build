@@ -592,5 +592,6 @@ export PATH=/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rk3562-ubuntu20.04-
 
 #### 2. 应用编译工具链
 ```bash
-export PATH=/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rk3562-ubuntu20.04-sdk/rk3562-ubuntu20.04-sdk-v1.0/environment:$PATH
+source /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rk3562-ubuntu20.04-sdk/rk3562-ubuntu20.04-sdk-v1.0/environment
+make CC=aarch64-linux-gnu-gcc
 ```
