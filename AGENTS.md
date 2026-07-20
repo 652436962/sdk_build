@@ -9,6 +9,7 @@ This is a **multi-platform embedded SDK build orchestration repo**. Actual SDK s
   - T527 OpenHarmony 5.0 (`t527_openharmony/`, `openharmony_T527/`) — container `t527_openharmony`
   - T113i (`tina5.0_v2.5/`) — container `t113i-sdk`, Allwinner Tina Linux
   - RK3562 (`rk3562_sdk/`) — container `rk3562-sdk`, Rockchip
+  - RK3562 Huayun (`huayun_sdk/`) — container `huayun-sdk`, Rockchip (分支自 rk3562_sdk)
   - RK3568 Buildroot (`rk3568_sdk/`) — container `rk3568_sdk`, Rockchip buildroot
   - RK3568 Ubuntu (`rk3568_ubuntu/`) — container `rk3568_ubuntu`, Rockchip, Forlinx Desktop 20.04
 
@@ -29,6 +30,7 @@ Container ↔ platform mapping (exact names matter):
 | T527 OH5.0 | `t527_openharmony` | `t527_openharmony/` → `/home/openharmony` | `ubuntu:20.04` |
 | T113i | `t113i-sdk` | `tina5.0_v2.5/` → `/workspace` | `ubuntu:18.04` |
 | RK3562 | `rk3562-sdk` | `rk3562_sdk/` → `/workspace` | `ubuntu:20.04` |
+| RK3562 Huayun | `huayun-sdk` | `huayun_sdk/` → `/workspace` | `ubuntu:20.04` |
 | RK3568 Buildroot | `rk3568_sdk` | `rk3568_sdk/` → `/workspace` | `ubuntu:20.04` |
 | RK3568 Ubuntu | `rk3568_ubuntu` | `rk3568_ubuntu/` → `/workspace` | `ubuntu:22.04` |
 
@@ -48,7 +50,7 @@ docker exec <name> tail -f <path>/build.log
 
 ### Do NOT modify SDK source dirs
 
-All SDK source directories (`t527_sdk/`, `t527_openharmony/`, `rk3562_sdk/`, `rk3568_sdk/`, `rk3568_ubuntu/`, `openharmony_T527/`, `tina5.0_v2.5/`) are in `.gitignore`. Changes to them are not versioned and not part of this repo. Only work with files tracked by git.
+All SDK source directories (`t527_sdk/`, `t527_openharmony/`, `rk3562_sdk/`, `huayun_sdk/`, `rk3568_sdk/`, `rk3568_ubuntu/`, `openharmony_T527/`, `tina5.0_v2.5/`) are in `.gitignore`. Changes to them are not versioned and not part of this repo. Only work with files tracked by git.
 
 ### Platform-specific gotchas
 
@@ -67,6 +69,7 @@ All SDK source directories (`t527_sdk/`, `t527_openharmony/`, `rk3562_sdk/`, `rk
 | T527 OH5.0 | `./build.sh --product-name okt527 --ccache` | `cd device/board/forlinx/okt527/kernel/build && ./pack.sh` | `/home/openharmony/forlinx-5.0-release` |
 | T113i | `source build/envsetup.sh && ./build.sh` | `./build.sh pack` | `/workspace/tina5.0_v1.0` |
 | RK3562 | `./ubuntu/build.sh all` | (included in `all`) | `/workspace` |
+| RK3562 Huayun | `./ubuntu/build.sh all` | (included in `all`) | `/workspace` |
 | RK3568 Buildroot | `./build.sh` | (automatic) | `/workspace/OK3568-linux-source` |
 | RK3568 Ubuntu | `./build.sh defconfig && ./build.sh` | (included in `all`) | `/workspace/OK3568-linux-source` |
 

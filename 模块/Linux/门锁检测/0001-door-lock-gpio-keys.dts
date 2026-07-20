@@ -1,0 +1,23 @@
+/*
+ * GPIO0_A0 复用为输入中断，连接门锁检测传感器。
+ * 通过 gpio-keys 框架注册为按键事件，应用层监听 /dev/input/eventX
+ * 判断门锁开/关状态变化。
+ */
+door_lock: gpio-keys {
+	compatible = "gpio-keys";
+	pinctrl-names = "default";
+	pinctrl-0 = <&gpio_key_pin>;
+	door_lock_key: door-lock {
+		label = "door-lock";
+		linux,code = <KEY_PROG1>;
+		gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
+		debounce-interval = <10>;
+	};
+};
+
+/* pinctrl 配置：GPIO0_A0 作为门锁检测输入，浮空输入 */
+gpio-keys {
+	gpio_key_pin: gpio-key-pin {
+		rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
+	};
+};

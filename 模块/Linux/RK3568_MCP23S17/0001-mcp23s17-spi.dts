@@ -1,0 +1,20 @@
+/*
+ * RK3568 MCP23S17 SPI GPIO 扩展芯片设备树配置
+ * MCP23S17 通过 SPI0 总线连接，提供 16 路扩展 GPIO。
+ * 注意：如果 SPI 总线还连接了其他设备（如 spidev），需要将 reg 号错开。
+ */
+&spi0 {
+    pinctrl-names = "default", "high_speed";
+    pinctrl-0 = <&spi0m1_cs0 &spi0m1_pins>;
+    pinctrl-1 = <&spi0m1_cs0 &spi0m1_pins_hs>;
+    status = "okay";
+
+    mcp23s17@0 {
+        compatible = "microchip,mcp23s17";
+        gpio-controller;
+        #gpio-cells = <2>;
+        microchip,spi-present-mask = <0x01>;
+        reg = <0>;
+        spi-max-frequency = <1000000>;
+    };
+};

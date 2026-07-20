@@ -1,6 +1,6 @@
 ---
 name: build-sdk
-description: SDK 编译任务选择器，引导用户在 T527 / T113i / RK3562 / RK3568 四个嵌入式平台中选择目标平台并按对应 build_*_script.md 文档执行 Docker 容器启动、SDK 编译与固件打包流程。当用户说"编译 SDK"、"编译固件"、"build sdk"、"build firmware"、"开始编译"、"打包固件"、"刷机镜像"等需要构建嵌入式 Linux/OpenHarmony 镜像的指令时使用。
+description: SDK 编译任务选择器，引导用户在 T527 / T113i / RK3562 / RK3562 Huayun / RK3568 五个嵌入式平台中选择目标平台并按对应 build_*_script.md 文档执行 Docker 容器启动、SDK 编译与固件打包流程。当用户说"编译 SDK"、"编译固件"、"build sdk"、"build firmware"、"开始编译"、"打包固件"、"刷机镜像"等需要构建嵌入式 Linux/OpenHarmony 镜像的指令时使用。
 ---
 
 # Build SDK 任务选择器
@@ -36,6 +36,8 @@ read_file /media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md
 read_file /media/lechi/linuxsdk/linuxsdk/build_T113i_script.md
 # RK3562
 read_file /media/lechi/linuxsdk/linuxsdk/build_rk3562_script.md
+# RK3562 Huayun（华云分支）
+read_file /media/lechi/linuxsdk/linuxsdk/build_huayun_script.md
 # RK3568 Buildroot
 read_file /media/lechi/linuxsdk/linuxsdk/build_ok3568_script.md
 # RK3568 Ubuntu (Forlinx Desktop 20.04)
@@ -46,9 +48,9 @@ read_file /media/lechi/linuxsdk/linuxsdk/build_rk3568_ubuntu22_script.md
 
 ```bash
 # 1) 容器是否存在
-docker ps -a | grep -E "t527|t113i|rk3562|ok3568"
+docker ps -a | grep -E "t527|t113i|rk3562|huayun|ok3568"
 # 2) SDK 目录权限
-ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openharmony"
+ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|huayun|rk3568|openharmony"
 # 3) 是否需要 chown -R $USER:$USER（参见对应文档"权限问题"小节）
 ```
 
@@ -83,6 +85,7 @@ watch -n 5 "docker exec <容器名> tail -20 <SDK路径>/build.log"
 | T527 OH5.0 | `t527_openharmony` | `/home/openharmony/forlinx-5.0-release/build.log` | `=====build  successful=====` |
 | T113i | `t113i-sdk` | `/workspace/tina5.0_v1.0/build.log` | `INFO: build OK.` + `pack finish` |
 | RK3562 | `rk3562-sdk` | `/home/ubuntu/rk3562/build.log` | `=====build  successful=====` |
+| RK3562 Huayun | `huayun-sdk` | `/workspace/build.log` | `=====build  successful=====` |
 | RK3568 Buildroot | `rk3568_sdk` | `/home/ubuntu/OK3568-linux-source/build.log` | `=====build  successful=====` |
 | RK3568 Ubuntu | `rk3568_ubuntu` | `/workspace/OK3568-linux-source/build.log` | `=====build  successful=====` |
 
@@ -118,6 +121,7 @@ openixcli scan
 | 1.1 | T527 OH5.0 | 飞凌 OK527-C | `build_T527_ubuntu20_op_script.md` | OpenHarmony 5.0 |
 | 2 | T113i | 创龙 TL113i | `build_T113i_script.md` | Tina Linux 5.0 |
 | 3 | RK3562 | 创龙 TL3562 | `build_rk3562_script.md` | Buildroot / Ubuntu |
+| 3.1 | RK3562 Huayun | 创龙 TL3562 | `build_huayun_script.md` | Buildroot / Ubuntu（华云分支） |
 | 4 | RK3568 | 飞凌 OK3568-C | `build_ok3568_script.md` | Buildroot |
 | 5 | RK3568 Ubuntu | 飞凌 OK3568-C | `build_rk3568_ubuntu22_script.md` | Forlinx Desktop 20.04 |
 
@@ -185,6 +189,20 @@ cd /home/ubuntu/rk3562
 ./build.sh all
 ```
 
+### RK3562 Huayun（华云分支）
+
+```bash
+# 进入 SDK 目录
+cd /media/lechi/linuxsdk/linuxsdk/huayun_sdk
+
+# 启动并进入容器
+docker start huayun-sdk
+docker exec -it huayun-sdk /bin/bash
+
+# 容器内：全量编译（容器已预配置依赖和修复）
+cd /workspace && ./ubuntu/build.sh all
+```
+
 ### RK3568 Buildroot
 
 ```bash
@@ -244,9 +262,12 @@ sudo upgrade_tool LD  # Rockchip
 | **T113i** | 断电 → 按住 FEL 键 → 上电 → 松键 |
 | **T527** | 断电 → 按住 FEL 键 → 上电 → 松键 |
 | **RK3562** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
+| **RK3562 Huayun** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
 | **RK3568** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
 
 ### T113i Tina Linux（Allwinner，openixcli）
+
+> ⚠️ 执行前请将开发板进入 FEL 烧写模式（断电 → 按住 FEL 键 → 上电 → 等待2秒 → 松键）
 
 ```bash
 # 1. 扫描设备（应先进入 FEL 模式再执行）
@@ -262,9 +283,11 @@ openixcli flash /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t11
 
 ### T527 Linux / T527 OH5.0（Allwinner，openixcli）
 
+> ⚠️ 执行前请将开发板进入 FEL 烧写模式（断电 → 按住 FEL 键 → 上电 → 等待2秒 → 松键）
+
 ```bash
-# 1. 扫描设备
-openixcli scan
+# 1. 扫描设备（未扫描到则等待5s后重试）
+openixcli scan || (sleep 5 && openixcli scan)
 
 # 2. 烧写固件（路径见「编译输出路径」表格）
 openixcli flash /media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/out/t527_linux_okt527_uart0.img
@@ -275,9 +298,11 @@ openixcli flash /media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/out/t52
 
 ### RK3562 Buildroot（Rockchip，upgrade_tool）
 
+> ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
+
 ```bash
-# 1. 检查设备连接（应显示 Maskrom 或 Loader 模式）
-sudo upgrade_tool LD
+# 1. 检查设备连接（应显示 Maskrom 或 Loader 模式，未扫描到则等待5s后重试）
+sudo upgrade_tool LD || (sleep 5 && sudo upgrade_tool LD)
 
 # 2. 全量烧写 update.img
 sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/output/update/Image/update.img
@@ -291,11 +316,27 @@ sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/o
 # 烧写完成后设备自动重启
 ```
 
-### RK3568 Buildroot（Rockchip，upgrade_tool）
+### RK3562 Huayun（Rockchip，upgrade_tool）
+
+> ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
 
 ```bash
-# 1. 检查设备连接
-sudo upgrade_tool LD
+# 1. 检查设备连接（应显示 Maskrom 或 Loader 模式，未扫描到则等待5s后重试）
+sudo upgrade_tool LD || (sleep 5 && sudo upgrade_tool LD)
+
+# 2. 全量烧写 update.img
+sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/huayun_sdk/ubuntu/rockchip/output/update/Image/update.img
+
+# 烧写完成后设备自动重启
+```
+
+### RK3568 Buildroot（Rockchip，upgrade_tool）
+
+> ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
+
+```bash
+# 1. 检查设备连接（未扫描到则等待5s后重试）
+sudo upgrade_tool LD || (sleep 5 && sudo upgrade_tool LD)
 
 # 2. 全量烧写
 sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3568_sdk/rockdev/update.img
@@ -312,6 +353,8 @@ sudo upgrade_tool rd   # 重启
 
 ### RK3568 Ubuntu（Rockchip，upgrade_tool / TF 卡）
 
+> ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
+
 ```bash
 # 全量烧写
 sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu/rockdev/update.img
@@ -326,13 +369,13 @@ sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu/rockdev/update
 
 ```bash
 # 查看所有相关容器状态
-docker ps -a | grep -E "t527_linuxsdk|t527_openharmony|t113i-sdk|rk3562-sdk|rk3568_sdk|rk3568_ubuntu"
+docker ps -a | grep -E "t527_linuxsdk|t527_openharmony|t113i-sdk|rk3562-sdk|huayun-sdk|rk3568_sdk|rk3568_ubuntu"
 
 # 查看容器运行时间
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Created}}"
 
 # 检查 SDK 目录是否存在
-ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openharmony"
+ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|huayun|rk3568|openharmony"
 ```
 
 ---
@@ -345,6 +388,7 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 | T527 (OH5.0) | `out/pack_out/okt527_uart0.img` | `out/pack_out/` |
 | T113i | `out/t113_i_linux_tlt113-evm-emmc_uart0.img` | `out/t113_i/tlt113-evm-emmc/pack_out/` |
 | RK3562 | `ubuntu/rockchip/output/update/Image/update.img` | - |
+| RK3562 Huayun | `ubuntu/rockchip/output/update/Image/update.img` | - |
 | RK3568 Buildroot | `rockdev/` | - |
 | RK3568 Ubuntu | `rockdev/update.img` | - |
 
@@ -353,7 +397,7 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|rk3568|openha
 ## 常见注意事项
 
 1. **首次编译 OpenHarmony 必须跑** `bash build/prebuilts_download.sh`，否则 `build.sh` 立即报错。
-2. **容器名一定区分平台**：T527 Linux 用 `t527_linuxsdk`，T527 OH5.0 用 `t527_openharmony`，T113i 用 `t113i-sdk`，RK3562 用 `rk3562-sdk`，RK3568 Buildroot 用 `rk3568_sdk`，RK3568 Ubuntu 用 `rk3568_ubuntu`。
+2. **容器名一定区分平台**：T527 Linux 用 `t527_linuxsdk`，T527 OH5.0 用 `t527_openharmony`，T113i 用 `t113i-sdk`，RK3562 用 `rk3562-sdk`，RK3562 Huayun 用 `huayun-sdk`，RK3568 Buildroot 用 `rk3568_sdk`，RK3568 Ubuntu 用 `rk3568_ubuntu`。
 3. **后台长任务**：使用 `docker exec -d <name> bash -c "cmd 2>&1 | tee build.log"`，配合 `tail -f build.log` 跟踪。
 4. **镜像/源码权限报错**：到本机 SDK 根目录执行 `sudo chown -R $USER:$USER .`。
 5. **不打开多个并行编译**：磁盘 I/O 与内存压力会拖垮整机，逐平台串行。

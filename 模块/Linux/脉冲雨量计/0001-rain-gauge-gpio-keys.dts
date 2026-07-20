@@ -1,0 +1,23 @@
+/*
+ * GPIO0_A0 复用为输入中断，连接翻斗式脉冲雨量计 (tipping bucket rain gauge)。
+ * 斗每翻转一次产生一个脉冲，通过 gpio-keys 框架注册为按键事件，
+ * 应用层通过轮询 /dev/input/eventX 统计脉冲次数换算降雨量。
+ */
+rain_gauge: gpio-keys {
+	compatible = "gpio-keys";
+	pinctrl-names = "default";
+	pinctrl-0 = <&gpio_key_pin>;
+	rain_gauge_key: rain-gauge {
+		label = "tipping-bucket-rain-gauge";
+		linux,code = <KEY_PROG1>;
+		gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
+		debounce-interval = <10>;
+	};
+};
+
+/* pinctrl 配置：GPIO0_A0 作为雨量计脉冲输入，浮空输入 */
+gpio-keys {
+	gpio_key_pin: gpio-key-pin {
+		rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
+	};
+};

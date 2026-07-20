@@ -553,3 +553,5 @@ exit
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig |
 | init 启动配置 | `base/startup/init/services/etc/init.cfg` |
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/base/startup/init/services/etc/init.cfg |
+| HCS 硬件配置 | `vendor/forlinx/okt527/hdf_config/khdf/device_info/device_info.hcs` |
+|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/vendor/forlinx/okt527/hdf_config/khdf/device_info/device_info.hcs |

@@ -625,3 +625,5 @@ picocom -b 115200 /dev/ttyUSB0
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/board/forlinx/okt527/bootloader/configs/default/linux-5.10/sun55iw3p1.dtsi |
 | 编译配置 | `device/soc/allwinner/t527/patches/config/t527_standard_defconfig` |
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig |
+| HCS 硬件配置 | `vendor/forlinx/okt527/hdf_config/khdf/device_info/device_info.hcs` |
+|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/vendor/forlinx/okt527/hdf_config/khdf/device_info/device_info.hcs |

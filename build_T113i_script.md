@@ -445,3 +445,102 @@ SDK 根目录 `tina5.0_v1.0/` 下，**tlt113-evm-emmc** 方案的关键配置文
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-tft-lcd.dts |
 
 > **说明**：`BoardConfig.mk` 中 `LICHEE_KERN_DEFCONF:=config-5.4` 指定内核使用 `config-5.4` 配置文件（非标准 defconfig 命名），而非 `kernel/` 目录下的通用 defconfig。
+
+---
+
+## 附录：应用交叉编译器
+
+T113i SDK 编译完成后，Buildroot 会自动生成一套完整的交叉编译工具链，可直接用于编译目标平台（ARM）上的用户态应用程序，无需额外安装外部工具链。
+
+### 工具链信息
+
+| 项目 | 内容 |
+|------|------|
+| 编译器路径 | `/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/bin/` |
+| 编译器前缀 | `arm-linux-gnueabi-` |
+| GCC 版本 | Linaro GCC 7.3-2018.05（7.3.1） |
+| 目标架构 | ARMv7-A（32 位，软浮点 eabi） |
+| sysroot 路径 | `/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/arm-buildroot-linux-gnueabi/sysroot` |
+
+### 设置环境变量
+
+在宿主机终端执行以下命令，将交叉编译器加入 PATH：
+
+```bash
+# 设置交叉编译器路径（绝对路径）
+export PATH="/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/bin:$PATH"
+
+# 设置 sysroot（供 pkg-config / autotools 构建系统使用）
+export STAGING_DIR="/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/arm-buildroot-linux-gnueabi/sysroot"
+
+# 验证编译器可用
+/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/bin/arm-linux-gnueabi-gcc --version
+```
+
+### 编译示例
+
+#### 简单 C 程序
+
+```bash
+# hello.c
+cat > hello.c << 'EOF'
+#include <stdio.h>
+int main() {
+    printf("Hello T113i!\n");
+    return 0;
+}
+EOF
+
+TOOLCHAIN_BIN="/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/bin"
+
+# 交叉编译（绝对路径）
+${TOOLCHAIN_BIN}/arm-linux-gnueabi-gcc -o hello hello.c
+
+# 验证二进制文件
+file hello
+# 输出: hello: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), ...
+```
+
+#### 带 sysroot 编译（使用第三方库）
+
+```bash
+TOOLCHAIN_BIN="/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/bin"
+STAGING_DIR="/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/arm-buildroot-linux-gnueabi/sysroot"
+
+${TOOLCHAIN_BIN}/arm-linux-gnueabi-gcc \
+  --sysroot=$STAGING_DIR \
+  -o myapp myapp.c \
+  -I${STAGING_DIR}/usr/include \
+  -L${STAGING_DIR}/usr/lib
+```
+
+CC = /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/usr/bin/arm-linux-gnueabi-g++
+
+
+
+### 工具链常用命令
+
+| 命令 | 用途 |
+|------|------|
+| `arm-linux-gnueabi-gcc` | C 编译器 |
+| `arm-linux-gnueabi-g++` | C++ 编译器 |
+| `arm-linux-gnueabi-ld` | 链接器 |
+| `arm-linux-gnueabi-ar` | 静态库归档工具 |
+| `arm-linux-gnueabi-strip` | 去除符号表，缩减体积 |
+| `arm-linux-gnueabi-objcopy` | 目标文件格式转换 |
+| `arm-linux-gnueabi-objdump` | 目标文件反汇编 |
+| `arm-linux-gnueabi-readelf` | ELF 文件信息查看 |
+
+### 注意事项
+
+1. 工具链由 Buildroot 编译生成，**必须先完成 SDK 全量编译**（`./build.sh`）后才能使用
+2. 编译器为 32 位 ARM 软浮点 EABI，**不支持 64 位程序**，请确认应用与目标平台匹配
+3. 如需在 CMake 项目中使用，可在 CMakeLists.txt 中指定 toolchain file：
+   ```cmake
+   set(CMAKE_SYSTEM_NAME Linux)
+   set(CMAKE_SYSTEM_PROCESSOR arm)
+   set(CMAKE_C_COMPILER /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/bin/arm-linux-gnueabi-gcc)
+   set(CMAKE_CXX_COMPILER /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/bin/arm-linux-gnueabi-g++)
+   set(CMAKE_SYSROOT /media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/out/t113_i/tlt113-evm-emmc/buildroot/buildroot/host/arm-buildroot-linux-gnueabi/sysroot)
+   ```
+4. `make clean` 或重新编译 SDK 不会清除工具链，手动删除 `out/` 目录后需要重新编译才能恢复

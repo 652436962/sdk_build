@@ -453,11 +453,7 @@ docker exec -it rk3562-sdk bash -c "cd /workspace/ubuntu && cp rootfs/rootfs.img
 # 1. 设备断电 → 按住 RECOVERY → 上电 → 2 秒后松键（进入 Maskrom）
 # 2. 烧写
 sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/output/update/Image/update.img
-# 3. 设备自动重启，SSH 验证
-ssh root@192.168.10.22
-cat /etc/hostname                    # 预期：Lechi
-systemctl status watchdog.service    # 预期：active (running)
-cat /opt/boot_count.log              # 预期：Boot #N ...
+
 ```
 
 > **固件输出位置**：`/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/output/update/Image/update.img`
@@ -488,14 +484,16 @@ cat /opt/boot_count.log              # 预期：Boot #N ...
 | 设备树（DTS） | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
 | 内核 defconfig | [`ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig) |
 
-该设备树引用以下 dtsi 公共配置文件：
+该设备树引用以下 dtsi 公共配置文件（完整路径均为 `ubuntu/Kernel/arch/arm64/boot/dts/rockchip/`）：
 
-| 文件 | 说明 |
-|------|------|
-| `rk3562-evb2-ddr4-v10.dtsi` | DDR4 内存配置 |
-| `rk3562-linux.dtsi` | Linux 通用外设配置 |
-| `rk3562-rk809.dtsi` | RK809 电源管理芯片配置 |
-| `rk3562-amp.dtsi` | AMP（非对称多处理）配置 |
+| 文件 | 路径 | 说明 |
+|------|------|------|
+| `rk3562-evb2-ddr4-v10.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb2-ddr4-v10.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb2-ddr4-v10.dtsi) | DDR4 内存配置 |
+| `rk3562-linux.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-linux.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-linux.dtsi) | Linux 通用外设配置 |
+| `rk3562-rk809.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-rk809.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-rk809.dtsi) | RK809 电源管理芯片配置 |
+| `rk3562-amp.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-amp.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-amp.dtsi) | AMP（非对称多处理）配置 |
+| `rk3562-evb.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb.dtsi) | EVB 板级公共配置（由 rk3562-evb2-ddr4-v10.dtsi 引入） |
+| `rk3562.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562.dtsi) | RK3562 SoC 核心定义（外设基地址、中断、时钟等，由 rk3562-evb2-ddr4-v10.dtsi 引入） |
 
 **SDK 中存在的设备树文件**：
 
@@ -509,77 +507,7 @@ cat /opt/boot_count.log              # 预期：Boot #N ...
 
 > 编译内核时，`build.sh` 会自动使用 `tl3562-evm.dts` 作为默认设备树，编译生成 `tl3562-evm.img` 内核镜像。
 
-### Overlay 自定义集成（rootfs 定制）
 
-SDK 支持通过 **overlay 机制** 将自定义配置（主机名、systemd 服务、脚本程序等）自动集成到 rootfs 中，编译烧写后即可开箱即用，无需手动 scp 部署。
-
-#### 原理
-
-`mkimage.sh pack` 打包阶段会自动调用 `post-overlay.sh`，将 `overlays/rootfs/` 下的文件通过 rsync 覆盖到 rootfs：
-
-```
-overlays/rootfs/lechi/            mkimage.sh pack
-    ├── etc/hostname          ──→  ┌─────────────────┐
-    ├── etc/hosts             ──→  │  post-overlay.sh │  ──→  rootfs.img（含所有自定义配置）
-    ├── opt/watchdog/         ──→  │  (rsync +        │
-    ├── opt/rebootcheck/      ──→  │   systemd link)  │
-    ├── etc/systemd/system/   ──→  └─────────────────┘
-    └── install.sh
-```
-
-#### Overlay 目录结构
-
-```
-ubuntu/rockchip/device/rockchip/common/overlays/rootfs/lechi/
-├── install.sh                                    # 安装脚本（SDK 自动调用）
-├── etc/
-│   ├── hostname                                  # 主机名 → Lechi
-│   ├── hosts                                     # hosts 映射（127.0.1.1 Lechi）
-│   └── systemd/system/
-│       ├── watchdog.service                      # GPIO 看门狗喂狗服务（Type=simple）
-│       └── rebootcheck.service                   # 重启检测服务（Type=oneshot）
-└── opt/
-    ├── watchdog/
-    │   └── watchdog.sh                           # GPIO 495 翻转喂狗脚本
-    └── rebootcheck/
-        └── fltest_rebootcheck                    # 启动计数二进制程序
-└── gpio/
-    └── lctest_gpio.sh                       # GPIO 控制脚本（全志/瑞芯微）
-```
-
-#### install.sh 核心逻辑
-
-```bash
-#!/bin/bash -e
-TARGET_DIR="$1"
-POST_OS="$2"
-
-# 1. rsync 所有文件到 rootfs（排除 install.sh 自身）
-$RK_RSYNC "${0%/*}/" "$TARGET_DIR/" --exclude install.sh
-
-# 2. 创建 systemd 符号链接实现开机自启
-mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
-ln -sf /etc/systemd/system/watchdog.service "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/"
-ln -sf /etc/systemd/system/rebootcheck.service "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/"
-```
-
-> 详细步骤参考 `rootfs_mount_guide.md` 第二章节。
-
-#### 添加新 overlay 的步骤
-
-1. 在 `overlays/rootfs/` 下创建子目录，按板端目标路径组织文件
-2. 编写 `install.sh`（rsync 文件 + systemd 符号链接）
-3. `chmod +x install.sh`
-4. 执行 `./build.sh all` 重新编译打包，overlay 即自动生效
-
-#### 仅 overlay 变更时的快速打包
-
-若仅 overlay 内容变更（无需重编 U-Boot 和内核），可直接执行：
-
-```bash
-cp ubuntu/rootfs/rootfs.img ubuntu/rockchip/output/Image/
-cd ubuntu/rockchip && ./mkimage.sh pack
-```
 
 ### 交叉编译工具链（备选）
 

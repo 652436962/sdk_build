@@ -1,0 +1,25 @@
+/*
+ * 全志 T113i GPADC 控制器节点
+ * 支持最多 2 路模拟输入通道 (CH0, CH1)，通过轮询方式分时采集。
+ */
+&gpadc {
+	/* 通道数量: 2 个采集通道 */
+	channel_num = <2>;
+
+	/* 通道选择掩码 0x3 = 0b0011，使能 CH0 和 CH1 */
+	channel_select = <0x3>;
+
+	/* 通道数据选择掩码，与 channel_select 保持一致 */
+	channel_data_select = <0x3>;
+
+	/* 比较功能: 关闭 */
+	channel_compare_select = <0>;
+
+	/* 低阈值检测: 关闭 */
+	channel_cld_select = <0>;
+
+	/* 高阈值检测: 关闭 */
+	channel_chd_select = <0>;
+
+	status = "okay";
+};

@@ -1,0 +1,17 @@
+/*
+ * 全志 T113i SPI1 引脚配置 (接外部 SPI ADC 芯片，如 MCP3008/ADS7953)
+ * PB9 (miso) → PD13 (miso)，解决原 PB9 引脚冲突
+ */
+spi1_pins_a: spi1@0 {
+	/* PB11=CLK, PB10=MOSI, PD13=MISO */
+	pins = "PB11", "PB10", "PD13";
+
+	/* 复用为 SPI1 控制器 */
+	function = "spi1";
+
+	/* 驱动强度: 10mA */
+	drive-strength = <10>;
+
+	/* 下拉偏置: 防止浮空抖动 */
+	bias-pull-down;
+};
