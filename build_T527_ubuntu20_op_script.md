@@ -79,31 +79,41 @@ tar -xvf forlinx-5.0-release.tar.bz2 -C ../
 ## 二、进入 Docker 编译环境
 
 ### 2.1 启动容器命令（首次执行）
-**先进入本机 T527 OpenHarmony SDK 根目录**，再执行以下命令，自动进入编译容器：
+**先进入本机 T527 OpenHarmony 工作目录**，再执行以下命令，创建后台编译容器：
 
 ```bash
-cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
+cd /media/lechi/linuxsdk/linuxsdk
 
-docker run -it --privileged \
+docker run -d --privileged \
    -m 27g \
-   --memory-swap 34g
+   --memory-swap 34g \
    --shm-size=2g \
    --cpus=$(nproc) \
-   -v $(pwd):/home/openharmony \
+   -v $(pwd)/t527_openharmony:/home/openharmony \
+   -v $(pwd)/openharmony_T527/forlinx-5.0-release:/home/openharmony/forlinx-5.0-release \
    -w /home/openharmony \
    -h t527-openharmony \
    --name t527_openharmony \
-   ubuntu:20.04 /bin/bash
+   ubuntu:20.04 \
+   sleep infinity
 ```
 
-> **注意**：`--privileged` 参数必须添加，否则后续挂载镜像或执行打包工具时会报 `Operation not permitted` 错误。
+> **注意**：
+> - `--privileged` 参数必须添加，否则后续挂载镜像或执行打包工具时会报 `Operation not permitted` 错误；
+> - 使用 `sleep infinity` 保持容器后台常驻，后续通过 `docker exec` 进入（见 2.3 节）；
+> - `t527_openharmony/forlinx-5.0-release` 需为指向 `openharmony_T527/forlinx-5.0-release` 的软链接（如缺失先执行 `ln -sfn /media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release /media/lechi/linuxsdk/linuxsdk/t527_openharmony/forlinx-5.0-release` 创建）。
 
 ### 2.2 命令参数说明
 | 参数 | 作用 |
 |------|------|
+| `--privileged` | 授予容器特权，打包固件与挂载镜像必需 |
+| `-m 27g` / `--memory-swap 34g` | 限制容器内存/交换空间，避免编译耗尽宿主资源 |
+| `--shm-size=2g` | 共享内存大小，编译打包需要 |
+| `--cpus=$(nproc)` | 使用宿主全部 CPU 核心参与编译 |
 | `--name t527_openharmony` | 容器命名，区别于 Linux SDK 容器 |
-| `-v $(pwd):/home/openharmony` | 本机 SDK 目录映射到容器，文件双向同步 |
-| `-w /home/openharmony` | 容器内默认进入 SDK 工作目录 |
+| `-v $(pwd)/t527_openharmony:/home/openharmony` | 本机工作目录映射到容器（含软链） |
+| `-v $(pwd)/openharmony_T527/forlinx-5.0-release:/home/openharmony/forlinx-5.0-release` | SDK 源码目录映射到容器，文件双向同步 |
+| `-w /home/openharmony` | 容器内默认进入工作目录 |
 | `-h t527-openharmony` | 设置容器主机名，方便识别 |
 
 ### 2.3 重新进入已存在的容器
@@ -176,7 +186,7 @@ apt-get install -y repo make gcc g++ expect patchelf chrpath gawk texinfo diffst
 # 数学/编码库
 apt-get install -y libgmp-dev libmpc-dev libicu-dev bsdmainutils
 
-# Python 3.10 及 pip（Ubuntu 20.04 默认版本）
+# Python 3.8 及 pip（Ubuntu 20.04 默认版本）
 apt-get install -y python3 python3-pip python3-distutils
 
 # 其他编译工具
@@ -206,7 +216,7 @@ ln -sf /bin/bash /bin/sh
 ln -sf /usr/bin/python3 /usr/bin/python
 ```
 
-### 3.6 执行预处理脚本
+### 3.6 执行预处理脚本与预编译工具链下载
 ```bash
 cd /home/openharmony/forlinx-5.0-release
 
@@ -214,9 +224,9 @@ cd device/board/forlinx/okt527/patch
 ./pre_build.sh
 
 cd /home/openharmony/forlinx-5.0-release
-```
 
 bash build/prebuilts_download.sh
+```
 
 ---
 
@@ -240,24 +250,6 @@ git config --global user.name "freeor"
 # ==============================================
 bash build/prebuilts_download.sh
 ```
-
-# =============================================
-# 步骤 4：git 配置
-# 说明 git配置
-
-
-
-#### 1.4.3 执行编译
-```bash
-
-# ==============================================
-# 执行完整编译
-# 本地路径：~/forlinx-5.0-release
-# 说明：编译 okt527 产品镜像，启用 ccache 加速
-# ==============================================
-./build.sh --product-name okt527 --ccache
-```
-
 
 ### 4.1 全量编译（推荐，生成完整刷机固件）
 ```bash
@@ -297,7 +289,9 @@ cd /home/openharmony/forlinx-5.0-release/device/board/forlinx/okt527/kernel/buil
 ./pack.sh
 ```
 
-**固件输出路径**：`out/pack_out/` 目录，生成的固件文件为 `t527_linux_okt527_uart0.img` 或类似文件。
+**固件输出路径**：最终烧录固件由 `.packconfig` 中的 `LICHEE_IC` / `LICHEE_PLATFORM` / `LICHEE_BOARD` 拼接命名，生成在 SDK 根目录 `out/` 下，即 `out/t527_linux_okt527_uart0.img`；`out/pack_out/` 目录存放分区中间产物（`.fex` 文件）。
+
+> **注意**：打包成功后 `pack.sh` 的脚本退出码可能为 1（详见 7.7），只要日志出现 `Dragon execute image.cfg SUCCESS` 与 `pack finish`，即表示打包成功。
 
 ---
 
@@ -448,7 +442,7 @@ sudo chown -R $USER:$USER .
 ln -sf /usr/bin/python3.8 /usr/bin/python
 ```
 
-### 7.6 编译产物清理
+### 7.5 编译产物清理
 ```bash
 # 清理编译产物（保留源码）
 cd /home/openharmony/forlinx-5.0-release
@@ -468,6 +462,81 @@ pack 脚本使用 `busybox unix2dos` 处理配置文件，如未安装会中断�
 apt-get update && apt-get install -y busybox
 ```
 
+### 7.7 pack.sh 退出码为 1（误报，实际打包成功）
+**现象**：`./pack.sh` 执行完毕后脚本退出码为 1，看似打包失败。
+
+**原因**：`pack.sh` 末行为 `[ $? -ne 0 ] && exit 1`，当 `mkpack` 成功返回 0 时，`[ 0 -ne 0 ]` 判定为假导致 `&&` 短路，该复合命令整体返回 1，作为脚本末行即成为整个脚本的退出码。这是脚本自身的写法缺陷。
+
+**判定方法**：打包日志中出现 `Dragon execute image.cfg SUCCESS !` 与 `pack finish`，且固件文件（`out/t527_linux_okt527_uart0.img`）已生成，即为打包成功，可忽略退出码。
+
+### 7.8 编译报错处理（FileNotFoundError）
+**现象**：编译过程中出现 `FileNotFoundError: error.log` 等错误
+
+**修复方法**：这是 hb 工具的 bug，不影响实际编译结果，可忽略。检查 out 目录下是否有生成的产物。
+
+### 7.9 GPIO 驱动编译错误
+**现象**：`gpio_adapter.c` 中 `gpiod_get_direction` 和 `gpio_to_desc` 隐式声明错误
+
+**原因**：内核源码编译时会重新克隆到 `out/KERNEL_OBJ/kernel/src_tmp/linux-5.10/`，原始源码修改需同步
+
+**修复方法**：
+1. 修改 `drivers/hdf_core/adapter/khdf/linux/platform/gpio/gpio_adapter.c`
+   添加头文件：
+   ```c
+   #include <linux/gpio.h>
+   #include <linux/gpio/consumer.h>
+   #include <linux/gpio/driver.h>
+   #include <linux/interrupt.h>
+   ```
+
+   注释掉 `gpiochip_find` 调用：
+   ```c
+   #if 0
+       (void)gpiochip_find(device, LinuxGpioMatchProbe);
+   #endif
+   ```
+
+2. 复制修复后的文件到内核编译目录：
+   ```bash
+   cp drivers/hdf_core/adapter/khdf/linux/platform/gpio/gpio_adapter.c \
+      out/KERNEL_OBJ/kernel/src_tmp/linux-5.10/drivers/hdf/khdf/platform/gpio/
+   ```
+
+### 7.10 rtc_time64_to_tm 未定义引用（已复核，无需修复）
+**现象**：内核链接时 `blackbox_common.o` 报 `rtc_time64_to_tm` 未定义引用
+
+**复核结论（2026-09-15）**：当前内核源码中 `rtc_time64_to_tm` 已由 `kernel/linux/linux-5.10/drivers/rtc/lib.c` 导出（`EXPORT_SYMBOL(rtc_time64_to_tm)`），符号可正常解析，**无需再做此修复**。以下为历史处理方式，仅在旧版本遇到该报错时参考。
+
+**历史修复方法**：
+1. 修改 `kernel/linux/linux-5.10/drivers/staging/blackbox/blackbox_common.c`
+   在文件开头添加：
+   ```c
+   #include <linux/timekeeping.h>
+
+   void rtc_time64_to_tm(time64_t time, struct rtc_time *tm)
+   {
+       if (tm == NULL) return;
+       tm->tm_sec = time % 60;
+       tm->tm_min = (time / 60) % 60;
+       tm->tm_hour = (time / 3600) % 24;
+       tm->tm_mday = (time / 86400) + 1;
+       tm->tm_mon = ((time / 86400) / 30) % 12;
+       tm->tm_year = ((time / 86400) / 365) + 70;
+   }
+   ```
+
+2. 复制修复后的文件到内核编译目录：
+   ```bash
+   cp kernel/linux/linux-5.10/drivers/staging/blackbox/blackbox_common.c \
+      out/KERNEL_OBJ/kernel/src_tmp/linux-5.10/drivers/staging/blackbox/
+   ```
+
+3. 提交到本地 git 仓库：
+   ```bash
+   cd kernel/linux/linux-5.10
+   git add drivers/staging/blackbox/blackbox_common.c
+   git commit -m "Add rtc_time64_to_tm stub for blackbox"
+   ```
 
 ## 八、编译结果验证
 
@@ -480,7 +549,7 @@ apt-get update && apt-get install -y busybox
 ```
 
 ### 8.2 固件输出路径
-固件输出目录：`out/pack_out/`
+固件输出目录：最终烧录固件位于 SDK 根目录 `out/` 下；`out/pack_out/` 目录存放分区中间产物（`.fex` 文件）。
 
 主要固件文件：
 | 文件 | 说明 |
@@ -491,7 +560,7 @@ apt-get update && apt-get install -y busybox
 | `rootfs.fex` | 根文件系统 |
 | `sys_prod.fex` | 系统配置 |
 | `vendor.fex` | 厂商分区 |
-| `t527_linux_okt527_uart0.img` | 最终烧录固件 |
+| `t527_linux_okt527_uart0.img` | 最终烧录固件（位于 `out/` 目录，约 5.0 GB） |
 
 ---
 
@@ -512,20 +581,23 @@ apt-get update && apt-get install -y busybox
 
 ### 首次使用（创建容器并进入）
 ```bash
-# 1. 进入 SDK 目录
-cd /media/lechi/linuxsdk/linuxsdk/t527_openharmony
+# 1. 进入工作目录
+cd /media/lechi/linuxsdk/linuxsdk
 
-# 2. 启动容器（需要 --privileged 参数，使用 Ubuntu 20.04）
-docker run -it --privileged \
+# 2. 启动容器并进入（需要 --privileged 参数，使用 Ubuntu 20.04）
+docker run -d --privileged \
   -m 27g \
-  --memory-swap 34g
+  --memory-swap 34g \
   --shm-size=2g \
   --cpus=$(nproc) \
-  -v $(pwd):/home/openharmony \
+  -v $(pwd)/t527_openharmony:/home/openharmony \
+  -v $(pwd)/openharmony_T527/forlinx-5.0-release:/home/openharmony/forlinx-5.0-release \
   -w /home/openharmony \
   -h t527-openharmony \
   --name t527_openharmony \
-  ubuntu:20.04 /bin/bash
+  ubuntu:20.04 \
+  sleep infinity
+docker exec -it t527_openharmony /bin/bash
 
 # 3. 设置时区（避免 tzdata 安装卡住）
 ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -553,12 +625,9 @@ bash build/prebuilts_download.sh
 # 9. 全量编译
 ./build.sh --product-name okt527 --ccache
 
-# 10. 打包生成固件（任选其一）
-# 方式一：pack.sh
-```bash
+# 10. 打包生成固件
 cd device/board/forlinx/okt527/kernel/build/
 ./pack.sh
-```
 
 # 11. 退出
 exit
@@ -577,18 +646,13 @@ docker exec -it t527_openharmony /bin/bash
 cd /home/openharmony/forlinx-5.0-release
 ./build.sh --product-name okt527 --ccache
 
-# 注意
-//全编译；如果进行了修改，编译后发现修改不生效，需要先删掉out目录再编译
-//单独编译内核，如果对内核进行了修改，需要先删掉out/KERNEL_OBJ，再运行单独编译内核命令
+# 注意：全编译后如修改不生效，需先删掉 out 目录再重新编译
+# 单独编译内核：如内核有修改，需先删掉 out/KERNEL_OBJ，再执行以下命令
 ./build.sh --product-name okt527 --ccache --build-target kernel --gn-args linux_kernel_version=\"linux-5.10\"
 
-
-# 4. 打包生成固件（任选其一）
-# 方式一：pack.sh
-```bash
+# 4. 打包生成固件
 cd device/board/forlinx/okt527/kernel/build/
 ./pack.sh
-```
 
 # 5. 退出
 exit
@@ -627,3 +691,12 @@ picocom -b 115200 /dev/ttyUSB0
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/device/soc/allwinner/t527/patches/config/t527_standard_defconfig |
 | HCS 硬件配置 | `vendor/forlinx/okt527/hdf_config/khdf/device_info/device_info.hcs` |
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/vendor/forlinx/okt527/hdf_config/khdf/device_info/device_info.hcs |
+
+---
+
+## 版本信息
+
+| 日期 | 作者 | 修改内容 |
+|------|------|----------|
+| 2026-09-15 | fanhui | 修正 2.1/快捷操作 docker run 语法错误（补齐行继续符）并改为 -d sleep infinity 与实际容器一致；补全双层挂载与 --privileged、资源参数说明；修正固件输出路径（out/t527_linux_okt527_uart0.img 位于 out/ 根目录）；修正 Python 版本说明（3.10→3.8）；清理 4.x 章节残留结构；新增 7.7 pack.sh 退出码误报说明；修正 7.5/7.6 编号与快捷操作代码块格式 |
+| 2026-09-15 | fanhui | 承接 build_T527_openharmony_script.md 文档删除，合并其故障排查内容：新增 7.8 编译报错处理（FileNotFoundError）、7.9 GPIO 驱动编译错误修复、7.10 rtc_time64_to_tm 未定义引用说明 |

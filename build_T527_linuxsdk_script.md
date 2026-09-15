@@ -257,7 +257,9 @@ cp your-logo.bmp device/config/chips/t527/boot-resource/boot-resource/bootlogo.b
 # 重新打包镜像
 ./build.sh pack
 ```
-
+# 输出镜像目录
+/media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/out
+openixcli flash t527_linux_okt527_uart0.img
 ---
 
 ## 五、内核与文件系统配置

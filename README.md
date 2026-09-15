@@ -16,7 +16,6 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 ├── build_rk3562_script.md            # RK3562 SDK Docker 编译环境完整文档
 ├── build_T113i_script.md             # T113i SDK Docker 编译环境完整文档
 ├── build_T527_linuxsdk_script.md     # T527 Linux SDK Docker 编译环境完整文档
-├── build_T527_openharmony_script.md  # T527 OpenHarmony 5.0 SDK Docker 编译环境完整文档
 ├── build_T527_ubuntu20_op_script.md  # T527 OpenHarmony 5.0 Ubuntu 20.04 编译环境文档
 ├── t527_sdk/                         # T527 Linux SDK 根目录
 │   ├── OKT527-linux-sdk/             # 飞凌 T527 Linux SDK（实际编译工作目录）
@@ -108,8 +107,7 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/t527_openharmony/` | T527 OpenHarmony Docker 挂载点，映射至容器 `/home/openharmony` |
 | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/forlinx-5.0-release/` | 飞凌 T527 OpenHarmony 发布版本（实际编译工作目录） |
 | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/source/` | OpenHarmony 源代码目录 |
-| `/media/lechi/linuxsdk/linuxsdk/build_T527_openharmony_script.md` | T527 OpenHarmony 5.0 完整编译流程文档（Docker Ubuntu 20.04） |
-| `/media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md` | T527 OpenHarmony 5.0 编译流程文档（Ubuntu 20.04 详细版） |
+| `/media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md` | T527 OpenHarmony 5.0 完整编译流程文档（Docker Ubuntu 20.04） |
 | `/media/lechi/linuxsdk/linuxsdk/build_T527_linuxsdk_script.md` | T527 Linux SDK 完整编译流程文档 |
 | `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/OK527.md` | 飞凌 OK527 原厂编译/使用文档 |
 
@@ -251,7 +249,7 @@ source build/envsetup.sh    # 初始化环境
 | 平台 | 主固件 | 打包输出 |
 |------|--------|----------|
 | T527 (Linux) | `out/t527_linux_okt527_uart0.img` | `out/pack_out/` |
-| T527 (OH5.0) | `out/pack_out/okt527_uart0.img` | `out/pack_out/` |
+| T527 (OH5.0) | `out/t527_linux_okt527_uart0.img` | `out/pack_out/` |
 | T113i | `out/t113i_uart0.img` | `out/pack_out/` |
 | RK3562 | `ubuntu/rockchip/output/update/Image/update.img` | - |
 | RK3568 | `OK3568-linux-source/output/` | - |

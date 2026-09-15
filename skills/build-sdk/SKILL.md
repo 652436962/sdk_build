@@ -14,6 +14,8 @@ description: SDK 编译任务选择器，引导用户在 T527 / T113i / RK3562 /
 - "打包固件" / "生成镜像" / "出刷机包"
 - 提到具体平台名（T527、T113i、RK3562、RK3568、RK3568 Ubuntu）并要求构建
 
+使用中文回复我
+
 ## 工作流程
 
 ### 步骤 1：识别目标平台
@@ -29,7 +31,7 @@ description: SDK 编译任务选择器，引导用户在 T527 / T113i / RK3562 /
 
 ```bash
 # T527
-read_file /media/lechi/linuxsdk/linuxsdk/build_T527_script.md
+read_file /media/lechi/linuxsdk/linuxsdk/build_T527_linuxsdk_script.md
 # T527 OpenHarmony 5.0
 read_file /media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md
 # T113i
@@ -105,11 +107,18 @@ watch -n 5 "docker exec <容器名> tail -20 <SDK路径>/build.log"
 ```bash
 # Rockchip 平台（RK3562 / RK3568）
 lsusb | grep -i rockchip
-sudo upgrade_tool LD
+openrockcli scan
 
 # Allwinner 平台（T113i / T527）
 openixcli scan
 ```
+
+**Rockchip 平台特殊流程（重要）**：若 `openrockcli scan` 未检测到处于 Maskrom/Loader 模式的设备，不要直接结束或让用户手动按键，而是按以下流程引导设备进入烧写模式：
+
+1. 自动枚举本机串口：`ls -l /dev/ttyUSB* /dev/ttyACM*`（详见「各平台烧写命令 → Rockchip 串口引导进入烧写模式」）
+2. 将检测到的串口列表展示给用户，用 `AskUserQuestion` 让用户选择开发板调试串口对应的设备节点
+3. 向所选串口发送 `reboot loader`，等待 5~10 秒让设备重新枚举
+4. 再次 `openrockcli scan` 确认设备已进入 Loader/Maskrom 模式，再执行烧写
 
 ---
 
@@ -243,16 +252,26 @@ ln -rsf ubuntu-20.04-release/ubuntu.img rockdev/rootfs.img
 
 烧写通过宿主机（非容器内）执行。Linux 下使用 USB OTG 线连接开发板。
 
+> 💡 **Rockchip 免按键引导**：若设备未处于烧写模式，可自动检测调试串口 → 与用户确认串口 → 发送 `reboot loader` 进入 Loader 模式 → 确认后再烧写。详细步骤见下方「Rockchip 串口引导进入烧写模式」小节。
+
 ### 烧写前准备
 
 ```bash
 # 检查烧写工具是否可用
-which upgrade_tool    # Rockchip 平台
+which openrockcli     # Rockchip 平台
 which openixcli       # Allwinner 平台
+
+# openrockcli 的 flash/devices/inspect/unpack 底层委托 upgrade_tool，
+# 若宿主机未安装 upgrade_tool，通过环境变量指向 SDK 自带工具：
+# export OPENROCKCLI_UPGRADE_TOOL=/path/to/upgrade_tool
 
 # 扫描已连接设备
 openixcli scan        # Allwinner
-sudo upgrade_tool LD  # Rockchip
+openrockcli scan      # Rockchip
+
+# 检测调试串口（Rockchip 串口引导进入烧写模式用）
+ls -l /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+ls -l /dev/serial/by-id/ 2>/dev/null
 ```
 
 ### 设备进入烧写模式
@@ -261,9 +280,59 @@ sudo upgrade_tool LD  # Rockchip
 |------|----------|
 | **T113i** | 断电 → 按住 FEL 键 → 上电 → 松键 |
 | **T527** | 断电 → 按住 FEL 键 → 上电 → 松键 |
-| **RK3562** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
-| **RK3562 Huayun** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
-| **RK3568** | 断电 → 按住 RECOVERY → 上电 → 2 秒后松键 |
+| **RK3562** | 方式一：断电 → 按住 RECOVERY → 上电 → 2 秒后松键；方式二：调试串口发送 `reboot loader` |
+| **RK3562 Huayun** | 方式一：断电 → 按住 RECOVERY → 上电 → 2 秒后松键；方式二：调试串口发送 `reboot loader` |
+| **RK3568** | 方式一：断电 → 按住 RECOVERY → 上电 → 2 秒后松键；方式二：调试串口发送 `reboot loader` |
+
+### Rockchip 串口引导进入烧写模式（免按键）
+
+> 适用于设备当前处于系统正常运行状态（未进入 Maskrom/Loader）的场景。通过调试串口发送 `reboot loader` 让设备重启进入 Loader 烧写模式，无需按键。参考 `原厂文档/openrockcli_Tutorial.md` 与 `原厂文档/upgrade_tool_Tutorial.md`。
+
+**步骤 1：自动检测串口**
+
+```bash
+# 枚举本机串口设备（ttyUSB=USB 转串口芯片，ttyACM=USB CDC）
+ls -l /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+
+# 查看串口芯片与设备节点的对应关系（CH340 / CP210x / FT232 等）
+ls -l /dev/serial/by-id/ 2>/dev/null
+```
+
+**步骤 2：与用户确认串口**
+
+将步骤 1 检测到的串口列表展示给用户，用 `AskUserQuestion` 让用户选择开发板调试串口对应的设备节点（常见 `/dev/ttyUSB0`）。若检测到多个串口，务必以用户选择为准，避免向错误串口发送指令。
+
+**步骤 3：向所选串口发送 `reboot loader`**
+
+```bash
+# 方式一：脚本化直接写入，波特率以开发板调试串口为准（常见 115200，部分板子 1500000）
+sudo stty -F /dev/ttyUSB0 115200 cs8 -cstopb -parenb
+printf 'reboot loader\r\n' | sudo tee /dev/ttyUSB0 > /dev/null
+```
+
+```bash
+# 方式二：picocom 交互式发送
+sudo picocom -b 115200 /dev/ttyUSB0
+# 在终端输入 reboot loader 并回车，然后按 Ctrl+A Ctrl+X 退出 picocom
+```
+
+> 若设备已启动进入 Linux 系统，`reboot loader` 需在 U-Boot 阶段生效；也可在上电时于调试串口按 **Ctrl+D** 直接进入 Loader 模式。
+
+**步骤 4：等待设备重新枚举并确认烧写模式**
+
+```bash
+# 等待 5~10 秒让设备重启并重新枚举
+sleep 8
+
+# 确认设备已进入 Loader / Maskrom 模式
+openrockcli scan
+
+# 若仍未检测到，可重试一次 reboot loader，或改用 RECOVERY 键方式进入
+```
+
+**步骤 5：烧写固件**
+
+确认设备处于烧写模式后，按下方对应平台的 `openrockcli flash` 命令执行烧写。
 
 ### T113i Tina Linux（Allwinner，openixcli）
 
@@ -293,22 +362,24 @@ openixcli scan || (sleep 5 && openixcli scan)
 openixcli flash /media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/out/t527_linux_okt527_uart0.img
 
 # T527 OH5.0 镜像：
-# openixcli flash /media/lechi/linuxsdk/linuxsdk/t527_openharmony/forlinx-5.0-release/out/pack_out/okt527_uart0.img
+# openixcli flash /media/lechi/linuxsdk/linuxsdk/t527_openharmony/forlinx-5.0-release/out/t527_linux_okt527_uart0.img
 ```
 
-### RK3562 Buildroot（Rockchip，upgrade_tool）
+### RK3562 ubuntu（Rockchip，upgrade_tool 推荐）
 
-> ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
+> ⚠️ 执行前请将开发板进入 **Maskrom** 烧写模式（断电 → 按住 RECOVERY → 上电 → 2 秒后松键）
+
+> 💡 **实践经验**：本平台 update.img 约 5.8GB（rootfs 占绝大部分），在 Loader 模式下烧写容易在 rootfs 写入中途 USB 断开失败（`Download Firmware Fail`）。**Maskrom 模式下直接 `upgrade_tool uf` 烧写一次成功率最高**。
 
 ```bash
-# 1. 检查设备连接（应显示 Maskrom 或 Loader 模式，未扫描到则等待5s后重试）
-sudo upgrade_tool LD || (sleep 5 && sudo upgrade_tool LD)
+# 1. 检查设备连接（应显示 Maskrom 模式，未检测到则等待5s后重试）
+openrockcli scan || (sleep 5 && openrockcli scan)
 
-# 2. 全量烧写 update.img
-sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/output/update/Image/update.img
+# 2. 全量烧写 update.img（Maskrom 下 upgrade_tool 自动下载 loader 初始化芯片并烧写）
+upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/output/update/Image/update.img
 
 # 预期输出：
-# Download Firmware Start
+# Download IDB Success
 # Download Image... (100%)
 # Download Firmware Success
 # Upgrade firmware ok.
@@ -316,48 +387,58 @@ sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/o
 # 烧写完成后设备自动重启
 ```
 
-### RK3562 Huayun（Rockchip，upgrade_tool）
-
-> ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
+**备选：openrockcli 烧写**（等价，底层同样委托 upgrade_tool UF）：
 
 ```bash
-# 1. 检查设备连接（应显示 Maskrom 或 Loader 模式，未扫描到则等待5s后重试）
-sudo upgrade_tool LD || (sleep 5 && sudo upgrade_tool LD)
+openrockcli scan
+openrockcli flash /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/output/update/Image/update.img
+# openrockcli flash <img> --verify true            # 启用校验
+# openrockcli flash <img> --mode full_erase        # 全量擦除后烧写
+# openrockcli flash <img> --post-action poweroff   # 烧写完成后关机
+```
+
+### RK3562 Huayun（Rockchip，upgrade_tool 推荐）
+
+> ⚠️ 执行前请将开发板进入 **Maskrom** 烧写模式（断电 → 按住 RECOVERY → 上电 → 2 秒后松键）
+
+> 💡 与 RK3562 相同：update.img 体积大（rootfs 为主），**Maskrom + `upgrade_tool uf`** 最稳定。
+
+```bash
+# 1. 检查设备连接（应显示 Maskrom 模式，未检测到则等待5s后重试）
+openrockcli scan || (sleep 5 && openrockcli scan)
 
 # 2. 全量烧写 update.img
-sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/huayun_sdk/ubuntu/rockchip/output/update/Image/update.img
+upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/huayun_sdk/ubuntu/rockchip/output/update/Image/update.img
 
 # 烧写完成后设备自动重启
 ```
 
-### RK3568 Buildroot（Rockchip，upgrade_tool）
+### RK3568 Buildroot（Rockchip，openrockcli）
 
 > ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
 
 ```bash
 # 1. 检查设备连接（未扫描到则等待5s后重试）
-sudo upgrade_tool LD || (sleep 5 && sudo upgrade_tool LD)
+openrockcli scan || (sleep 5 && openrockcli scan)
 
 # 2. 全量烧写
-sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3568_sdk/rockdev/update.img
+openrockcli flash /media/lechi/linuxsdk/linuxsdk/rk3568_sdk/rockdev/update.img
 
-# 3. 分步烧写（仅更新部分分区）
-cd /media/lechi/linuxsdk/linuxsdk/rk3568_sdk/rockdev/
-sudo upgrade_tool ul MiniLoaderAll.bin
-sudo upgrade_tool di -p parameter.txt
-sudo upgrade_tool di -u uboot.img
-sudo upgrade_tool di -b boot.img
-sudo upgrade_tool di -rootfs rootfs.img
-sudo upgrade_tool rd   # 重启
+# 3. 分区烧写（仅更新部分分区，openrockcli 内部解包 update.img 后按分区写入）
+openrockcli flash /media/lechi/linuxsdk/linuxsdk/rk3568_sdk/rockdev/update.img \
+  --mode partition --partitions boot,uboot,trust,resource,recovery
+
+# 4. 重启设备
+openrockcli reset
 ```
 
-### RK3568 Ubuntu（Rockchip，upgrade_tool / TF 卡）
+### RK3568 Ubuntu（Rockchip，openrockcli / TF 卡）
 
 > ⚠️ 执行前请将开发板进入 Maskrom/Loader 烧写模式
 
 ```bash
 # 全量烧写
-sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu/rockdev/update.img
+openrockcli flash /media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu/rockdev/update.img
 
 # 或写入 TF 卡后插入开发板启动
 # sudo dd if=/media/lechi/linuxsdk/linuxsdk/rk3568_ubuntu/rockdev/update.img of=/dev/sdX bs=1M status=progress
@@ -385,7 +466,7 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|huayun|rk3568
 | 平台 | 主固件 | 打包输出 |
 |------|--------|----------|
 | T527 (Linux) | `out/t527_linux_okt527_uart0.img` | `out/pack_out/` |
-| T527 (OH5.0) | `out/pack_out/okt527_uart0.img` | `out/pack_out/` |
+| T527 (OH5.0) | `out/t527_linux_okt527_uart0.img` | `out/pack_out/` |
 | T113i | `out/t113_i_linux_tlt113-evm-emmc_uart0.img` | `out/t113_i/tlt113-evm-emmc/pack_out/` |
 | RK3562 | `ubuntu/rockchip/output/update/Image/update.img` | - |
 | RK3562 Huayun | `ubuntu/rockchip/output/update/Image/update.img` | - |
@@ -402,10 +483,18 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|huayun|rk3568
 4. **镜像/源码权限报错**：到本机 SDK 根目录执行 `sudo chown -R $USER:$USER .`。
 5. **不打开多个并行编译**：磁盘 I/O 与内存压力会拖垮整机，逐平台串行。
 6. **T113i 编译 = 两步**：`./build.sh` 只编译组件（内核、U-Boot、rootfs），**不会**生成最终 `.img` 镜像。必须显式执行 `./build.sh pack` 才能打包出刷机镜像，否则镜像文件日期不会更新。
-7. **烧写前确认设备模式**：Rockchip 需 `sudo upgrade_tool LD` 看到 Maskrom/Loader，Allwinner 需进入 FEL 模式。烧写全程不拔 USB 线。
+7. **烧写前确认设备模式**：Rockchip 需 `openrockcli scan` 看到 Maskrom/Loader，Allwinner 需进入 FEL 模式。烧写全程不拔 USB 线。
+8. **Rockchip 串口引导**：设备未处于烧写模式时，先自动检测串口（`ls -l /dev/ttyUSB* /dev/ttyACM*`）并与用户确认串口号，再向串口发送 `reboot loader` 进入 Loader 模式，避免反复按键。
+9. **RK3562 大固件烧写**：update.img（约 5.8GB）建议在 **Maskrom 模式**下用 `upgrade_tool uf` 直接烧写；Loader 模式或 `openrockcli flash` 封装（内部仍委托 UF）易在 rootfs 写入中途 USB 断开失败（实践经验），若失败可先按键进 Maskrom 再重试。
 
 ---
 
 ## 引用文档
 
 各平台详细步骤、常见问题、修复方案均收录在对应 `build_*_script.md` 中。本 Skill 只提供"选择 + 快捷"层级的引导，遇到细节请直接读取对应平台文档。
+
+## 烧写工具参考
+
+- `原厂文档/openrockcli_Tutorial.md` — OpenRockCLI（Rockchip 烧录工具）完整使用说明
+- `原厂文档/upgrade_tool_Tutorial.md` — Rockchip upgrade_tool 官方烧录工具使用说明
+- `原厂文档/OpenixCLI_Tutorial.md` — OpenixCLI（Allwinner 烧录工具）完整使用说明

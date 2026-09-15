@@ -541,6 +541,8 @@ cd /workspace/OK3568-linux-source
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/configs/OK3568-C-linux_defconfig |
 | 设备树（DTS） | `kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts` |
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts |
+| 设备树 (Common DTSI) | `kernel/arch/arm64/boot/dts/rockchip/OK3568-C-common.dtsi` |
+|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/boot/dts/rockchip/OK3568-C-common.dtsi |
 | Buildroot defconfig | `buildroot/configs/OK3568_defconfig` |
 |  | 路径：file:///media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/buildroot/configs/OK3568_defconfig |
 | U-Boot defconfig | `u-boot/configs/OK3568-C_defconfig` |
