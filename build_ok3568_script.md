@@ -537,19 +537,11 @@ cd /workspace/OK3568-linux-source
 
 | 文件类型 | 路径 |
 |---------|------|
-| 内核 defconfig | `kernel/arch/arm64/configs/OK3568-C-linux_defconfig` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/configs/OK3568-C-linux_defconfig |
-| 设备树（DTS） | `kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts |
-| 设备树 (Common DTSI) | `kernel/arch/arm64/boot/dts/rockchip/OK3568-C-common.dtsi` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/boot/dts/rockchip/OK3568-C-common.dtsi |
-| Buildroot defconfig | `buildroot/configs/OK3568_defconfig` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/buildroot/configs/OK3568_defconfig |
-| U-Boot defconfig | `u-boot/configs/OK3568-C_defconfig` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/u-boot/configs/OK3568-C_defconfig |
-| 分区参数 | `device/rockchip/ok3568/parameter-buildroot-fit.txt` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/parameter-buildroot-fit.txt |
-| BoardConfig | `device/rockchip/ok3568/BoardConfig-ok3568.mk` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/BoardConfig-ok3568.mk |
-| FIT 镜像描述 | `device/rockchip/ok3568/boot.its` |
-|  | 路径：/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/boot.its |
+| 内核 defconfig | [`kernel/arch/arm64/configs/OK3568-C-linux_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/configs/OK3568-C-linux_defconfig) |
+| 设备树（DTS） | [`kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/boot/dts/rockchip/OK3568-C-linux.dts) |
+| 设备树 (Common DTSI) | [`kernel/arch/arm64/boot/dts/rockchip/OK3568-C-common.dtsi`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/kernel/arch/arm64/boot/dts/rockchip/OK3568-C-common.dtsi) |
+| Buildroot defconfig | [`buildroot/configs/OK3568_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/buildroot/configs/OK3568_defconfig) |
+| U-Boot defconfig | [`u-boot/configs/OK3568-C_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/u-boot/configs/OK3568-C_defconfig) |
+| 分区参数 | [`device/rockchip/ok3568/parameter-buildroot-fit.txt`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/parameter-buildroot-fit.txt) |
+| BoardConfig | [`device/rockchip/ok3568/BoardConfig-ok3568.mk`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/BoardConfig-ok3568.mk) |
+| FIT 镜像描述 | [`device/rockchip/ok3568/boot.its`](/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/OK3568-linux-source/device/rockchip/ok3568/boot.its) |
