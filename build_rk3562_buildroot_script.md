@@ -20,7 +20,7 @@
 ### 1.2 SDK 结构说明
 Buildroot SDK 位于以下路径，目录结构如下：
 
-**SDK 根目录**：[`rk3562_buildroot/rk3562_linux_sdk_release/`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release)
+**SDK 根目录**：[`rk3562_buildroot/rk3562_linux_sdk_release/`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release)
 
 | 目录/文件 | 说明 |
 | --------- | ---- |
@@ -224,7 +224,7 @@ export FORCE_UNSAFE_CONFIGURE=1
 ## 五、配置说明
 ### 5.1 配置设备树
 默认编译的设备树文件为 `tl3562-evm.dts`，路径：
-[`kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts)
+[`kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts)
 
 SDK 中提供的设备树文件：
 
@@ -259,7 +259,7 @@ RK_KERNEL_DTS_NAME="tl3562-evm-mipi-lcd"   # 添加目标设备树
 ```
 
 配置完毕后，选中 `<Save>` 保存，配置将自动保存到：
-[`kernel/arch/arm64/configs/rockchip_linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/configs/rockchip_linux_defconfig)
+[`kernel/arch/arm64/configs/rockchip_linux_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/configs/rockchip_linux_defconfig)
 
 ### 5.3 配置 Buildroot 选项（图形化）
 Buildroot 配置需先设置环境变量再打开图形界面：
@@ -281,7 +281,7 @@ make savedefconfig
 > **注意**：
 > - `envsetup.sh` 必须使用 `source`（或 `.`）方式执行，若直接 `./envsetup.sh` 执行会启动新的 bash 子 shell，导致后续 `make menuconfig` 无法在当前 shell 中执行。
 > - Buildroot 图形化配置需要交互式终端。若在 Docker 非交互模式下失败，可在本机系统操作，或直接编辑配置文件：
-> [`buildroot/configs/rockchip_rk3562_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/buildroot/configs/rockchip_rk3562_defconfig)
+> [`buildroot/configs/rockchip_rk3562_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/buildroot/configs/rockchip_rk3562_defconfig)
 
 ---
 
@@ -308,7 +308,7 @@ exit
 sudo umount -l ~/mount_dir
 ```
 
-> **详细操作参考**：[`rk3562_buildroot/Linux系统使用手册.md`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/Linux系统使用手册.md) 第 3 章
+> **详细操作参考**：[`rk3562_buildroot/Linux系统使用手册.md`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/Linux系统使用手册.md) 第 3 章
 
 ### 6.2 扩大 rootfs 镜像空间
 若根文件系统剩余空间不足，可扩大镜像容量，详细操作参见使用手册第 3.2 节。
@@ -627,10 +627,10 @@ sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linu
 
 | 文件类型 | 路径 |
 |---------|------|
-| 默认设备树（DTS） | [`kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
-| 内核 defconfig | [`kernel/arch/arm64/configs/rockchip_linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/configs/rockchip_linux_defconfig) |
-| Buildroot defconfig | [`buildroot/configs/rockchip_rk3562_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/buildroot/configs/rockchip_rk3562_defconfig) |
-| 板级 defconfig | [`device/rockchip/rk3562/tl3562_evm_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/device/rockchip/rk3562/tl3562_evm_defconfig) |
+| 默认设备树（DTS） | [`kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
+| 内核 defconfig | [`kernel/arch/arm64/configs/rockchip_linux_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/kernel/arch/arm64/configs/rockchip_linux_defconfig) |
+| Buildroot defconfig | [`buildroot/configs/rockchip_rk3562_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/buildroot/configs/rockchip_rk3562_defconfig) |
+| 板级 defconfig | [`device/rockchip/rk3562/tl3562_evm_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/rk3562_linux_sdk_release/device/rockchip/rk3562/tl3562_evm_defconfig) |
 
 ### 交叉编译工具链
 编译脚本已自动设置工具链，路径如下：
@@ -652,4 +652,4 @@ source /workspace/buildroot/output/rockchip_rk3562/host/environment-setup
 
 ---
 
-**备注**：本文档适配创龙 RK3562 Buildroot SDK（基于 rk3562_linux_release_v1.2.0_20240620），Docker 环境与官方编译要求完全一致。更多系统使用细节请参考 [`rk3562_buildroot/Linux系统使用手册.md`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/Linux系统使用手册.md)。
+**备注**：本文档适配创龙 RK3562 Buildroot SDK（基于 rk3562_linux_release_v1.2.0_20240620），Docker 环境与官方编译要求完全一致。更多系统使用细节请参考 [`rk3562_buildroot/Linux系统使用手册.md`](/media/lechi/linuxsdk/linuxsdk/rk3562_buildroot/Linux系统使用手册.md)。

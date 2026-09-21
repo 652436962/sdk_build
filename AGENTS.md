@@ -16,7 +16,7 @@ This is a **multi-platform embedded SDK build orchestration repo**. Actual SDK s
 - **Build documentation** (`build_*_script.md`) is the executable source of truth for each platform — always read before executing.
 - **Build skill**: `skills/build-sdk/SKILL.md` — Qoder skill for guided multi-platform compilation.
 - **Peripheral modules**: `模块/` contains driver docs for WiFi/BT, 4G, GPIO expanders, USB serial.
-- **Vendor docs**: `原厂编译文档/` contains flashing tool guides and board-specific docs.
+- **Vendor docs**: `datasheet/` contains flashing tool guides, chip datasheets, and board-specific docs.
 
 ## Critical rules
 

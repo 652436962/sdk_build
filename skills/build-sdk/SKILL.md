@@ -286,7 +286,7 @@ ls -l /dev/serial/by-id/ 2>/dev/null
 
 ### Rockchip 串口引导进入烧写模式（免按键）
 
-> 适用于设备当前处于系统正常运行状态（未进入 Maskrom/Loader）的场景。通过调试串口发送 `reboot loader` 让设备重启进入 Loader 烧写模式，无需按键。参考 `原厂文档/openrockcli_Tutorial.md` 与 `原厂文档/upgrade_tool_Tutorial.md`。
+> 适用于设备当前处于系统正常运行状态（未进入 Maskrom/Loader）的场景。通过调试串口发送 `reboot loader` 让设备重启进入 Loader 烧写模式，无需按键。参考 `datasheet/openrockcli_Tutorial.md` 与 `datasheet/upgrade_tool_Tutorial.md`。
 
 **步骤 1：自动检测串口**
 
@@ -495,6 +495,6 @@ ls -la /media/lechi/linuxsdk/linuxsdk/ | grep -E "t527|tina|rk3562|huayun|rk3568
 
 ## 烧写工具参考
 
-- `原厂文档/openrockcli_Tutorial.md` — OpenRockCLI（Rockchip 烧录工具）完整使用说明
-- `原厂文档/upgrade_tool_Tutorial.md` — Rockchip upgrade_tool 官方烧录工具使用说明
-- `原厂文档/OpenixCLI_Tutorial.md` — OpenixCLI（Allwinner 烧录工具）完整使用说明
+- `datasheet/openrockcli_Tutorial.md` — OpenRockCLI（Rockchip 烧录工具）完整使用说明
+- `datasheet/upgrade_tool_Tutorial.md` — Rockchip upgrade_tool 官方烧录工具使用说明
+- `datasheet/OpenixCLI_Tutorial.md` — OpenixCLI（Allwinner 烧录工具）完整使用说明

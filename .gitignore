@@ -20,6 +20,9 @@ rk3562_buildroot/
 *.img
 *.bin
 
+# ===== 数据手册 PDF（体积过大，不同步） =====
+datasheet/**/*.pdf
+
 # ===== 日志与临时文件 =====
 *.log
 *.swp

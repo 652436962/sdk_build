@@ -41,17 +41,26 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 │   ├── LinuxSDK-v2.1.tar.gz          # Linux SDK 归档包
 │   ├── tina5.0_fh_v1.0.tar.gz        # Tina 5.0 归档包
 │   └── tina5.0_v1.0_2026-2-26.tar.gz # Tina SDK 带日期归档包
-├── 原厂编译文档/                        # 各平台原厂/工具使用文档
-│   ├── OK527.md                      # 飞凌 OK527 原厂编译文档
-│   ├── ok527编译linuxSDK.md           # T527 Linux SDK 编译说明（飞凌原版）
+├── datasheet/                        # 各平台原厂手册/数据手册与工具使用文档
+│   ├── t527/                         # T527 芯片数据手册
+│   │   ├── T527_Datasheet_V0.90.pdf  # T527 Datasheet
+│   │   └── T527_User_Manual_V0.90.pdf # T527 用户手册
+│   ├── 原厂编译文档/                    # 原厂编译/板级使用文档
+│   │   ├── OK527.md                  # 飞凌 OK527 原厂编译文档
+│   │   ├── ok527编译linuxSDK.md       # T527 Linux SDK 编译说明（飞凌原版）
+│   │   ├── OK3568-OH5.1-交叉编译应用.md # RK3568 OpenHarmony 交叉编译应用指南
+│   │   ├── RK3562评估板测试手册.md      # RK3562 评估板硬件测试手册
+│   │   └── build_rk3562_commands.md  # RK3562 常用编译命令速查
 │   ├── OpenixCLI_Tutorial.md         # OpenixCLI 全志烧录工具使用说明
+│   ├── openrockcli_Tutorial.md       # OpenRockCLI 烧录工具使用说明
 │   ├── upgrade_tool_Tutorial.md      # Rockchip upgrade_tool 烧录工具使用说明
 │   ├── HDC_INSTALL.md                # HDC 工具安装说明（OpenHarmony）
 │   ├── HDC_USAGE.md                  # HDC 工具使用说明（推送/调试）
-│   ├── OK3568-OH5.1-交叉编译应用.md    # RK3568 OpenHarmony 交叉编译应用指南
-│   ├── RK3562评估板测试手册.md          # RK3562 评估板硬件测试手册
-│   ├── build_rk3562_commands.md      # RK3562 常用编译命令速查
-│   └── openharmony测试文档             # OpenHarmony 测试说明文档
+│   ├── rk3568_ubuntu.md              # RK3568 Ubuntu 相关说明
+│   ├── openharmony测试文档             # OpenHarmony 测试说明文档
+│   ├── deepin_install_docker.md      # deepin 安装 Docker 说明
+│   ├── 野火LubanCat_RK356x_快速使用手册.md
+│   └── 野火产品资料下载中心.md
 ├── 模块/                               # 外设模块驱动与适配文档
 │   ├── aic8800/                      # AIC8800 WiFi/蓝牙驱动文档
 │   ├── ch340/                        # CH340/CH341 USB 转串口驱动
@@ -81,7 +90,7 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/Lechi/` | 自定义测试/调试脚本及资料 |
 | `/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/hardware_peripherals.md` | RK3562 外设硬件说明文档 |
 | `/media/lechi/linuxsdk/linuxsdk/build_rk3562_script.md` | RK3562 完整编译流程文档（Docker Ubuntu 20.04） |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/build_rk3562_commands.md` | RK3562 编译命令速查手册 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/build_rk3562_commands.md` | RK3562 编译命令速查手册 |
 
 ### RK3568 Buildroot 相关
 | 路径 | 说明 |
@@ -98,7 +107,7 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/t527_sdk/OKT527-linux-sdk/` | 飞凌 T527 Linux SDK（实际编译工作目录） |
 | `/media/lechi/linuxsdk/linuxsdk/t527_sdk/Source/` | T527 源码目录 |
 | `/media/lechi/linuxsdk/linuxsdk/build_T527_linuxsdk_script.md` | T527 Linux SDK 完整编译流程文档（Docker Ubuntu 20.04） |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/ok527编译linuxSDK.md` | T527 Linux SDK 编译说明（飞凌原版） |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/ok527编译linuxSDK.md` | T527 Linux SDK 编译说明（飞凌原版） |
 
 ### T527 OpenHarmony 相关
 | 路径 | 说明 |
@@ -109,7 +118,7 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/openharmony_T527/source/` | OpenHarmony 源代码目录 |
 | `/media/lechi/linuxsdk/linuxsdk/build_T527_ubuntu20_op_script.md` | T527 OpenHarmony 5.0 完整编译流程文档（Docker Ubuntu 20.04） |
 | `/media/lechi/linuxsdk/linuxsdk/build_T527_linuxsdk_script.md` | T527 Linux SDK 完整编译流程文档 |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/OK527.md` | 飞凌 OK527 原厂编译/使用文档 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/OK527.md` | 飞凌 OK527 原厂编译/使用文档 |
 
 ### T113i 相关
 | 路径 | 说明 |
@@ -133,14 +142,17 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 ### 烧录与工具文档
 | 路径 | 说明 |
 |------|------|
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/OpenixCLI_Tutorial.md` | OpenixCLI 全志烧录工具使用说明 |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/upgrade_tool_Tutorial.md` | Rockchip upgrade_tool 烧录工具使用说明 |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/HDC_INSTALL.md` | OpenHarmony HDC 调试工具安装说明 |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/HDC_USAGE.md` | OpenHarmony HDC 工具详细使用说明（推送/调试） |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/ok527编译linuxSDK.md` | T527 Linux SDK 编译说明（飞凌原版） |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/OK3568-OH5.1-交叉编译应用.md` | RK3568 OpenHarmony 5.1 交叉编译应用指南 |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/RK3562评估板测试手册.md` | RK3562 评估板硬件测试手册 |
-| `/media/lechi/linuxsdk/linuxsdk/原厂编译文档/openharmony测试文档` | OpenHarmony 测试说明文档 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/OpenixCLI_Tutorial.md` | OpenixCLI 全志烧录工具使用说明 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/openrockcli_Tutorial.md` | OpenRockCLI 烧录工具使用说明 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/upgrade_tool_Tutorial.md` | Rockchip upgrade_tool 烧录工具使用说明 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/HDC_INSTALL.md` | OpenHarmony HDC 调试工具安装说明 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/HDC_USAGE.md` | OpenHarmony HDC 工具详细使用说明（推送/调试） |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/ok527编译linuxSDK.md` | T527 Linux SDK 编译说明（飞凌原版） |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/OK3568-OH5.1-交叉编译应用.md` | RK3568 OpenHarmony 5.1 交叉编译应用指南 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/RK3562评估板测试手册.md` | RK3562 评估板硬件测试手册 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/openharmony测试文档` | OpenHarmony 测试说明文档 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/t527/T527_Datasheet_V0.90.pdf` | T527 芯片数据手册 |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/t527/T527_User_Manual_V0.90.pdf` | T527 用户手册 |
 
 ### Qoder 辅助目录
 | 路径 | 说明 |

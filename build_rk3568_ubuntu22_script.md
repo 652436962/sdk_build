@@ -1,7 +1,7 @@
 # RK3568 Forlinx Desktop 22.04 Docker 编译环境使用文档
 **适用系统**：Ubuntu 22.04（Docker 容器）
 **适用平台**：瑞芯微 RK3568 系列开发板（飞凌 OK3568-C）
-**官方参考**：原厂文档/rk3568_ubuntu.md
+**官方参考**：datasheet/rk3568_ubuntu.md
 **核心优势**：Docker 隔离环境，不污染本机系统，无依赖冲突，编译环境稳定纯净。
 
 ## 前言

@@ -411,38 +411,39 @@ SDK 根目录 `tina5.0_v1.0/` 下，**tlt113-evm-emmc** 方案的关键配置文
 | 文件类型 | 路径 |
 |---------|------|
 | 方案配置（BoardConfig） | `device/config/chips/t113_i/configs/tlt113-evm-emmc/BoardConfig.mk` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/BoardConfig.mk |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/BoardConfig.mk |
 | 设备树（board 级） | `device/config/chips/t113_i/configs/tlt113-evm-emmc/board.dts` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/board.dts |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/board.dts 
+
 | 设备树（内核级） | `device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board.dts` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board.dts |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board.dts |
 | 内核配置 | `device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/config-5.4` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/config-5.4 |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/config-5.4 |
 | Buildroot defconfig | `buildroot/buildroot-201902/configs/sun8iw20p1_t113_defconfig` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/buildroot/buildroot-201902/configs/sun8iw20p1_t113_defconfig |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/buildroot/buildroot-201902/configs/sun8iw20p1_t113_defconfig |
 | U-Boot defconfig | `brandy/brandy-2.0/u-boot-2018/configs/sun8iw20p1_auto_t113_i_defconfig` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/brandy/brandy-2.0/u-boot-2018/configs/sun8iw20p1_auto_t113_i_defconfig |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/brandy/brandy-2.0/u-boot-2018/configs/sun8iw20p1_auto_t113_i_defconfig |
 | sys_config.fex | `device/config/chips/t113_i/configs/tlt113-evm-emmc/sys_config.fex` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/sys_config.fex |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/sys_config.fex |
 | U-Boot 设备树 | `device/config/chips/t113_i/configs/tlt113-evm-emmc/uboot-board.dts` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/uboot-board.dts |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/uboot-board.dts |
 | U-Boot 环境变量 | `device/config/chips/t113_i/configs/tlt113-evm-emmc/buildroot/env.cfg` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/buildroot/env.cfg |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/buildroot/env.cfg |
 | 启动 logo | `device/config/chips/t113_i/configs/tlt113-evm-emmc/buildroot/bootlogo.bmp` |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/buildroot/bootlogo.bmp |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/buildroot/bootlogo.bmp |
 
 **LCD 变体设备树**（基于 board.dts 覆盖特定显示配置）：
 
 | 文件 | 显示类型 |
 |------|----------|
 | `linux-5.4/board-cvbs.dts` | CVBS 复合视频 |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-cvbs.dts |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-cvbs.dts |
 | `linux-5.4/board-lvds-lcd.dts` | LVDS LCD |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-lvds-lcd.dts |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-lvds-lcd.dts |
 | `linux-5.4/board-mipi-lcd.dts` | MIPI LCD |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-mipi-lcd.dts |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-mipi-lcd.dts |
 | `linux-5.4/board-tft-lcd.dts` | TFT LCD |
-|  | 路径：file:///media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-tft-lcd.dts |
+|  | 路径：/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/tina5.0_v1.0/device/config/chips/t113_i/configs/tlt113-evm-emmc/linux-5.4/board-tft-lcd.dts |
 
 > **说明**：`BoardConfig.mk` 中 `LICHEE_KERN_DEFCONF:=config-5.4` 指定内核使用 `config-5.4` 配置文件（非标准 defconfig 命名），而非 `kernel/` 目录下的通用 defconfig。
 

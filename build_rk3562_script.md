@@ -481,19 +481,19 @@ sudo upgrade_tool uf /media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/rockchip/o
 
 | 文件类型 | 路径 |
 |---------|------|
-| 设备树（DTS） | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
-| 内核 defconfig | [`ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig) |
+| 设备树（DTS） | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/tl3562-evm.dts) |
+| 内核 defconfig | [`ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/configs/rockchip_linux_defconfig) |
 
 该设备树引用以下 dtsi 公共配置文件（完整路径均为 `ubuntu/Kernel/arch/arm64/boot/dts/rockchip/`）：
 
 | 文件 | 路径 | 说明 |
 |------|------|------|
-| `rk3562-evb2-ddr4-v10.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb2-ddr4-v10.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb2-ddr4-v10.dtsi) | DDR4 内存配置 |
-| `rk3562-linux.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-linux.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-linux.dtsi) | Linux 通用外设配置 |
-| `rk3562-rk809.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-rk809.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-rk809.dtsi) | RK809 电源管理芯片配置 |
-| `rk3562-amp.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-amp.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-amp.dtsi) | AMP（非对称多处理）配置 |
-| `rk3562-evb.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb.dtsi) | EVB 板级公共配置（由 rk3562-evb2-ddr4-v10.dtsi 引入） |
-| `rk3562.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562.dtsi`](file:///media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562.dtsi) | RK3562 SoC 核心定义（外设基地址、中断、时钟等，由 rk3562-evb2-ddr4-v10.dtsi 引入） |
+| `rk3562-evb2-ddr4-v10.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb2-ddr4-v10.dtsi`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb2-ddr4-v10.dtsi) | DDR4 内存配置 |
+| `rk3562-linux.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-linux.dtsi`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-linux.dtsi) | Linux 通用外设配置 |
+| `rk3562-rk809.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-rk809.dtsi`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-rk809.dtsi) | RK809 电源管理芯片配置 |
+| `rk3562-amp.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-amp.dtsi`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-amp.dtsi) | AMP（非对称多处理）配置 |
+| `rk3562-evb.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb.dtsi`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562-evb.dtsi) | EVB 板级公共配置（由 rk3562-evb2-ddr4-v10.dtsi 引入） |
+| `rk3562.dtsi` | [`ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562.dtsi`](/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/ubuntu/Kernel/arch/arm64/boot/dts/rockchip/rk3562.dtsi) | RK3562 SoC 核心定义（外设基地址、中断、时钟等，由 rk3562-evb2-ddr4-v10.dtsi 引入） |
 
 **SDK 中存在的设备树文件**：
 
