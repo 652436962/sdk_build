@@ -1,5 +1,6 @@
 # ===== SDK 源码目录（体积过大，不同步） =====
 huayun_sdk/
+ok3562_sdk/
 rk3562_sdk/
 rk3568_sdk/
 rk3568_ubuntu/
@@ -8,6 +9,17 @@ tina5.0_v2.5/
 t527_sdk/
 t527_openharmony/
 rk3562_buildroot/
+
+# ===== 模块目录：驱动源码树 / 编译产物 / 嵌套仓库（体积过大，不同步） =====
+模块/OpenHarmony/lycium/tpc_c_cplusplus/
+模块/Linux/AP6275S/bcmdhd.101.10.591.x.rk/
+模块/Linux/AP6275S/firmware/clm_bcm43752a2_ag.blob
+模块/Linux/T113-gpadc/allwin_adc/adc
+模块/Linux/T113-gpadc/allwin_adc/gpadc
+模块/Linux/T113-gpadc/allwin_adc/hello
+模块/Linux/T113-spiadc/ads1120/ads1120
+模块/Linux/T113-spiadc/ads1120/root@192.168.1.100
+模块/Linux/wifi模块测试程序/tcpserver/tcpserver
 
 # ===== 归档包 / 压缩包 =====
 *.tar.gz

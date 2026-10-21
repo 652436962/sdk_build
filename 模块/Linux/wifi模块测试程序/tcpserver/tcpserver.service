@@ -1,0 +1,15 @@
+[Unit]
+Description=TCP server (tcpserver)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/lechi/tcpserver -p 1500 -d /lechi/logs
+Restart=always
+RestartSec=2
+StandardOutput=append:/lechi/tcpserver.log
+StandardError=append:/lechi/tcpserver.log
+
+[Install]
+WantedBy=multi-user.target

@@ -80,8 +80,7 @@ sudo chown root:root /usr/local/bin/upgrade_tool
 3. 连接 USB 线
 4. 两秒后松开按键
 方法二
-reboot  loader
-方法三
+c方法三
 启动时，调试串口上电时ctrl＋d也能进loader模式
 
 ---

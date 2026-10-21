@@ -1,0 +1,15 @@
+[Unit]
+Description=TCP server (tcpserver)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/tcpserver/tcpserver -p 1500 -d /opt/tcpserver/logs
+Restart=always
+RestartSec=2
+StandardOutput=append:/opt/tcpserver/tcpserver.log
+StandardError=append:/opt/tcpserver/tcpserver.log
+
+[Install]
+WantedBy=multi-user.target

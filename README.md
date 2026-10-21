@@ -12,6 +12,7 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 ```
 /media/lechi/linuxsdk/linuxsdk
 ├── README.md                         # 本文件：SDK 目录结构说明
+├── build_ok3562_script.md            # 飞凌 OK3562 Ubuntu SDK Docker 编译环境完整文档
 ├── build_ok3568_script.md            # RK3568 Buildroot SDK Docker 编译环境完整文档
 ├── build_rk3562_script.md            # RK3562 SDK Docker 编译环境完整文档
 ├── build_T113i_script.md             # T113i SDK Docker 编译环境完整文档
@@ -24,6 +25,8 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 │   ├── extract.log                   # 解压日志
 │   └── install_deps.log              # 依赖安装日志
 ├── t527_openharmony/                 # T527 OpenHarmony Docker 工作目录（挂载点）
+├── ok3562_sdk/                       # 飞凌 OK3562 Ubuntu SDK 根目录
+│   └── 1-源码/                        # OK3562 源码分卷归档（OK3562-linux-source.tar.bz2.00~.05）
 ├── rk3562_sdk/                       # RK3562 SDK 根目录
 │   ├── Lechi/                        # 自定义测试与调试脚本目录
 │   ├── hardware_peripherals.md       # RK3562 外设硬件说明
@@ -91,6 +94,14 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/hardware_peripherals.md` | RK3562 外设硬件说明文档 |
 | `/media/lechi/linuxsdk/linuxsdk/build_rk3562_script.md` | RK3562 完整编译流程文档（Docker Ubuntu 20.04） |
 | `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/build_rk3562_commands.md` | RK3562 编译命令速查手册 |
+
+### 飞凌 OK3562 Ubuntu 相关
+| 路径 | 说明 |
+|------|------|
+| `/media/lechi/linuxsdk/linuxsdk/ok3562_sdk/` | 飞凌 OK3562 Ubuntu SDK 根目录，挂载至 Docker 容器 `/workspace` |
+| `/media/lechi/linuxsdk/linuxsdk/ok3562_sdk/1-源码/` | OK3562 源码分卷归档，含 `OK3562-linux-source.tar.bz2.00~.05` 与 `sdk_md5sum.txt` |
+| `/media/lechi/linuxsdk/linuxsdk/build_ok3562_script.md` | 飞凌 OK3562 Ubuntu 完整编译流程文档（Docker Ubuntu 22.04） |
+| `/media/lechi/linuxsdk/linuxsdk/datasheet/原厂编译文档/ok3562编译ubuntu_sdk.md` | OK3562 Ubuntu SDK 编译说明（飞凌原版） |
 
 ### RK3568 Buildroot 相关
 | 路径 | 说明 |
@@ -170,6 +181,7 @@ SDK 根路径：`/media/lechi/linuxsdk/linuxsdk`
 | `t527_openharmony` | `ubuntu:20.04` | `/media/lechi/linuxsdk/linuxsdk/t527_openharmony/` → `/home/openharmony` | 全志 T527 OpenHarmony |
 | `rk3568_sdk` | `ubuntu:20.04` | `/media/lechi/linuxsdk/linuxsdk/rk3568_sdk/` → `/workspace` | 瑞芯微 RK3568 Buildroot |
 | `rk3562-sdk` | `ubuntu:20.04` | `/media/lechi/linuxsdk/linuxsdk/rk3562_sdk/` → `/workspace` | 瑞芯微 RK3562 |
+| `ok3562-sdk` | `ubuntu:22.04` | `/media/lechi/linuxsdk/linuxsdk/ok3562_sdk/` → `/workspace` | 飞凌 OK3562 Ubuntu |
 | `t113i-sdk` | `ubuntu:18.04` | `/media/lechi/linuxsdk/linuxsdk/tina5.0_v2.5/` → `/workspace` | 全志 T113i |
 
 ---
@@ -201,6 +213,17 @@ cd /media/lechi/linuxsdk/linuxsdk/rk3562_sdk
 docker start rk3562-sdk
 docker exec -it rk3562-sdk /bin/bash
 cd /workspace/ubuntu/
+```
+
+### 飞凌 OK3562 Ubuntu
+```bash
+cd /media/lechi/linuxsdk/linuxsdk/ok3562_sdk
+docker start ok3562-sdk
+docker exec -it ok3562-sdk /bin/bash
+su - builduser                # 必须以属主 UID 用户编译（首次先 useradd -u 1000 -m builduser）
+cd /workspace/OK3562-linux-source
+./build.sh all       # 弹出选项时输入 6（forlinx_ok3562_ubuntu22_defconfig）
+# 输出: rockdev/update.img
 ```
 
 ### T527 OpenHarmony 5.0
@@ -236,7 +259,7 @@ source build/envsetup.sh    # 初始化环境
 
 | Skill 名称 | 路径 | 作用 |
 |------------|------|------|
-| `build-sdk` | `skills/build-sdk/SKILL.md` | SDK 编译任务选择器，覆盖 T527 Linux / T527 OH5.0 / T113i / RK3562 / RK3568 五个平台的 Docker 容器启动、SDK 编译与固件打包流程 |
+| `build-sdk` | `skills/build-sdk/SKILL.md` | SDK 编译任务选择器，覆盖 T527 Linux / T527 OH5.0 / T113i / RK3562 / 飞凌 OK3562 / RK3568 六个平台的 Docker 容器启动、SDK 编译与固件打包流程 |
 
 ### 触发方式
 
@@ -251,7 +274,7 @@ source build/envsetup.sh    # 初始化环境
 
 ### 工作流程（由 Skill 自动执行）
 
-1. **识别目标平台** —— 未指定平台时会弹出选择交互（T527 Linux / T527 OH5.0 / T113i / RK3562 / RK3568）
+1. **识别目标平台** —— 未指定平台时会弹出选择交互（T527 Linux / T527 OH5.0 / T113i / RK3562 / 飞凌 OK3562 / RK3568）
 2. **读取对应 `build_*_script.md` 文档** —— 所有细节步骤以该文档为准
 3. **环境检查三连** —— 容器是否存在、SDK 目录权限、是否需要 `chown`
 4. **按文档执行编译** —— 推荐 `docker exec -d ... | tee build.log` 后台运行
@@ -264,6 +287,7 @@ source build/envsetup.sh    # 初始化环境
 | T527 (OH5.0) | `out/t527_linux_okt527_uart0.img` | `out/pack_out/` |
 | T113i | `out/t113i_uart0.img` | `out/pack_out/` |
 | RK3562 | `ubuntu/rockchip/output/update/Image/update.img` | - |
+| 飞凌 OK3562 | `rockdev/update.img` | - |
 | RK3568 | `OK3568-linux-source/output/` | - |
 
 ### 使用注意事项

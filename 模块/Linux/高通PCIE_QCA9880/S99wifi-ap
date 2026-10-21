@@ -1,0 +1,75 @@
+#!/bin/sh
+# WiFi AP 一键脚本  (RK3568 ath10k / QCA988X)
+# 只开启热点(hostapd + dnsmasq)，不做 NAT 转发/上行。
+# 用法: /etc/init.d/S99wifi-ap {start|stop|restart|status|clients}
+
+WIFI=wlp1s0
+AP_IP=172.31.100.1
+AP_CIDR=172.31.100.1/16
+HOSTAPD_CONF=/etc/hostapd-lechi.conf
+DNSMASQ_CONF=/etc/dnsmasq-lechi.conf
+
+log() { echo "[wifi-ap] $*"; }
+
+start() {
+    iw reg set CN 2>/dev/null
+    killall hostapd 2>/dev/null
+    killall dnsmasq 2>/dev/null
+    sleep 1
+
+    ip link set $WIFI down 2>/dev/null
+    iw dev $WIFI set type __ap
+    ip link set $WIFI up
+    ip addr flush dev $WIFI 2>/dev/null
+    ip addr add $AP_CIDR dev $WIFI 2>/dev/null
+
+    hostapd -B $HOSTAPD_CONF
+    dnsmasq -C $DNSMASQ_CONF
+    sleep 2
+    log "AP $WIFI running at $AP_IP (ssid/passwd from $HOSTAPD_CONF)"
+}
+
+stop() {
+    killall hostapd 2>/dev/null
+    killall dnsmasq 2>/dev/null
+    ip link set $WIFI down 2>/dev/null
+    log "AP stopped"
+}
+
+status() {
+    echo "== addr =="
+    ip -br addr show $WIFI
+    echo "== proc =="
+    echo "hostapd: $(pidof hostapd || echo not-running)"
+    echo "dnsmasq: $(pidof dnsmasq || echo not-running)"
+    echo "== ap =="
+    iw dev $WIFI info 2>/dev/null | grep -E 'ssid|type|channel'
+    clients
+}
+
+clients() {
+    STA=$(iw dev $WIFI station dump 2>/dev/null)
+    echo "== clients (MAC / signal / IP) =="
+    if [ -z "$STA" ]; then
+        echo "  (no client associated)"
+    else
+        echo "$STA" | awk '/^Station/{print $2}' | while read mac; do
+            ip=$(awk -v m="$mac" 'BEGIN{IGNORECASE=1} $4==m && $1!="0.0.0.0"{print $1}' /proc/net/arp)
+            sig=$(echo "$STA" | awk -v m="$mac" '$0~m{f=1} f&&/signal:/{print $2; exit}')
+            printf "  %-18s signal=%-8s IP=%s\n" "$mac" "${sig:-?}" "${ip:-none}"
+        done
+    fi
+    echo "-- DHCP leases (dynamic) --"
+    if [ -s /var/lib/misc/dnsmasq.leases ]; then cat /var/lib/misc/dnsmasq.leases; else echo "  (none)"; fi
+    echo "-- ARP table (IP<->MAC; static clients appear here) --"
+    cat /proc/net/arp
+}
+
+case "$1" in
+    start)   start ;;
+    stop)    stop ;;
+    restart) stop; sleep 1; start ;;
+    status)  status ;;
+    clients) clients ;;
+    *) echo "Usage: $0 {start|stop|restart|status|clients}"; exit 1 ;;
+esac

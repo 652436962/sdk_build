@@ -1,0 +1,50 @@
+/dts-v1/;
+
+#include "tl3562-evm.dts"
+
+/ {
+	model = "TL3562-EVM-SDIO-WIFI-AP6275S";
+};
+
+/* AP6275S test board (TF-card form factor) in the TF slot -> sdmmc0 (mmc1)
+ *  - WL_REG_ON tied 1.8V (R113)   -> module always enabled -> NO mmc-pwrseq
+ *  - WL_HOST_WAKE floating        -> use IN-BAND SDIO irq (cap-sdio-irq)
+ *  - SDIO signalling is 1.8V      -> force the sdmmc0 IO bank to 1.8V by
+ *    pinning vccio_sd to 1.8V (it is only used as sdmmc0 vqmmc).
+ */
+
+/* vccio_sd is only used as sdmmc0's vqmmc -> pin it to 1.8V */
+&vccio_sd {
+	regulator-min-microvolt = <1800000>;
+	regulator-max-microvolt = <1800000>;
+};
+
+&sdmmc0 {
+	/delete-property/ no-sdio;
+	no-sd;
+	bus-width = <1>;
+	cap-sdio-irq;
+	keep-power-in-suspend;
+	non-removable;
+	max-frequency = <1000000>;
+	vqmmc-supply = <&vccio_sd>;   /* 1.8V (pinned above) */
+	status = "okay";
+};
+
+/* Vendor onboard SDIO WiFi controller not used on this board */
+&sdmmc1 {
+	status = "disabled";
+};
+
+&sdio_pwrseq {
+	status = "disabled";
+};
+
+&{/wireless-wlan} {
+	status = "okay";
+	wifi_chip_type = "ap6275s";
+	/* in-band interrupt: no OOB host-wake pin */
+	/delete-property/ WIFI,host_wake_irq;
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-0;
+};

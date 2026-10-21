@@ -1,0 +1,21 @@
+/dts-v1/;
+
+#include "tl3562-evm.dts"
+
+/ {
+	model = "TL3562-EVM-SDIO-WIFI";
+};
+
+&sdio_pwrseq {
+	status = "okay";
+};
+
+/* SDIO */
+&sdmmc1 {
+	status = "okay";
+};
+
+&{/wireless-wlan} {
+	status = "okay";
+	wifi_chip_type = "rtl8723ds";
+};

@@ -1,0 +1,45 @@
+#!/bin/sh
+# TCP server (echo+log) 开机自启 / 手动管理
+# 程序与生成文件均放在 /lechi 下
+# 用法: /etc/init.d/S99tcpserver {start|stop|restart|status}
+BIN=/lechi/tcpserver
+PORT=1500
+LOGDIR=/lechi/logs
+LOG=/lechi/tcpserver.log
+
+start() {
+    if pidof tcpserver >/dev/null 2>&1; then
+        echo "[tcpserver] already running (pid $(pidof tcpserver))"
+        return
+    fi
+    mkdir -p "$LOGDIR"
+    echo "[tcpserver] starting on port $PORT (logdir $LOGDIR) ..."
+    $BIN -p $PORT -d "$LOGDIR" >>"$LOG" 2>&1 &
+    sleep 1
+    echo "[tcpserver] pid $(pidof tcpserver)"
+}
+
+stop() {
+    killall tcpserver 2>/dev/null && echo "[tcpserver] stopped"
+}
+
+status() {
+    p=$(pidof tcpserver)
+    echo "bin  : $BIN"
+    echo "pid  : ${p:-not-running}"
+    echo "port : $PORT"
+    netstat -lnt 2>/dev/null | grep ":$PORT " | grep -q LISTEN \
+        && netstat -lnt 2>/dev/null | grep ":$PORT " \
+        || echo "(port not listening)"
+    echo "log  : $LOG"
+    echo "per-IP logs: $LOGDIR"
+    ls -l "$LOGDIR" 2>/dev/null
+}
+
+case "$1" in
+    start)   start ;;
+    stop)    stop ;;
+    restart) stop; sleep 1; start ;;
+    status)  status ;;
+    *) echo "Usage: $0 {start|stop|restart|status}"; exit 1 ;;
+esac

@@ -1,0 +1,128 @@
+#!/bin/sh
+# =============================================================================
+# S00thslog —— T527(OKT527-C) 开机温区采样脚本（临时排障用，不改内核/镜像）
+#
+# 目的：抓「启动约 8.6s / 负载突增时 cpul 温区被判 >=critical 触发热保护 Power down」
+#       那一刻各温区与 THS 原始码，判断是"真实高温"还是"读数被扰动"。
+#
+# 已实测（2026-09-16，见 README 第 2.6 节）：
+#   * 异常时是**所有通道同时**跳到 100~140C，而且 0.14s 内就能跳 +67C（真实热过程不可能）；
+#   * 异常与"负载/电源域动作"强相关：启动 8.6s（mali/npu/camera 模块加载）、8 核满载都能触发；
+#   * 异常瞬间 devmem 直读原始码 ≈650~750（公式算出 130~140C），而同期 sysfs 仍显示几十度。
+#
+# 采样策略（两段）：
+#   前 FAST_SEC 秒（默认 12s，覆盖 8.2~12s 关键窗口）：全速采样（约 15 次/秒），
+#        含 ths1 原始码 + DATA_INTS +（可选）GPADC CH3；
+#   之后：降频到 1 次/秒，只读 6 个温区做基线 —— 避免脚本自己把 CPU 一直跑满、
+#        反而干扰被测现象。
+#
+# 安装：cp S00thslog /etc/init.d/S00thslog && chmod 755 /etc/init.d/S00thslog && reboot
+# 关闭：rm /etc/init.d/S00thslog，或 THSLOG_SEC=0
+# 可调：THSLOG_SEC 总时长秒(默认300)；FAST_SEC 全速段秒(默认12)；THSLOG 文件；NTC=0 不读GPADC
+# =============================================================================
+
+THSLOG_SEC=${THSLOG_SEC:-300}
+FAST_SEC=${FAST_SEC:-12}
+THSLOG=${THSLOG-/root/ths-boot.log}
+NTC=${NTC:-1}
+GPADC=/sys/class/gpadc/gpadc_chip0/data
+
+RAW_C0=0x020094C0   # cpub
+RAW_C1=0x020094C4   # cpul
+RAW_STS=0x02009420
+RAW_CAL0=0x020094A0
+
+[ "$THSLOG_SEC" = "0" ] && exit 0
+
+rd()  { cat "$1" 2>/dev/null; }
+raw() { devmem "$1" 2>/dev/null; }
+
+# 原始码 -> C：code>1991 走 (2736-code)*0.074（<=55C）；code<=1991 走 (2825-code)*0.065（>=54C）
+code2c() {
+	awk -v v="$1" 'BEGIN{
+		if (v !~ /^[0-9]+$/) { printf "?"; exit }
+		if (v > 1991) printf "%.1f", (2736 - v) * 0.074
+		else          printf "%.1f", (2825 - v) * 0.065
+	}' 2>/dev/null
+}
+mc2c() {
+	awk -v t="$1" 'BEGIN{ if (t !~ /^-?[0-9]+$/) printf "?"; else printf "%.1f", t/1000 }' 2>/dev/null
+}
+
+(
+	t0=$(cut -d' ' -f1 /proc/uptime); t0=${t0%.*}
+	n=0; nsusp=0; el=0
+	while [ "$el" -lt "$THSLOG_SEC" ]; do
+		up=$(cut -d' ' -f1 /proc/uptime)
+		z0=$(rd /sys/class/thermal/thermal_zone0/temp)
+		z1=$(rd /sys/class/thermal/thermal_zone1/temp)
+		z2=$(rd /sys/class/thermal/thermal_zone2/temp)
+		z3=$(rd /sys/class/thermal/thermal_zone3/temp)
+		z4=$(rd /sys/class/thermal/thermal_zone4/temp)
+		z5=$(rd /sys/class/thermal/thermal_zone5/temp)
+
+		line="[THS] up=$up z0=$z0 z1=$z1 z2=$z2 z3=$z3 z4=$z4 z5=$z5"
+
+		if [ "$el" -lt "$FAST_SEC" ]; then
+			# ---- 全速段：抓原始码 ----
+			h1=$(raw $RAW_C1); h0=$(raw $RAW_C0)
+			case "$h1" in 0x[0-9a-fA-F]*) c1=$((0x${h1#0x})) ;; *) c1="?" ;; esac
+			case "$h0" in 0x[0-9a-fA-F]*) c0=$((0x${h0#0x})) ;; *) c0="?" ;; esac
+			line="$line raw_c0=$c0 raw_c1=$c1 sts=$(raw $RAW_STS)"
+			if [ "$NTC" = "1" ] && [ $((n % 10)) -eq 0 ]; then
+				echo 3 > $GPADC 2>/dev/null
+				sum=0; cnt=0; mn=; mx=; k=0
+				while [ "$k" -lt 8 ]; do
+					v=$(rd $GPADC | awk '{print $NF}')
+					case "$v" in
+						''|*[!0-9]*) ;;
+						*) sum=$((sum + v)); cnt=$((cnt + 1))
+						   if [ -z "$mn" ] || [ "$v" -lt "$mn" ]; then mn=$v; fi
+						   if [ -z "$mx" ] || [ "$v" -gt "$mx" ]; then mx=$v; fi ;;
+					esac
+					k=$((k + 1))
+				done
+				if [ "$cnt" -gt 0 ]; then
+					avg=$((sum / cnt))
+					line="$line ntc_avg=${avg}mV($(awk -v v="$avg" 'BEGIN{printf "%.1f",(v-500)/10}')C,min=$mn,max=$mx)"
+				fi
+			fi
+		fi
+
+		if [ -n "$THSLOG" ]; then
+			echo "$line" >> "$THSLOG" 2>/dev/null
+			if [ $((n % 20)) -eq 0 ]; then sync; fi
+		fi
+
+		sup=""
+		if [ -n "$z0" ] && [ "$z0" -ge 60000 ] 2>/dev/null; then
+			sup="z0(cpul)=$(mc2c "$z0")C"
+		elif [ -n "$z1" ] && [ "$z1" -ge 60000 ] 2>/dev/null; then
+			sup="z1(cpub)=$(mc2c "$z1")C"
+		fi
+		if [ -z "$sup" ] && [ "$el" -lt "$FAST_SEC" ]; then
+			case "$c1" in
+				''|'?') ;;
+				*) if [ "$c1" -lt 1950 ] 2>/dev/null; then sup="raw_c1=$c1($(code2c "$c1")C) 校准=$(raw $RAW_CAL0)"; fi ;;
+			esac
+		fi
+		if [ -n "$sup" ]; then
+			nsusp=$((nsusp + 1))
+			if [ "$nsusp" -le 20 ] || [ $((nsusp % 50)) -eq 0 ]; then
+				echo "$line  <== 可疑#$nsusp: $sup"
+			fi
+		fi
+
+		n=$((n + 1))
+		now=$(cut -d' ' -f1 /proc/uptime); now=${now%.*}
+		el=$((now - t0))
+		if [ $((n % 100)) -eq 0 ]; then
+			echo "[THS] heartbeat elapsed=${el}s samples=$n suspicious=$nsusp"
+		fi
+		if [ "$el" -ge "$FAST_SEC" ]; then
+			sleep 1          # 降频段：1 次/秒
+		fi
+	done
+	sync
+	echo "[THS] done elapsed=${el}s samples=$n suspicious=$nsusp log=${THSLOG:-none}"
+) &
